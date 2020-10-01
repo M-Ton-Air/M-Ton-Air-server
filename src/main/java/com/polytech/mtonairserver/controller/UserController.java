@@ -1,14 +1,17 @@
 package com.polytech.mtonairserver.controller;
 
-import com.polytech.mtonairserver.dao.UserDao;
-import com.polytech.mtonairserver.domains.UserEntity;
+import com.polytech.mtonairserver.config.SwaggerConfig;
+import com.polytech.mtonairserver.model.UserEntity;
 import com.polytech.mtonairserver.repositories.UserEntityRepository;
+import io.swagger.annotations.*;
+import org.hibernate.annotations.Parameter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
+@Api(tags = SwaggerConfig.USERS_NAME_TAG)
 public class UserController {
 
     private UserEntityRepository userEntityRepository;
@@ -21,10 +24,11 @@ public class UserController {
     //private UserDao userDao;
 
     /**
-     * Retrieve the list of users
-     * @return list of users
+     * Retrieve the users list
+     * @return users list
      */
-    //@Operation(summary = "Get the list of users")
+    @ApiOperation(value = "Get the users list", notes = "gets all the" +
+            "available users stored in the M-Ton-Air database.")
     @RequestMapping(value = "/users", method= RequestMethod.GET)
     public List<UserEntity> listOfUsers() {
         return userEntityRepository.findAll();
@@ -32,13 +36,15 @@ public class UserController {
 
     /**
      * Retrieve a user by his id
-     * @param id user's id
+     * @param id users id
      * @return a specific user
      */
-    //@Operation(summary = "Get a user by his id")
+    //todo : documenter les autres méthodes de cette manière
+    @ApiOperation(value = "Gets a user with his id", notes = "Retrieves a user according to a given id")
     @RequestMapping(value = "/users/{id}", method= RequestMethod.GET)
-    public UserEntity displayAUser(//@Parameter(description = "id of user to be searched")
-                                       @PathVariable int id) {
+    public UserEntity displayAUser(
+            @ApiParam(name = "id", value = "The user id", required = true)
+            @PathVariable int id) {
        // return userDao.findById(id);
         return userEntityRepository.findByIdUser(id);
     }

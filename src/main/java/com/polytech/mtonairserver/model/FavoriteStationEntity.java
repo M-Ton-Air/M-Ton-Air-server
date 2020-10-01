@@ -1,4 +1,4 @@
-package com.polytech.mtonairserver.domains;
+package com.polytech.mtonairserver.model;
 
 import javax.persistence.*;
 import java.util.Objects;

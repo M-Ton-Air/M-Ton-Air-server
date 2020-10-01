@@ -1,6 +1,6 @@
 package com.polytech.mtonairserver.repositories;
 
-import com.polytech.mtonairserver.domains.UserEntity;
+import com.polytech.mtonairserver.model.UserEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;

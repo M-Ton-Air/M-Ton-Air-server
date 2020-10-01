@@ -6,12 +6,14 @@ import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfi
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 //@SpringBootApplication
-@SpringBootApplication(exclude = { SecurityAutoConfiguration.class })
 @EnableSwagger2
+@SpringBootApplication(exclude = { SecurityAutoConfiguration.class })
 public class MTonAirServerApplication {
 
     public static void main(String[] args) {
         SpringApplication.run(MTonAirServerApplication.class, args);
     }
+
+
 
 }

@@ -1,6 +1,6 @@
 package com.polytech.mtonairserver.dao;
 
-import com.polytech.mtonairserver.domains.UserEntity;
+import com.polytech.mtonairserver.model.UserEntity;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;

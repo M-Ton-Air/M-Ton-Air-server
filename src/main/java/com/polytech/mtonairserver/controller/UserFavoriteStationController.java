@@ -1,9 +1,6 @@
 package com.polytech.mtonairserver.controller;
 
-import com.polytech.mtonairserver.domains.UserFavoriteStationEntity;
 import com.polytech.mtonairserver.repositories.UserFavoriteStationEntityRepository;
-import io.swagger.annotations.ApiOperation;
-import org.hibernate.annotations.Parameter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 

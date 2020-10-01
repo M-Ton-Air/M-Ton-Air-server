@@ -2,6 +2,8 @@
 -- BENALI Myriam & NAAJI Dorian --
 
 CREATE DATABASE `mtonairserver` /*!40100 DEFAULT CHARACTER SET latin1 */;
+USE `mtonairserver`;
+
 CREATE TABLE `favorite_station` (
   `id_favorite_station` int(11) NOT NULL,
   `station_name` varchar(300) NOT NULL,

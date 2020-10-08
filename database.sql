@@ -1,7 +1,7 @@
 -- Project M-Ton-Air-Server --
 -- BENALI Myriam & NAAJI Dorian --
-
-CREATE DATABASE `mtonairserver` /*!40100 DEFAULT CHARACTER SET latin1 */;
+DROP DATABASE IF EXISTS `mtonairserver`;
+CREATE DATABASE `mtonairserver` DEFAULT CHARACTER SET utf8 ;
 USE `mtonairserver`;
 
 CREATE TABLE `favorite_station` (

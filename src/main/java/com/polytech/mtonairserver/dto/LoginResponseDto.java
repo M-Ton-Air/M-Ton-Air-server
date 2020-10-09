@@ -1,6 +1,6 @@
 package com.polytech.mtonairserver.dto;
 
-import com.polytech.mtonairserver.domains.UserEntity;
+import com.polytech.mtonairserver.model.UserEntity;
 
 public class LoginResponseDto {
 

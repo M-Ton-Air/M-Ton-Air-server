@@ -5,6 +5,8 @@ import com.polytech.mtonairserver.config.SwaggerConfig;
 import com.polytech.mtonairserver.model.UserEntity;
 import com.polytech.mtonairserver.repositories.UserEntityRepository;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,8 +46,10 @@ public class AuthenticationController
      * @param loginPassword a json body that will be deserialized into a UserEntity and that contains
      * @return
      */
+    @ApiOperation(value = "User authentication", notes = "")
     @RequestMapping(value = "/signin", method = RequestMethod.POST)
-    public UserEntity login(@RequestBody UserEntity loginPassword) {
+    public UserEntity login(@ApiParam(name = "loginPassword", value = "The user login and password", required = true)
+                                @RequestBody UserEntity loginPassword) {
         //System.out.println(loginPassword);
         return null;
     }
@@ -55,8 +59,10 @@ public class AuthenticationController
      * @param loginPassword the user login and password.
      * @return 200 OK and a custom message if the account creation was okay. An error code otherwise.
      */
+    @ApiOperation(value = "Create an account", notes = "The user authenticates to his M-Ton-Air account")
     @RequestMapping(value = "/signup", method = RequestMethod.POST)
-    public UserEntity createAccount(@RequestBody UserEntity loginPassword) {
+    public UserEntity createAccount(@ApiParam(name = "loginPassword", value = "The user login and password", required = true)
+                                        @RequestBody UserEntity loginPassword) {
         String pwOriginal = loginPassword.getPassword();
         String pwHash = this.pwHasher.encode(pwOriginal);
         System.out.println("Matches ? : " + this.pwHasher.matches(pwOriginal, pwHash));

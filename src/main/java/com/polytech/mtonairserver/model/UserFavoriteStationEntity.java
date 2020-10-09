@@ -51,6 +51,16 @@ public class UserFavoriteStationEntity {
     }
 
     @Override
+    public String toString()
+    {
+        return "UserFavoriteStationEntity{" +
+                "idUserFavoriteStation=" + idUserFavoriteStation +
+                ", idUser=" + idUser +
+                ", idFavoriteStation=" + idFavoriteStation +
+                '}';
+    }
+
+    @Override
     public int hashCode() {
         return Objects.hash(idUserFavoriteStation, idUser, idFavoriteStation);
     }

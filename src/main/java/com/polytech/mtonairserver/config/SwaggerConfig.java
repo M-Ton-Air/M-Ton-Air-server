@@ -18,7 +18,13 @@ public class SwaggerConfig
 {
 
     public static final String USERS_NAME_TAG = "Users";
-    private static final String USERS_DESCRIPTION_TAG = "M-Ton-Air Users Management API";
+    private static final String USERS_DESCRIPTION_TAG = "Users management API";
+
+    public static final String AUTHENTICATION_NAME_TAG = "Authentication";
+    private static final String AUTHENTICATION_DESCRIPTION_TAG = "Authentication API, to allow users authentication";
+
+    public static final String USERS_FAVORITE_STATIONS_NAME_TAG = "Users favorite stations";
+    private static final String USERS_FAVORITE_STATIONS_DESCRIPTION = "Users favorite stations management API";
 
     @Bean
     /**
@@ -34,7 +40,11 @@ public class SwaggerConfig
                 .apis(RequestHandlerSelectors.any())
                 .paths(PathSelectors.any())
                 .build()
-                .tags(new Tag(USERS_NAME_TAG, USERS_DESCRIPTION_TAG));
+                .tags(
+                        new Tag(USERS_NAME_TAG, USERS_DESCRIPTION_TAG),
+                        new Tag(AUTHENTICATION_NAME_TAG, AUTHENTICATION_DESCRIPTION_TAG),
+                        new Tag(USERS_FAVORITE_STATIONS_NAME_TAG, USERS_FAVORITE_STATIONS_DESCRIPTION)
+                );
 
     }
 

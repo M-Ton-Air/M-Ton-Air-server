@@ -12,6 +12,7 @@ import java.util.List;
 
 @RestController
 @Api(tags = SwaggerConfig.USERS_NAME_TAG)
+@RequestMapping("/users")
 public class UserController {
 
     private UserEntityRepository userEntityRepository;
@@ -29,7 +30,7 @@ public class UserController {
      */
     @ApiOperation(value = "Get the users list", notes = "gets all the" +
             "available users stored in the M-Ton-Air database.")
-    @RequestMapping(value = "/users", method= RequestMethod.GET)
+    @RequestMapping(method= RequestMethod.GET)
     public List<UserEntity> listOfUsers() {
         return userEntityRepository.findAll();
     }
@@ -41,8 +42,8 @@ public class UserController {
      */
     //todo : documenter les autres méthodes de cette manière
     @ApiOperation(value = "Gets a user with his id", notes = "Retrieves a user according to a given id")
-    @RequestMapping(value = "/users/{id}", method= RequestMethod.GET)
-    public UserEntity displayAUser(
+    @RequestMapping(value = "/{id}", method= RequestMethod.GET)
+    public UserEntity getAUser(
             @ApiParam(name = "id", value = "The user id", required = true)
             @PathVariable int id) {
        // return userDao.findById(id);

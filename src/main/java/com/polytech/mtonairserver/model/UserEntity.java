@@ -87,6 +87,19 @@ public class UserEntity {
     }
 
     @Override
+    public String toString()
+    {
+        return "UserEntity{" +
+                "idUser=" + idUser +
+                ", name='" + name + '\'' +
+                ", firstname='" + firstname + '\'' +
+                ", email='" + email + '\'' +
+                ", password='" + password + '\'' +
+                ", apiKey='" + apiKey + '\'' +
+                '}';
+    }
+
+    @Override
     public int hashCode() {
         return Objects.hash(idUser, name, firstname, email, password, apiKey);
     }

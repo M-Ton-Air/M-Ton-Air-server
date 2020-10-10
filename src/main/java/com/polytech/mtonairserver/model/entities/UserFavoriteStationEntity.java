@@ -1,4 +1,4 @@
-package com.polytech.mtonairserver.model;
+package com.polytech.mtonairserver.model.entities;
 
 import javax.persistence.*;
 import java.util.Objects;

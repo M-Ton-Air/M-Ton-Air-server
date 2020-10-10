@@ -1,11 +1,10 @@
 package com.polytech.mtonairserver.repositories;
 
-import com.polytech.mtonairserver.model.UserEntity;
+import com.polytech.mtonairserver.model.entities.UserEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
-import java.util.Optional;
 
 /**
  * Public operations for the users entities.
@@ -40,4 +39,6 @@ public interface UserEntityRepository extends JpaRepository<UserEntity, Integer>
      * @return the user if it does exist. null otherwise.
      */
     UserEntity findByEmail(String email);
+
+
 }

@@ -1,4 +1,4 @@
-package com.polytech.mtonairserver.model;
+package com.polytech.mtonairserver.model.entities;
 
 import javax.persistence.*;
 import java.util.Objects;
@@ -14,6 +14,7 @@ public class UserEntity {
     private String apiKey;
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_user")
     public int getIdUser() {
         return idUser;

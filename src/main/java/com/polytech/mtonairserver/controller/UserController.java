@@ -1,10 +1,9 @@
 package com.polytech.mtonairserver.controller;
 
 import com.polytech.mtonairserver.config.SwaggerConfig;
-import com.polytech.mtonairserver.model.UserEntity;
+import com.polytech.mtonairserver.model.entities.UserEntity;
 import com.polytech.mtonairserver.repositories.UserEntityRepository;
 import io.swagger.annotations.*;
-import org.hibernate.annotations.Parameter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 

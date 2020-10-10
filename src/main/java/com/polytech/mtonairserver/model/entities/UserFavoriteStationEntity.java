@@ -1,4 +1,4 @@
-package com.polytech.mtonairserver.model;
+package com.polytech.mtonairserver.model.entities;
 
 import javax.persistence.*;
 import java.util.Objects;
@@ -48,6 +48,16 @@ public class UserFavoriteStationEntity {
         return idUserFavoriteStation == that.idUserFavoriteStation &&
                 idUser == that.idUser &&
                 idFavoriteStation == that.idFavoriteStation;
+    }
+
+    @Override
+    public String toString()
+    {
+        return "UserFavoriteStationEntity{" +
+                "idUserFavoriteStation=" + idUserFavoriteStation +
+                ", idUser=" + idUser +
+                ", idFavoriteStation=" + idFavoriteStation +
+                '}';
     }
 
     @Override

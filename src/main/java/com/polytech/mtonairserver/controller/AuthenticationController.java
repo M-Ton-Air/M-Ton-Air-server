@@ -10,6 +10,8 @@ import com.polytech.mtonairserver.repositories.UserEntityRepository;
 import com.polytech.mtonairserver.security.TokenGenerator;
 import io.swagger.annotations.Api;
 import org.apache.commons.validator.routines.EmailValidator;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -41,8 +43,10 @@ public class AuthenticationController
      * @param loginPassword a json body that will be deserialized into a UserEntity and that contains
      * @return
      */
+    @ApiOperation(value = "User authentication", notes = "")
     @RequestMapping(value = "/signin", method = RequestMethod.POST)
-    public UserEntity login(@RequestBody UserEntity loginPassword) {
+    public UserEntity login(@ApiParam(name = "loginPassword", value = "The user login and password", required = true)
+                                @RequestBody UserEntity loginPassword) {
         //System.out.println(loginPassword);
         return null;
     }
@@ -57,6 +61,7 @@ public class AuthenticationController
      * - email
      * - password
      */
+    @ApiOperation(value = "Create an account", notes = "The user authenticates to his M-Ton-Air account")
     @RequestMapping(value = "/signup", method = RequestMethod.POST)
     @ResponseBody
     public ApiResponse createAccount(@RequestBody UserEntity namesLoginPassword) throws AccountCreationException
@@ -170,7 +175,7 @@ public class AuthenticationController
     @ExceptionHandler(NamesMissingException.class)
     @ResponseBody
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ApiErrorResponse missingNmaesResponse(NamesMissingException ex)
+    public ApiErrorResponse missingNamesResponse(NamesMissingException ex)
     {
         // ignores unuseful elements
         ex.setStackTrace(new StackTraceElement[]{ex.getStackTrace()[0]});

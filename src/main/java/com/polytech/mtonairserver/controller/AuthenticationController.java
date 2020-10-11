@@ -128,6 +128,16 @@ public class AuthenticationController
 
         // generating a unique api token for our user
         namesLoginPassword.setApiKey(TokenGenerator.generateUserApiToken());
+        int cpt = 0;
+        while(this.userEntityRepository.existsByApiKey(namesLoginPassword.getApiKey()))
+        {
+            namesLoginPassword.setApiKey(TokenGenerator.generateUserApiToken());
+            cpt++;
+            if(cpt > 100)
+            {
+                throw new TokenGenerationException("Could not find a unique token on server side... Token size has to be increased.", AuthenticationController.class);
+            }
+        }
         // hashing the user pw
         namesLoginPassword.setPassword(this.pwHasher.encode(namesLoginPassword.getPassword()));
         try
@@ -231,4 +241,13 @@ public class AuthenticationController
         return new ApiErrorResponse(HttpStatus.BAD_REQUEST, "Invalid variables length", ex);
     }
 
+    @ExceptionHandler(TokenGenerationException.class)
+    @ResponseBody
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public ApiErrorResponse tokenError(TokenGenerationException ex)
+    {
+        ex.setStackTrace(new StackTraceElement[]{ex.getStackTrace()[0]});
+        return new ApiErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, "A unique token could not be found. Exception message : " +
+                ex.getMessage(), ex);
+    }
 }

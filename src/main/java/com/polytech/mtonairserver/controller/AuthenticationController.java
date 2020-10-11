@@ -2,6 +2,7 @@ package com.polytech.mtonairserver.controller;
 
 import com.polytech.mtonairserver.config.SwaggerConfig;
 import com.polytech.mtonairserver.customexceptions.accountcreation.*;
+import com.polytech.mtonairserver.model.responses.ApiAuthenticateSuccessResponse;
 import com.polytech.mtonairserver.model.responses.ApiErrorResponse;
 import com.polytech.mtonairserver.model.entities.UserEntity;
 import com.polytech.mtonairserver.model.responses.ApiResponse;
@@ -18,6 +19,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.SecureRandom;
+import java.util.HashMap;
 
 @RestController
 @Api(tags = SwaggerConfig.AUTHENTICATION_NAME_TAG)
@@ -43,11 +45,12 @@ public class AuthenticationController
      * @param loginPassword a json body that will be deserialized into a UserEntity and that contains
      * @return
      */
-    @ApiOperation(value = "User authentication", notes = "")
+    @ApiOperation(value = "User authentication", notes = "The user authenticates to his M-Ton-Air account")
     @RequestMapping(value = "/signin", method = RequestMethod.POST)
-    public UserEntity login(@ApiParam(name = "loginPassword", value = "The user login and password", required = true)
+    public ApiAuthenticateSuccessResponse login(@ApiParam(name = "loginPassword", value = "The user login and password", required = true)
                                 @RequestBody UserEntity loginPassword) {
-        //System.out.println(loginPassword);
+        //todo : handle sign in with email
+        // returns an ApiAuthenticateSuccessResponse with the user id + user api token. Client then has to store it locally.
         return null;
     }
 
@@ -61,7 +64,7 @@ public class AuthenticationController
      * - email
      * - password
      */
-    @ApiOperation(value = "Create an account", notes = "The user authenticates to his M-Ton-Air account")
+    @ApiOperation(value = "Create an account", notes = "Allows an user to create an account with a POST request to the API. It creates an user and stores it.")
     @RequestMapping(value = "/signup", method = RequestMethod.POST)
     @ResponseBody
     public ApiResponse createAccount(@RequestBody UserEntity namesLoginPassword) throws AccountCreationException
@@ -71,13 +74,37 @@ public class AuthenticationController
         {
             throw new NamesMissingException("Name and First name were not specified", AuthenticationController.class);
         }
-        
-        // todo : handle the following cases :
+
         /*
-        pw : between 6 and 32 chars
+        pw (non hashed): between 6 and 32 chars
         names between 1 to 50 chars
         email : up to 75chars
          */
+        boolean oneParamInvalid = false;
+        HashMap<String, Integer> fieldsLength = new HashMap<>();
+        if(! this.checkVariableLength(6, 32, namesLoginPassword.getPassword()))
+        {
+            oneParamInvalid = true;
+            fieldsLength.put("Password", namesLoginPassword.getPassword().length());
+        }
+        if(! this.checkVariableLength(1, 50, namesLoginPassword.getName())
+        || ! this.checkVariableLength(1, 50, namesLoginPassword.getFirstname()))
+        {
+            oneParamInvalid = true;
+            fieldsLength.put("Name", namesLoginPassword.getName().length());
+            fieldsLength.put("First name", namesLoginPassword.getFirstname().length());
+
+        }
+        if(! this.checkVariableLength(0, 75, namesLoginPassword.getEmail()))
+        {
+            oneParamInvalid = true;
+            fieldsLength.put("E-mail", namesLoginPassword.getEmail().length());
+        }
+
+        if(oneParamInvalid)
+        {
+            throw new InvalidVariablesLength("One or many params do not have the required length.", AuthenticationController.class, fieldsLength);
+        }
 
         String userEmail = namesLoginPassword.getEmail();
         // Is email correctly formed ?
@@ -114,13 +141,25 @@ public class AuthenticationController
         }
         return new ApiSuccessResponse(HttpStatus.OK,
                 "Account was successfully created. Welcome "
-                        + namesLoginPassword.getFirstname()
-                        + " "
                         + namesLoginPassword.getName()
                         + " ("
                         + namesLoginPassword.getEmail()
                         + ")");
     }
+
+
+    /**
+     * Private helper that helps to know whether or not a given string has min to max characters.
+     * @param min the minimal length of the string.
+     * @param max the maximal length of the string
+     * @param str the String to be analyzed
+     * @return true if str has min to max (included) chars. False otherwise.
+     */
+    private boolean checkVariableLength(int min, int max, String str)
+    {
+        return (str.length() >= min && str.length() <= max);
+    }
+
 
     /* ############################################################## EXCEPTION HANDLERS ############################################################## */
 
@@ -180,6 +219,16 @@ public class AuthenticationController
         // ignores unuseful elements
         ex.setStackTrace(new StackTraceElement[]{ex.getStackTrace()[0]});
         return new ApiErrorResponse(HttpStatus.BAD_REQUEST, "Names are missing.", ex);
+    }
+
+    @ExceptionHandler(InvalidVariablesLength.class)
+    @ResponseBody
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ApiErrorResponse invalidVarLength(InvalidVariablesLength ex)
+    {
+        // ignores unuseful elements
+        ex.setStackTrace(new StackTraceElement[]{ex.getStackTrace()[0]});
+        return new ApiErrorResponse(HttpStatus.BAD_REQUEST, "Invalid variables length", ex);
     }
 
 }

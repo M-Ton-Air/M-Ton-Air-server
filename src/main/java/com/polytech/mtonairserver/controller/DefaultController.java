@@ -24,7 +24,7 @@ public class DefaultController implements org.springframework.boot.web.servlet.e
     @RequestMapping(value = PATH)
     public ApiErrorResponse error()
     {
-        return new ApiErrorResponse(HttpStatus.BAD_REQUEST, "Given request could not be interprated.", null);
+        return new ApiErrorResponse(HttpStatus.BAD_REQUEST, "Given request could not be interpreted.", null);
     }
 
     @Override

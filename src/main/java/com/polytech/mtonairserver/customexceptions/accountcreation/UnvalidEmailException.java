@@ -1,5 +1,6 @@
 package com.polytech.mtonairserver.customexceptions.accountcreation;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.polytech.mtonairserver.customexceptions.accountcreation.AccountCreationException;
 
 public class UnvalidEmailException extends AccountCreationException
@@ -16,6 +17,7 @@ public class UnvalidEmailException extends AccountCreationException
         this.invalidMail = _invalidMail;
     }
 
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
     private String invalidMail;
 
     public String getInvalidMail()

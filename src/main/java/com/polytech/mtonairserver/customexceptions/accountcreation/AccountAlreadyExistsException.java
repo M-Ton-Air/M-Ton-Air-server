@@ -1,5 +1,7 @@
 package com.polytech.mtonairserver.customexceptions.accountcreation;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 public class AccountAlreadyExistsException extends AccountCreationException
 {
     /**
@@ -14,6 +16,7 @@ public class AccountAlreadyExistsException extends AccountCreationException
         this.existingMail = _existingMail;
     }
 
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
     private String existingMail;
 
     public String getExistingMail()

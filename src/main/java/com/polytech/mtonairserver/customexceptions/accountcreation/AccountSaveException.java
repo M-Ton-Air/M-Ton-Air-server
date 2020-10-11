@@ -1,5 +1,6 @@
 package com.polytech.mtonairserver.customexceptions.accountcreation;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.polytech.mtonairserver.customexceptions.accountcreation.AccountCreationException;
 import com.polytech.mtonairserver.model.entities.UserEntity;
 
@@ -18,5 +19,6 @@ public class AccountSaveException extends AccountCreationException
         this.concernedUser = user;
     }
 
+    @JsonFormat(shape = JsonFormat.Shape.OBJECT)
     private UserEntity concernedUser;
 }

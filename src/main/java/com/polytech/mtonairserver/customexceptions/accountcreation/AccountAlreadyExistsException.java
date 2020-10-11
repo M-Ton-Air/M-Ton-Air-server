@@ -1,8 +1,10 @@
 package com.polytech.mtonairserver.customexceptions.accountcreation;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.polytech.mtonairserver.customexceptions.ExceptionLogger;
+import com.polytech.mtonairserver.customexceptions.LoggableException;
 
-public class AccountAlreadyExistsException extends AccountCreationException
+public class AccountAlreadyExistsException extends LoggableException
 {
     /**
      * Default constructor for an account creation exception.
@@ -14,6 +16,7 @@ public class AccountAlreadyExistsException extends AccountCreationException
     {
         super(_errorMessage, classInWhichExceptionOccured);
         this.existingMail = _existingMail;
+        ExceptionLogger.logException(this);
     }
 
     @JsonFormat(shape = JsonFormat.Shape.STRING)

@@ -1,7 +1,10 @@
 package com.polytech.mtonairserver.controller;
 
 import com.polytech.mtonairserver.config.SwaggerConfig;
+import com.polytech.mtonairserver.customexceptions.LoggableException;
 import com.polytech.mtonairserver.customexceptions.accountcreation.*;
+import com.polytech.mtonairserver.customexceptions.loginexception.UnknownEmailException;
+import com.polytech.mtonairserver.customexceptions.loginexception.WrongPasswordException;
 import com.polytech.mtonairserver.model.responses.ApiAuthenticateSuccessResponse;
 import com.polytech.mtonairserver.model.responses.ApiErrorResponse;
 import com.polytech.mtonairserver.model.entities.UserEntity;
@@ -10,6 +13,7 @@ import com.polytech.mtonairserver.model.responses.ApiSuccessResponse;
 import com.polytech.mtonairserver.repositories.UserEntityRepository;
 import com.polytech.mtonairserver.security.TokenGenerator;
 import io.swagger.annotations.Api;
+import org.apache.catalina.User;
 import org.apache.commons.validator.routines.EmailValidator;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -41,17 +45,36 @@ public class AuthenticationController
 
 
     /**
-     * Allows the user authentication
-     * @param loginPassword a json body that will be deserialized into a UserEntity and that contains
-     * @return
+     * Allows the user authentication.
+     * @param loginPassword a json body that will be deserialized into a UserEntity and that contains.
+     * @return an ApiAuthenticateSuccessResponse with the user id and the user api token.
      */
     @ApiOperation(value = "User authentication", notes = "The user authenticates to his M-Ton-Air account")
     @RequestMapping(value = "/signin", method = RequestMethod.POST)
     public ApiAuthenticateSuccessResponse login(@ApiParam(name = "loginPassword", value = "The user login and password", required = true)
-                                @RequestBody UserEntity loginPassword) {
-        //todo : handle sign in with email
-        // returns an ApiAuthenticateSuccessResponse with the user id + user api token. Client then has to store it locally.
-        return null;
+                                @RequestBody UserEntity loginPassword) throws UnknownEmailException, WrongPasswordException {
+
+        //check if the user exists
+        if (userEntityRepository.existsByEmail(loginPassword.getEmail())) {
+            // user contains all the information about the useUserEntity user = userEntityRepository.findByEmail(loginPassword.getEmail());
+            UserEntity user = userEntityRepository.findByEmail(loginPassword.getEmail());
+
+           // if the entered password does not match with the user's password
+           if(!this.pwHasher.matches(loginPassword.getPassword(), user.getPassword()))
+           {
+               throw new WrongPasswordException("The entered password is wrong", AuthenticationController.class);
+           }
+           // if the entered password match with the user's password
+           else {
+               return new ApiAuthenticateSuccessResponse(HttpStatus.OK, "The user " + user.getFirstname() + " " + user.getName() +
+                       " (" + user.getEmail() + ") is well authenticated.", user.getIdUser(), user.getApiKey());
+           }
+        }
+        // if the user does not exists
+        else {
+            throw new UnknownEmailException("Email " + loginPassword + " is unknown.", AuthenticationController.class, loginPassword.getEmail());
+        }
+            // todo returns an ApiAuthenticateSuccessResponse with the user id + user api token. Client then has to store it locally.
     }
 
     /**
@@ -67,7 +90,7 @@ public class AuthenticationController
     @ApiOperation(value = "Create an account", notes = "Allows an user to create an account with a POST request to the API. It creates an user and stores it.")
     @RequestMapping(value = "/signup", method = RequestMethod.POST)
     @ResponseBody
-    public ApiResponse createAccount(@RequestBody UserEntity namesLoginPassword) throws AccountCreationException
+    public ApiResponse createAccount(@RequestBody UserEntity namesLoginPassword) throws LoggableException
     {
         // when no names are given
         if(namesLoginPassword.getName().isEmpty() || namesLoginPassword.getFirstname().isEmpty())
@@ -103,7 +126,7 @@ public class AuthenticationController
 
         if(oneParamInvalid)
         {
-            throw new InvalidVariablesLength("One or many params do not have the required length.", AuthenticationController.class, fieldsLength);
+            throw new InvalidVariablesLengthException("One or many params do not have the required length.", AuthenticationController.class, fieldsLength);
         }
 
         String userEmail = namesLoginPassword.getEmail();
@@ -151,7 +174,7 @@ public class AuthenticationController
         }
         return new ApiSuccessResponse(HttpStatus.OK,
                 "Account was successfully created. Welcome "
-                        + namesLoginPassword.getName()
+                        + namesLoginPassword.getFirstname()
                         + " ("
                         + namesLoginPassword.getEmail()
                         + ")");
@@ -178,7 +201,7 @@ public class AuthenticationController
      * Custom Exception Handler that will provide data to the API user when an AccountAlreadyExistsException is
      * raised.
      * @param ex the raised exception.
-     * @return an ApiErrorResponse describing the error
+     * @return an ApiErrorResponse describing the error.
      * @see ApiErrorResponse
      */
     @ExceptionHandler(AccountAlreadyExistsException.class)
@@ -207,8 +230,8 @@ public class AuthenticationController
     }
 
     /**
-     * Custom Exception Handler for account creation errors while saving an user to the db
-     * @param ex an AccountSaveException
+     * Custom Exception Handler for account creation errors while saving an user to the db.
+     * @param ex an AccountSaveException.
      * @return an api error response describing what went wrong to the api user.
      */
     @ExceptionHandler(AccountSaveException.class)
@@ -221,6 +244,11 @@ public class AuthenticationController
         return new ApiErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, "Something went wrong on server side while saving the given user to our database. ", ex);
     }
 
+    /**
+     * Custom Exception Handler for missing names.
+     * @param ex an NamesMissingException.
+     * @return an ApiErrorResponse describing the error.
+     */
     @ExceptionHandler(NamesMissingException.class)
     @ResponseBody
     @ResponseStatus(HttpStatus.BAD_REQUEST)
@@ -231,23 +259,62 @@ public class AuthenticationController
         return new ApiErrorResponse(HttpStatus.BAD_REQUEST, "Names are missing.", ex);
     }
 
-    @ExceptionHandler(InvalidVariablesLength.class)
+    /**
+     * Custom Exception Handler for invalid variables length.
+     * @param ex an InvalidVariablesLengthException.
+     * @return an ApiErrorResponse describing the error.
+     */
+    @ExceptionHandler(InvalidVariablesLengthException.class)
     @ResponseBody
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ApiErrorResponse invalidVarLength(InvalidVariablesLength ex)
+    public ApiErrorResponse invalidVarLength(InvalidVariablesLengthException ex)
     {
         // ignores unuseful elements
         ex.setStackTrace(new StackTraceElement[]{ex.getStackTrace()[0]});
         return new ApiErrorResponse(HttpStatus.BAD_REQUEST, "Invalid variables length", ex);
     }
 
+    /**
+     * Custom Exception Handler for token generation.
+     * @param ex an TokenGenerationException.
+     * @return an ApiErrorResponse describing the error.
+     */
     @ExceptionHandler(TokenGenerationException.class)
     @ResponseBody
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ApiErrorResponse tokenError(TokenGenerationException ex)
     {
+        // ignores unuseful elements
         ex.setStackTrace(new StackTraceElement[]{ex.getStackTrace()[0]});
-        return new ApiErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, "A unique token could not be found. Exception message : " +
-                ex.getMessage(), ex);
+        return new ApiErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, "A unique token could not be found.", ex);
+    }
+
+    /**
+     * Custom Exception Handler for non existing emails.
+     * @param ex an UnknownEmailException.
+     * @return an ApiErrorResponse describing the error.
+     */
+    @ExceptionHandler(UnknownEmailException.class)
+    @ResponseBody
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ApiErrorResponse unknownEmailResponse(UnknownEmailException ex) {
+        // ignores unuseful elements
+        ex.setStackTrace(new StackTraceElement[]{ex.getStackTrace()[0]});
+        return
+                new ApiErrorResponse(HttpStatus.BAD_REQUEST, "The entered email does not exist in our database.", ex);
+    }
+
+    /**
+     * Custom Exception Handler for wrong passwords.
+     * @param ex an WrongPasswordException.
+     * @return an ApiErrorResponse describing the error.
+     */
+    @ExceptionHandler(WrongPasswordException.class)
+    @ResponseBody
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ApiErrorResponse wrongPasswordResponse(WrongPasswordException ex) {
+        // ignores unuseful elements
+        ex.setStackTrace(new StackTraceElement[]{ex.getStackTrace()[0]});
+        return new ApiErrorResponse(HttpStatus.BAD_REQUEST, "The entered password is wrong.", ex);
     }
 }

@@ -1,10 +1,11 @@
 package com.polytech.mtonairserver.customexceptions.accountcreation;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.polytech.mtonairserver.customexceptions.accountcreation.AccountCreationException;
+import com.polytech.mtonairserver.customexceptions.ExceptionLogger;
+import com.polytech.mtonairserver.customexceptions.LoggableException;
 import com.polytech.mtonairserver.model.entities.UserEntity;
 
-public class AccountSaveException extends AccountCreationException
+public class AccountSaveException extends LoggableException
 {
 
     /**
@@ -17,6 +18,7 @@ public class AccountSaveException extends AccountCreationException
     {
         super(_errorMessage, classInWhichExceptionOccured);
         this.concernedUser = user;
+        ExceptionLogger.logException(this);
     }
 
     @JsonFormat(shape = JsonFormat.Shape.OBJECT)

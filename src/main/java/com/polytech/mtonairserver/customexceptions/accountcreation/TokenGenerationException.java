@@ -1,6 +1,9 @@
 package com.polytech.mtonairserver.customexceptions.accountcreation;
 
-public class TokenGenerationException extends AccountCreationException
+import com.polytech.mtonairserver.customexceptions.ExceptionLogger;
+import com.polytech.mtonairserver.customexceptions.LoggableException;
+
+public class TokenGenerationException extends LoggableException
 {
     /**
      * Default constructor for an account creation exception.
@@ -11,5 +14,6 @@ public class TokenGenerationException extends AccountCreationException
     public TokenGenerationException(String _errorMessage, Class<?> classInWhichExceptionOccured)
     {
         super(_errorMessage, classInWhichExceptionOccured);
+        ExceptionLogger.logException(this);
     }
 }

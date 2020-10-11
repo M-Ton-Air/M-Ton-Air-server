@@ -1,29 +1,23 @@
-package com.polytech.mtonairserver.customexceptions.accountcreation;
+package com.polytech.mtonairserver.customexceptions.loginexception;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.polytech.mtonairserver.customexceptions.ExceptionLogger;
 import com.polytech.mtonairserver.customexceptions.LoggableException;
 
-public class UnvalidEmailException extends LoggableException
+public class UnknownEmailException extends LoggableException
 {
     /**
-     * Default constructor for an account creation exception.
+     * Default constructor for a loggable exception.
      *
      * @param _errorMessage                the error message.
      * @param classInWhichExceptionOccured the class in which the exception occured.
      */
-    public UnvalidEmailException(String _errorMessage, Class<?> classInWhichExceptionOccured, String _invalidMail)
-    {
+    public UnknownEmailException(String _errorMessage, Class<?> classInWhichExceptionOccured, String _unrecognizedEmail) {
         super(_errorMessage, classInWhichExceptionOccured);
-        this.invalidMail = _invalidMail;
+        this.unrecognizedEmail = _unrecognizedEmail;
         ExceptionLogger.logException(this);
     }
 
     @JsonFormat(shape = JsonFormat.Shape.STRING)
-    private String invalidMail;
-
-    public String getInvalidMail()
-    {
-        return invalidMail;
-    }
+    private String unrecognizedEmail;
 }

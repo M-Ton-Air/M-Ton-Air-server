@@ -13,6 +13,18 @@ public class UserEntity {
     private String password;
     private String apiKey;
 
+    public UserEntity() {
+    }
+
+    public UserEntity(int idUser, String name, String firstname, String email, String password, String apiKey) {
+        this.idUser = idUser;
+        this.name = name;
+        this.firstname = firstname;
+        this.email = email;
+        this.password = password;
+        this.apiKey = apiKey;
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_user")

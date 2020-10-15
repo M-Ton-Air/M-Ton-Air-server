@@ -24,7 +24,10 @@ public class SwaggerConfig
     private static final String AUTHENTICATION_DESCRIPTION_TAG = "Authentication API, to allow users authentication";
 
     public static final String USERS_FAVORITE_STATIONS_NAME_TAG = "Users favorite stations";
-    private static final String USERS_FAVORITE_STATIONS_DESCRIPTION = "Users favorite stations management API";
+    private static final String USERS_FAVORITE_STATIONS_DESCRIPTION_TAG = "Users favorite stations management API";
+
+    public static final String AQICN_NAME_TAG = "AQICN requests";
+    private static final String AQICN_DESCRIPTION_TAG = "AQICN requests management API";
 
     @Bean
     /**
@@ -43,8 +46,8 @@ public class SwaggerConfig
                 .tags(
                         new Tag(USERS_NAME_TAG, USERS_DESCRIPTION_TAG),
                         new Tag(AUTHENTICATION_NAME_TAG, AUTHENTICATION_DESCRIPTION_TAG),
-                        new Tag(USERS_FAVORITE_STATIONS_NAME_TAG, USERS_FAVORITE_STATIONS_DESCRIPTION)
-                );
+                        new Tag(USERS_FAVORITE_STATIONS_NAME_TAG, USERS_FAVORITE_STATIONS_DESCRIPTION_TAG),
+                        new Tag(AQICN_NAME_TAG, AQICN_DESCRIPTION_TAG));
 
     }
 

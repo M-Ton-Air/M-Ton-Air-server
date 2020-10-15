@@ -21,8 +21,6 @@ public class UserController {
         this.userEntityRepository = userEntityRepository;
     }
 
-    //private UserDao userDao;
-
     /**
      * Retrieve the users list
      * @return users list

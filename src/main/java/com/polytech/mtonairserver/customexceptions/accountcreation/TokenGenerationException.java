@@ -1,6 +1,9 @@
 package com.polytech.mtonairserver.customexceptions.accountcreation;
 
-public class InvalidVariablesLength extends AccountCreationException
+import com.polytech.mtonairserver.customexceptions.ExceptionLogger;
+import com.polytech.mtonairserver.customexceptions.LoggableException;
+
+public class TokenGenerationException extends LoggableException
 {
     /**
      * Default constructor for an account creation exception.
@@ -8,8 +11,9 @@ public class InvalidVariablesLength extends AccountCreationException
      * @param _errorMessage                the error message.
      * @param classInWhichExceptionOccured the class in which the exception occured.
      */
-    public InvalidVariablesLength(String _errorMessage, Class<?> classInWhichExceptionOccured)
+    public TokenGenerationException(String _errorMessage, Class<?> classInWhichExceptionOccured)
     {
         super(_errorMessage, classInWhichExceptionOccured);
+        ExceptionLogger.logException(this);
     }
 }

@@ -41,4 +41,11 @@ public interface UserEntityRepository extends JpaRepository<UserEntity, Integer>
     UserEntity findByEmail(String email);
 
 
+    /**
+     * Checks if an user with the given api key already exists
+     * @param api_key an api key that may exists in db
+     * @return true if the user with the given api key exists. False otherwise.
+     */
+    Boolean existsByApiKey(String api_key);
+
 }

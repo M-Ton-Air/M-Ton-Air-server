@@ -1,6 +1,9 @@
 package com.polytech.mtonairserver.customexceptions.accountcreation;
 
-public class NamesMissingException extends  AccountCreationException
+import com.polytech.mtonairserver.customexceptions.ExceptionLogger;
+import com.polytech.mtonairserver.customexceptions.LoggableException;
+
+public class NamesMissingException extends LoggableException
 {
     /**
      * Default constructor for an account creation exception.
@@ -11,5 +14,6 @@ public class NamesMissingException extends  AccountCreationException
     public NamesMissingException(String _errorMessage, Class<?> classInWhichExceptionOccured)
     {
         super(_errorMessage, classInWhichExceptionOccured);
+        ExceptionLogger.logException(this);
     }
 }

@@ -1,23 +1,22 @@
 package com.polytech.mtonairserver.model.entities;
 
+
 import javax.persistence.*;
 import java.util.Objects;
 
 @Entity
-@Table(name = "user_favorite_station", schema = "mtonairserver", catalog = "")
+@Table(name = "user_favorite_station", schema = "mtonairserver")
 public class UserFavoriteStationEntity {
     private int idUserFavoriteStation;
     private int idUser;
-    private int idFavoriteStation;
+    private int idStation;
+
+    public UserFavoriteStationEntity() { }
 
     @Id
     @Column(name = "id_user_favorite_station")
     public int getIdUserFavoriteStation() {
         return idUserFavoriteStation;
-    }
-
-    public void setIdUserFavoriteStation(int idUserFavoriteStation) {
-        this.idUserFavoriteStation = idUserFavoriteStation;
     }
 
     @Basic
@@ -26,42 +25,41 @@ public class UserFavoriteStationEntity {
         return idUser;
     }
 
-    public void setIdUser(int idUser) {
+    @Basic
+    @Column(name = "id_station")
+    public int getIdStation() {
+        return idStation;
+    }
+
+    public void setIdUserFavoriteStation(int idUserFavoriteStation)
+    {
+        this.idUserFavoriteStation = idUserFavoriteStation;
+    }
+
+    public void setIdUser(int idUser)
+    {
         this.idUser = idUser;
     }
 
-    @Basic
-    @Column(name = "id_favorite_station")
-    public int getIdFavoriteStation() {
-        return idFavoriteStation;
-    }
-
-    public void setIdFavoriteStation(int idFavoriteStation) {
-        this.idFavoriteStation = idFavoriteStation;
+    public void setIdStation(int idStation)
+    {
+        this.idStation = idStation;
     }
 
     @Override
-    public boolean equals(Object o) {
+    public boolean equals(Object o)
+    {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         UserFavoriteStationEntity that = (UserFavoriteStationEntity) o;
         return idUserFavoriteStation == that.idUserFavoriteStation &&
                 idUser == that.idUser &&
-                idFavoriteStation == that.idFavoriteStation;
+                idStation == that.idStation;
     }
 
     @Override
-    public String toString()
+    public int hashCode()
     {
-        return "UserFavoriteStationEntity{" +
-                "idUserFavoriteStation=" + idUserFavoriteStation +
-                ", idUser=" + idUser +
-                ", idFavoriteStation=" + idFavoriteStation +
-                '}';
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(idUserFavoriteStation, idUser, idFavoriteStation);
+        return Objects.hash(idUserFavoriteStation, idUser, idStation);
     }
 }

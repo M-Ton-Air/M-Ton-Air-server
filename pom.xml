@@ -92,6 +92,20 @@
             <scope>test</scope>
         </dependency>
 
+        <!-- does not work welly well : When we set the @AllArgsConstructor annotation to a class
+         and try to instantiate the class from another class with the given constructor, since these
+         are run time constructor, there is a compilation error. We prefer the usage of coded constructor.
+         (no suitable constructor found error)
+         We may search later on how to properly use Lombok. -->
+        <!--
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>1.18.16</version>
+            <scope>provided</scope>
+        </dependency>
+        -->
+
 
     </dependencies>
 

@@ -1,25 +1,36 @@
 package com.polytech.mtonairserver.controller;
 
 import com.polytech.mtonairserver.config.SwaggerConfig;
+import com.polytech.mtonairserver.customexceptions.miscellaneous.UserFavoriteStationsFetchException;
+import com.polytech.mtonairserver.model.entities.StationEntity;
 import com.polytech.mtonairserver.model.entities.UserEntity;
-import com.polytech.mtonairserver.repositories.UserEntityRepository;
+import com.polytech.mtonairserver.model.responses.ApiErrorResponse;
+import com.polytech.mtonairserver.service.implementation.UserService;
 import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collection;
 import java.util.List;
 
+/**
+ * Users controller.
+ */
 @RestController
 @Api(tags = SwaggerConfig.USERS_NAME_TAG)
 @RequestMapping("/users")
 public class UserController {
 
-    private UserEntityRepository userEntityRepository;
+    private UserService userService;
 
     @Autowired
-    public UserController(UserEntityRepository userEntityRepository) {
-        this.userEntityRepository = userEntityRepository;
+    public UserController(UserService _userService) {
+        this.userService = _userService;
     }
+
+    // todo : restrict the user api usage, otherwise anyone can access these data.
 
     /**
      * Retrieve the users list
@@ -29,7 +40,7 @@ public class UserController {
             "available users stored in the M-Ton-Air database.")
     @RequestMapping(method= RequestMethod.GET)
     public List<UserEntity> listOfUsers() {
-        return userEntityRepository.findAll();
+        return this.userService.findAll();
     }
 
     /**
@@ -44,7 +55,55 @@ public class UserController {
             @ApiParam(name = "id", value = "The user id", required = true)
             @PathVariable int id) {
        // return userDao.findById(id);
-        return userEntityRepository.findByIdUser(id);
+        return this.userService.findByIdUser(id);
     }
+
+    @ApiOperation(value = "Gets the favorite stations of a given user", notes = "Returns 0, one or many stations" +
+            " according to the user favorite stations.")
+    @RequestMapping(value = "/{id}/favoriteStations", method = RequestMethod.GET)
+    public Collection<StationEntity> getUserFavoriteStations(
+            @ApiParam(name = "id", value = "The user id", required = true)
+            @PathVariable int id) throws UserFavoriteStationsFetchException
+    {
+        //Todo : not working
+        /**
+         *         "message": "Failed to convert from type [java.lang.Object[]] to
+         *         type [com.polytech.mtonairserver.model.entities.StationEntity]
+         *         for value '{1, MaStation, /url/test, France, Rhône, Lyon}';
+         *         nested exception is org.springframework.core.convert.ConverterNotFoundException:
+         *         No converter found capable of converting from type [java.lang.Integer] to type
+         *         [com.polytech.mtonairserver.model.entities.StationEntity]",
+         */
+        try
+        {
+            return this.userService.listUserFavoriteStations(id);
+        }
+        catch(Exception e)
+        {
+            throw new UserFavoriteStationsFetchException(e.getMessage(), UserController.class);
+        }
+    }
+
+
+    //todo : add a favorite station.
+
+
+    /* ############################################################## EXCEPTION HANDLERS ############################################################## */
+
+    /**
+     * Custom Exception Handler for invalid variables length.
+     * @param ex an InvalidVariablesLengthException.
+     * @return an ApiErrorResponse describing the error.
+     */
+    @ExceptionHandler(UserFavoriteStationsFetchException.class)
+    @ResponseBody
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public ApiErrorResponse invalidVarLength(UserFavoriteStationsFetchException ex)
+    {
+        // ignores unuseful elements
+        ex.setStackTrace(new StackTraceElement[]{ex.getStackTrace()[0]});
+        return new ApiErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, "Could not fetch the user favorite stations. Server side error occured.", ex);
+    }
+
 
 }

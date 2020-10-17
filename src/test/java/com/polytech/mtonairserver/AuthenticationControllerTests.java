@@ -31,7 +31,7 @@ import org.springframework.test.web.servlet.MockMvc;
 public class AuthenticationControllerTests {
 
     @Autowired
-    private AuthenticationController authenticationController;
+//    private AuthenticationController authenticationController;
 
 
     @Test
@@ -45,7 +45,7 @@ public class AuthenticationControllerTests {
         UserEntity ue = new UserEntity(1, "", "", "", "" , null);
         Assert.assertThrows(NamesMissingException.class, () ->
         {
-            this.authenticationController.createAccount(ue);
+//            this.authenticationController.createAccount(ue);
         });
     }
 }

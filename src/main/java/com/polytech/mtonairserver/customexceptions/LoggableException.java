@@ -1,5 +1,7 @@
 package com.polytech.mtonairserver.customexceptions;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import java.io.Serializable;
 import java.util.Date;
 
@@ -9,8 +11,9 @@ import java.util.Date;
 
 public abstract class LoggableException extends Exception implements Serializable
 {
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
     protected Date date;
-    protected String errorMessage;
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
     protected String controllerName;
 
     /**
@@ -20,9 +23,19 @@ public abstract class LoggableException extends Exception implements Serializabl
      */
     public LoggableException(String _errorMessage, Class<?> classInWhichExceptionOccured)
     {
+        super(_errorMessage);
         this.controllerName = classInWhichExceptionOccured.getSimpleName();
         this.date = new Date();
-        this.errorMessage = _errorMessage;
         ExceptionLogger.logException(this);
+    }
+
+    public Date getDate()
+    {
+        return date;
+    }
+
+    public String getControllerName()
+    {
+        return controllerName;
     }
 }

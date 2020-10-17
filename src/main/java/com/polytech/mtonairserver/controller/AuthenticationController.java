@@ -5,42 +5,29 @@ import com.polytech.mtonairserver.customexceptions.LoggableException;
 import com.polytech.mtonairserver.customexceptions.accountcreation.*;
 import com.polytech.mtonairserver.customexceptions.loginexception.UnknownEmailException;
 import com.polytech.mtonairserver.customexceptions.loginexception.WrongPasswordException;
+import com.polytech.mtonairserver.model.entities.UserEntity;
 import com.polytech.mtonairserver.model.responses.ApiAuthenticateSuccessResponse;
 import com.polytech.mtonairserver.model.responses.ApiErrorResponse;
-import com.polytech.mtonairserver.model.entities.UserEntity;
 import com.polytech.mtonairserver.model.responses.ApiResponse;
 import com.polytech.mtonairserver.model.responses.ApiSuccessResponse;
-import com.polytech.mtonairserver.repositories.UserEntityRepository;
-import com.polytech.mtonairserver.security.TokenGenerator;
+import com.polytech.mtonairserver.service.implementation.UserService;
 import io.swagger.annotations.Api;
-import org.apache.catalina.User;
-import org.apache.commons.validator.routines.EmailValidator;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
-
-import java.security.SecureRandom;
-import java.util.HashMap;
 
 @RestController
 @Api(tags = SwaggerConfig.AUTHENTICATION_NAME_TAG)
 @RequestMapping(value = "/auth")
 public class AuthenticationController
 {
-    private final int encryptionStrength = 10;
-
-    // we chose to use BCrypt for our password encryption.
-    private final BCryptPasswordEncoder pwHasher = new BCryptPasswordEncoder(encryptionStrength, new SecureRandom());
-
-
-    private UserEntityRepository userEntityRepository;
+    private UserService userService;
 
     @Autowired
-    public AuthenticationController(UserEntityRepository userEntityRepository) {
-        this.userEntityRepository = userEntityRepository;
+    public AuthenticationController(UserService _userService) {
+        this.userService = _userService;
     }
 
 
@@ -52,35 +39,21 @@ public class AuthenticationController
     @ApiOperation(value = "User authentication", notes = "The user authenticates to his M-Ton-Air account")
     @RequestMapping(value = "/signin", method = RequestMethod.POST)
     public ApiAuthenticateSuccessResponse login(@ApiParam(name = "loginPassword", value = "The user login and password", required = true)
-                                @RequestBody UserEntity loginPassword) throws UnknownEmailException, WrongPasswordException {
+                                @RequestBody UserEntity loginPassword) throws UnknownEmailException, WrongPasswordException
+    {
 
-        //check if the user exists
-        if (userEntityRepository.existsByEmail(loginPassword.getEmail())) {
-            // user contains all the information about the useUserEntity user = userEntityRepository.findByEmail(loginPassword.getEmail());
-            UserEntity user = userEntityRepository.findByEmail(loginPassword.getEmail());
 
-           // if the entered password does not match with the user's password
-           if(!this.pwHasher.matches(loginPassword.getPassword(), user.getPassword()))
-           {
-               throw new WrongPasswordException("The entered password is wrong", AuthenticationController.class);
-           }
-           // if the entered password match with the user's password
-           else {
-               return new ApiAuthenticateSuccessResponse(HttpStatus.OK, "The user " + user.getFirstname() + " " + user.getName() +
-                       " (" + user.getEmail() + ") is well authenticated.", user.getIdUser(), user.getApiKey());
-           }
-        }
-        // if the user does not exists
-        else {
-            throw new UnknownEmailException("Email " + loginPassword + " is unknown.", AuthenticationController.class, loginPassword.getEmail());
-        }
+        UserEntity ue = this.userService.login(loginPassword);
+        return new ApiAuthenticateSuccessResponse(HttpStatus.OK, "The user " + ue.getFirstname() + " " + ue.getName() +
+                " (" + ue.getEmail() + ") is well authenticated.", ue.getIdUser(), ue.getApiKey());
+
             // todo returns an ApiAuthenticateSuccessResponse with the user id + user api token. Client then has to store it locally.
     }
 
     /**
      * Method that creates an user account.
      * @param namesLoginPassword the user login and password.
-     * @return 200 OK and a custom message if the account creation was okay. 409 if account with the given email already exists.
+     * @return 200 OK and a custom message if the account creation was okay. 409 if account with the given email already login.
      * UserEntity should have the following fields correctly set :
      * - Name
      * - First Name
@@ -92,86 +65,16 @@ public class AuthenticationController
     @ResponseBody
     public ApiResponse createAccount(@RequestBody UserEntity namesLoginPassword) throws LoggableException
     {
-        // when no names are given
-        if(namesLoginPassword.getName().isEmpty() || namesLoginPassword.getFirstname().isEmpty())
-        {
-            throw new NamesMissingException("Name and First name were not specified", AuthenticationController.class);
-        }
-
-        /*
-        pw (non hashed): between 6 and 32 chars
-        names between 1 to 50 chars
-        email : up to 75chars
-         */
-        boolean oneParamInvalid = false;
-        HashMap<String, Integer> fieldsLength = new HashMap<>();
-        if(! this.checkVariableLength(6, 32, namesLoginPassword.getPassword()))
-        {
-            oneParamInvalid = true;
-            fieldsLength.put("Password", namesLoginPassword.getPassword().length());
-        }
-        if(! this.checkVariableLength(1, 50, namesLoginPassword.getName())
-        || ! this.checkVariableLength(1, 50, namesLoginPassword.getFirstname()))
-        {
-            oneParamInvalid = true;
-            fieldsLength.put("Name", namesLoginPassword.getName().length());
-            fieldsLength.put("First name", namesLoginPassword.getFirstname().length());
-
-        }
-        if(! this.checkVariableLength(0, 75, namesLoginPassword.getEmail()))
-        {
-            oneParamInvalid = true;
-            fieldsLength.put("E-mail", namesLoginPassword.getEmail().length());
-        }
-
-        if(oneParamInvalid)
-        {
-            throw new InvalidVariablesLengthException("One or many params do not have the required length.", AuthenticationController.class, fieldsLength);
-        }
-
-        String userEmail = namesLoginPassword.getEmail();
-        // Is email correctly formed ?
-        EmailValidator validator = EmailValidator.getInstance();
-        if(!validator.isValid(userEmail))
-        {
-            throw new UnvalidEmailException("Email " + userEmail + " is invalid.", AuthenticationController.class, userEmail);
-        }
-
-
-
-        // If it is valid, then we can check if the user already has an account or not.
-        // If he already has one, server returns a 409 conflict error code with a message.
-        // Checking if email is already used
-        if(this.userEntityRepository.existsByEmail(userEmail))
-        {
-            throw new AccountAlreadyExistsException("Email already exists.", AuthenticationController.class, namesLoginPassword.getEmail());
-        }
-
-        // if email is valid + account does not already exists, we can begin the account creation process.
-
-        // generating a unique api token for our user
-        namesLoginPassword.setApiKey(TokenGenerator.generateUserApiToken());
-        int cpt = 0;
-        while(this.userEntityRepository.existsByApiKey(namesLoginPassword.getApiKey()))
-        {
-            namesLoginPassword.setApiKey(TokenGenerator.generateUserApiToken());
-            cpt++;
-            if(cpt > 100)
-            {
-                throw new TokenGenerationException("Could not find a unique token on server side... Token size has to be increased.", AuthenticationController.class);
-            }
-        }
-        // hashing the user pw
-        namesLoginPassword.setPassword(this.pwHasher.encode(namesLoginPassword.getPassword()));
         try
         {
-            this.userEntityRepository.save(namesLoginPassword);
+            this.userService.createAccount(namesLoginPassword);
         }
         catch(Exception e)
         {
             e.printStackTrace();
-            return new ApiErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, "Cold not save the specified UserEntity : \n " + userEmail.toString(), e);
+            return new ApiErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, "Cold not createAccount the specified UserEntity : \n " + namesLoginPassword.getEmail(), e);
         }
+
         return new ApiSuccessResponse(HttpStatus.OK,
                 "Account was successfully created. Welcome "
                         + namesLoginPassword.getFirstname()
@@ -181,17 +84,7 @@ public class AuthenticationController
     }
 
 
-    /**
-     * Private helper that helps to know whether or not a given string has min to max characters.
-     * @param min the minimal length of the string.
-     * @param max the maximal length of the string
-     * @param str the String to be analyzed
-     * @return true if str has min to max (included) chars. False otherwise.
-     */
-    private boolean checkVariableLength(int min, int max, String str)
-    {
-        return (str.length() >= min && str.length() <= max);
-    }
+
 
 
     /* ############################################################## EXCEPTION HANDLERS ############################################################## */
@@ -211,7 +104,7 @@ public class AuthenticationController
     {
         // ignores unuseful elements
         ex.setStackTrace(new StackTraceElement[]{ex.getStackTrace()[0]});
-        return new ApiErrorResponse(HttpStatus.CONFLICT, "The given e-mail already exists (" + ex.getExistingMail() + ")", ex);
+        return new ApiErrorResponse(HttpStatus.CONFLICT, "The given e-mail already login (" + ex.getExistingMail() + ")", ex);
     }
 
     /**
@@ -241,7 +134,7 @@ public class AuthenticationController
     {
         // ignores unuseful elements
         ex.setStackTrace(new StackTraceElement[]{ex.getStackTrace()[0]});
-        return new ApiErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, "Something went wrong on server side while saving the given user to our database. ", ex);
+        return new ApiErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, "Something went wrong on server side while saving the given user to our database.", ex);
     }
 
     /**
@@ -316,5 +209,18 @@ public class AuthenticationController
         // ignores unuseful elements
         ex.setStackTrace(new StackTraceElement[]{ex.getStackTrace()[0]});
         return new ApiErrorResponse(HttpStatus.BAD_REQUEST, "The entered password is wrong.", ex);
+    }
+
+    /**
+     * Custom Exception Handler for wrong passwords.
+     * @param ex an WrongPasswordException.
+     * @return an ApiErrorResponse describing the error.
+     */
+    @ExceptionHandler(Exception.class)
+    @ResponseBody
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ApiErrorResponse globalException(Exception ex) {
+            ex.setStackTrace(new StackTraceElement[]{ex.getStackTrace()[0]});
+        return new ApiErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, "An unknown exception occured.", ex);
     }
 }

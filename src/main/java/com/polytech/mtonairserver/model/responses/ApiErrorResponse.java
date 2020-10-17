@@ -13,24 +13,24 @@ import java.util.Date;
  */
 public class ApiErrorResponse extends ApiResponse
 {
-    // the error message
-
-
-    // the exception that caused the creation of an apierror response
-    @JsonFormat(shape = JsonFormat.Shape.OBJECT)
-    private Exception innerException;
-
     /**
      * Creates an Api Error Response.
      * @param _status the http status code
      * @param _message the error message
-     * @param _innerException the exception that caused the creation of an apierror response
      */
-    public ApiErrorResponse(HttpStatus _status, String _message, Exception _innerException)
+    public ApiErrorResponse(HttpStatus _status, String _message, Exception ex)
     {
         super(_status, _message);
         this.statusCode =  _status.toString();
         this.message = _message;
-        this.innerException = _innerException;
+        this.exception = ex;
+    }
+
+    @JsonFormat(shape = JsonFormat.Shape.OBJECT)
+    private Exception exception;
+
+    public Exception getException()
+    {
+        return exception;
     }
 }

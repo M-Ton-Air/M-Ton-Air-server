@@ -1,23 +1,22 @@
-package com.polytech.mtonairserver.service;
+package com.polytech.mtonairserver.service.implementation;
 
-import com.polytech.mtonairserver.controller.AuthenticationController;
 import com.polytech.mtonairserver.customexceptions.accountcreation.*;
 import com.polytech.mtonairserver.customexceptions.loginexception.UnknownEmailException;
 import com.polytech.mtonairserver.customexceptions.loginexception.WrongPasswordException;
+import com.polytech.mtonairserver.model.entities.StationEntity;
 import com.polytech.mtonairserver.model.entities.UserEntity;
-import com.polytech.mtonairserver.model.responses.ApiAuthenticateSuccessResponse;
 import com.polytech.mtonairserver.repository.UserRepository;
 import com.polytech.mtonairserver.security.TokenGenerator;
+import com.polytech.mtonairserver.service.interfaces.IUserService;
 import org.apache.commons.validator.routines.EmailValidator;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.security.SecureRandom;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
-import java.util.NoSuchElementException;
 
 /**
  * Service implementation for the user service.
@@ -91,6 +90,12 @@ public class UserService implements IUserService
     public boolean existsByApiKey(String apiKey)
     {
         return this.userRepository.existsByApiKey(apiKey);
+    }
+
+    @Override
+    public Collection<StationEntity> listUserFavoriteStations(int userId)
+    {
+        return this.userRepository.listUserFavoriteStations(userId);
     }
 
     @Override
@@ -206,4 +211,6 @@ public class UserService implements IUserService
     {
         return (str.length() >= min && str.length() <= max);
     }
+
+
 }

@@ -1,6 +1,5 @@
 package com.polytech.mtonairserver.controller;
 
-
 import com.polytech.mtonairserver.model.entities.UserEntity;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -69,4 +68,5 @@ public class StationController {
         System.out.println();
         return null;
     }
+
 }

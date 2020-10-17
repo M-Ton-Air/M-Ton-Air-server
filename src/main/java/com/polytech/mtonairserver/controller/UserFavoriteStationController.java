@@ -7,8 +7,11 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Description;
+import org.springframework.util.ResourceUtils;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.List;
 
 /**
@@ -47,5 +50,14 @@ public class UserFavoriteStationController {
     public List<Object[]> getUsersFavoriteStations(@ApiParam(name = "id", value = "the user id", required = true)
                                                    @PathVariable int id) {
         return userFavoriteStationEntityRepository.findByIdUser(id);
+    }
+
+    public List<String> getAllTheStations() throws FileNotFoundException {
+
+        File htmlFile = ResourceUtils.getFile("resources/data/stations.html");
+
+
+        return null;
+
     }
 }

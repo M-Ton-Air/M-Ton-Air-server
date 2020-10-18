@@ -54,7 +54,6 @@ public class UserController {
     public UserEntity getAUser(
             @ApiParam(name = "id", value = "The user id", required = true)
             @PathVariable int id) {
-       // return userDao.findById(id);
         return this.userService.findByIdUser(id);
     }
 

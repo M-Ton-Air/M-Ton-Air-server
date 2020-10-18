@@ -7,8 +7,8 @@ import com.polytech.mtonairserver.model.entities.StationEntity;
 import com.polytech.mtonairserver.model.entities.UserEntity;
 import com.polytech.mtonairserver.repository.UserRepository;
 
-import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 public interface IUserService
 {
@@ -26,5 +26,5 @@ public interface IUserService
 
     public UserEntity login(UserEntity loginPassword) throws UnknownEmailException, WrongPasswordException;
 
-    public Collection<StationEntity> listUserFavoriteStations(int userId);
+    public Set<StationEntity> listUserFavoriteStations(int userId);
 }

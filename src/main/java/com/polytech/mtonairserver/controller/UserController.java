@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Users controller.
@@ -58,22 +59,13 @@ public class UserController {
         return this.userService.findByIdUser(id);
     }
 
-    @ApiOperation(value = "Gets the favorite stations of a given user", notes = "Returns 0, one or many stations" +
+    @ApiOperation(value = "Gets the favorite stations for a given user", notes = "Returns 0, one or many stations" +
             " according to the user favorite stations.")
     @RequestMapping(value = "/{id}/favoriteStations", method = RequestMethod.GET)
-    public Collection<StationEntity> getUserFavoriteStations(
+    public Set<StationEntity> getUserFavoriteStations(
             @ApiParam(name = "id", value = "The user id", required = true)
             @PathVariable int id) throws UserFavoriteStationsFetchException
     {
-        //Todo : not working
-        /**
-         *         "message": "Failed to convert from type [java.lang.Object[]] to
-         *         type [com.polytech.mtonairserver.model.entities.StationEntity]
-         *         for value '{1, MaStation, /url/test, France, Rhône, Lyon}';
-         *         nested exception is org.springframework.core.convert.ConverterNotFoundException:
-         *         No converter found capable of converting from type [java.lang.Integer] to type
-         *         [com.polytech.mtonairserver.model.entities.StationEntity]",
-         */
         try
         {
             return this.userService.listUserFavoriteStations(id);

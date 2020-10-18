@@ -1,9 +1,14 @@
 package com.polytech.mtonairserver.model.entities;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import org.hibernate.annotations.ManyToAny;
+
 import javax.persistence.*;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
 @Entity
 @Table(name = "user", schema = "mtonairserver")
@@ -14,7 +19,8 @@ public class UserEntity {
     private String email;
     private String password;
     private String apiKey;
-    private Collection<UserFavoriteStationEntity> userFavoriteStationsByIdUser;
+
+    private Set<StationEntity> userFavoriteStationsByIdUser = new HashSet<>();
 
     public UserEntity(int idUser, String name, String firstname, String email, String password, String apiKey)
     {
@@ -69,8 +75,11 @@ public class UserEntity {
         return apiKey;
     }
 
-    @OneToMany(mappedBy = "idUser")
-    public Collection<UserFavoriteStationEntity> getUserFavoriteStationsByIdUser()
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "user_favorite_station",
+    joinColumns = { @JoinColumn(name = "id_user")},
+    inverseJoinColumns = { @JoinColumn(name = "id_station")})
+    public Set<StationEntity> getUserFavoriteStationsByIdUser()
     {
         return userFavoriteStationsByIdUser;
     }
@@ -105,7 +114,7 @@ public class UserEntity {
         this.apiKey = apiKey;
     }
 
-    public void setUserFavoriteStationsByIdUser(Collection<UserFavoriteStationEntity> userFavoriteStationsByIdUser)
+    public void setUserFavoriteStationsByIdUser(Set<StationEntity> userFavoriteStationsByIdUser)
     {
         this.userFavoriteStationsByIdUser = userFavoriteStationsByIdUser;
     }

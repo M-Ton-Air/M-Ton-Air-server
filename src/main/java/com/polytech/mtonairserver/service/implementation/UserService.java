@@ -17,6 +17,7 @@ import java.security.SecureRandom;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Service implementation for the user service.
@@ -38,13 +39,15 @@ public class UserService implements IUserService
     }
 
     /**
-     * Gets all the users.
+     * Gets all the users, without their favorite stations
      * @return all the users.
      */
     @Override
     public List<UserEntity> findAll()
     {
-        return this.userRepository.findAll();
+        List<UserEntity> res = this.userRepository.findAll();
+        res.forEach( sta -> sta.getUserFavoriteStationsByIdUser().clear());
+        return res;
     }
 
     /**
@@ -93,9 +96,10 @@ public class UserService implements IUserService
     }
 
     @Override
-    public Collection<StationEntity> listUserFavoriteStations(int userId)
+    public Set<StationEntity> listUserFavoriteStations(int userId)
     {
-        return this.userRepository.listUserFavoriteStations(userId);
+        UserEntity ue = this.findByIdUser(userId);
+        return ue.getUserFavoriteStationsByIdUser();
     }
 
     @Override

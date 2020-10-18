@@ -1,6 +1,8 @@
 package com.polytech.mtonairserver.controller;
 
+import com.polytech.mtonairserver.config.SwaggerConfig;
 import com.polytech.mtonairserver.model.responses.ApiErrorResponse;
+import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -14,6 +16,7 @@ import java.util.Calendar;
 import java.util.Date;
 
 @RestController
+@Api(tags = SwaggerConfig.DEFAULT_TAG)
 public class DefaultController implements org.springframework.boot.web.servlet.error.ErrorController
 {
     private static final String PATH = "/error";

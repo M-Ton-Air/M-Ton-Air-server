@@ -2,8 +2,6 @@ package com.polytech.mtonairserver.customexceptions;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import net.minidev.json.JSONObject;
-import sun.reflect.annotation.ExceptionProxy;
 
 import java.io.*;
 import java.nio.file.Files;

@@ -28,4 +28,11 @@ public class StationController {
         return this.stationService.getAllStationsName();
     }
 
+    @RequestMapping(value = "/toc", method = RequestMethod.GET)
+    public Object test() throws IOException {
+        Object o = this.stationService.getCsvCountriesCities();
+        System.out.println();
+        return o;
+    }
+
 }

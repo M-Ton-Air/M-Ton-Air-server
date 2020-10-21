@@ -1,7 +1,6 @@
 package com.polytech.mtonairserver.service.implementation;
 
-import au.com.bytecode.opencsv.CSVParser;
-import au.com.bytecode.opencsv.CSVReader;
+import com.opencsv.CSVReader;
 import com.polytech.mtonairserver.model.entities.StationEntity;
 import com.polytech.mtonairserver.model.entities.UserEntity;
 import com.polytech.mtonairserver.model.external.CountryCity;
@@ -22,6 +21,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -58,7 +58,17 @@ public class StationService implements IStationService {
         StationService.hostLink = hostLink;
     }
 
+    //todo : renommer la méthode (get = pour les getter, cela porte à confusion)
 
+    //todo : refactoriser et stocker en BD. Il n'est pas pensable de parser le HTML à chaque fois qu'un utilisateur
+    // requête l'endpoint des stations. Ce code doit être refactoré dans une autre classe (en réglant la problématique
+    // de chargement du fichier). Le code ainsi refactoré doit stocker TOUTES les stations en BD (code appelé une seule
+    // fois lorsque nécessaire).
+
+
+    //todo : Cette méthode (stationService) doit
+    // ensuite requêter la BD pour effectuer les différentes opérations (récupérer une/des station(s) par ville, nom,
+    // pays, etc.
     public List<StationEntity> getAllStationsName() throws IOException {
 
         File htmlFile = this.stations.getFile();
@@ -131,7 +141,9 @@ public class StationService implements IStationService {
         return listStationEntity;
     }
 
-    //todo : réfléchir à comment rendre ça + propre
+    //todo : renommer la méthode (get = pour les getter, cela porte à confusion)
+    //todo : réfléchir à comment rendre ça + propre (dans un autre endroit du code + stockage en bd todo (les stations
+    // doivent être stockées en bd)
     public List<CountryCity> getCsvCountriesCities() throws IOException {
 
       /*  FileReader fileReader = new FileReader(this.csvCountriesCities.getFile());
@@ -158,19 +170,31 @@ public class StationService implements IStationService {
 
 //listStationEntity.stream().anyMatch(s -> s.getUrl().toLowerCase().contains("rome"))
         //listStationEntity.stream().filter(s -> s.getUrl().toLowerCase().contains("rome")).toArray()
-
-        List<String> records = new ArrayList<>();
-        try (CSVReader csvReader = new CSVReader(new FileReader(this.csvCountriesCities.getFile()))) {
-            String[] values;
-            csvReader.readNext();
-            while ((values = csvReader.readNext()) != null) {
-                records.add(Arrays.toString(values));
-                String[] res = Arrays.toString(values).split(",");
-            }
+        List<CountryCity> countryCities = new ArrayList<CountryCity>();
+        CSVReader reader = new CSVReader(new FileReader(this.csvCountriesCities.getFile()), ',', '"', 1);
+        String line[];
+        while( (line = reader.readNext()) != null)
+        {
             System.out.println();
-        }
-        return null;
 
+            // Myriam : obligé d'utiliser le remplacement des quotes car de toutes les librairies CSV testé (3 en tout)
+            // aucune ne retirait les délimiteurs (enclosers) du fichier. on se retrouvait alors avec deux quotes en +
+            // par valeur récupérée.
+
+            //todo
+            // La méthode fonctionne (je n'ai pas changé grand à ce que tu as fait) mais il y a un gros travail de
+            // refactorisation. Déjà comme noté dans les todos, il faut absolument déporter ce code dans d'autres classes
+            // car ce n'est pas du traitement de service mais du traitement in/out (lecture de fichiers) et potentiellement
+            // insertion en BD pour l'autre méthode + haut
+            
+            // En effet, on va insérer toutes les stations récupérées en BD, cela sera beaucoup plus rapide,
+            // car là dans l'état, cela prend environ 5s de faire le traitement de cet algo. Si les données sont
+            // indexées et stockées en BD, cela ne prendrait même pas 0.5s de tout récupérer et de tout renvoyer.
+            String lineValues[] = line[0].replace("\"", "").split(",");
+            CountryCity countryCity = new CountryCity(lineValues[4], lineValues[1], lineValues[6]);
+            countryCities.add(countryCity);
+        }
+        return countryCities;
     }
 
 }

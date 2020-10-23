@@ -15,12 +15,16 @@ import javax.servlet.http.HttpServletRequest;
 @Service
 public class AqicnService
 {
-    static String host = "https://api.waqi.info" ;
-    static String path = "/feed/";
+    private static String hostLinkJsonAPI = "https://api.waqi.info" ;
+    private static String path = "/feed/";
     //the API AQICN token
-    static String token = "/?token=582a979a038e4dd717de2788124fd200620e1e3b";
+    private static String token = "/?token=582a979a038e4dd717de2788124fd200620e1e3b";
     //the part of the URL to remove.
-    static String partOfUrlToRemove = "/api/v1/aqicn/";
+    private static String partOfUrlToRemove = "/api/v1/aqicn/";
+
+    public static String getHostLinkJsonAPI() {
+        return hostLinkJsonAPI;
+    }
 
     /**
      * Retrieve air quality data about a city.
@@ -35,7 +39,7 @@ public class AqicnService
         String stationName = request.getRequestURI().replace(partOfUrlToRemove, "");
 
         RestTemplate restTemplate = new RestTemplate();
-        ResponseEntity<String> stringResponseEntity = restTemplate.getForEntity(host + path + stationName + token, String.class);
+        ResponseEntity<String> stringResponseEntity = restTemplate.getForEntity(hostLinkJsonAPI + path + stationName + token, String.class);
 
         // if the station is unknown ...
         if (stringResponseEntity.getBody().contains("Unknown station")) {

@@ -65,7 +65,7 @@ CREATE TABLE `forecast` (
   `measure_average` float NOT NULL,
   `measure_min` float NOT NULL,
   `measure_max` float NOT NULL,
-  PRIMARY KEY (`id_forecast`, `id_station`, `id_date_forecast`),
+  PRIMARY KEY (`id_forecast`,`id_station`,`id_date_forecast`,`id_measure`),
   CONSTRAINT `fk_id_measure` FOREIGN KEY (`id_measure`) REFERENCES `measure` (`id_measure`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `fk_id_station_bis` FOREIGN KEY (`id_station`) REFERENCES `station` (`id_station`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='Table gathering forecasts according to station name, date and particulates';

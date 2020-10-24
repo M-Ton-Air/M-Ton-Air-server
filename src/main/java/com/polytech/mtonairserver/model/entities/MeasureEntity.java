@@ -10,7 +10,7 @@ public class MeasureEntity {
     private String measureName;
 
     @Id
-    @Column(name = "id_measure")
+    @Column(name = "id_measure", nullable = false)
     public int getIdMeasure() {
         return idMeasure;
     }
@@ -20,7 +20,7 @@ public class MeasureEntity {
     }
 
     @Basic
-    @Column(name = "measure_name")
+    @Column(name = "measure_name", nullable = true, length = 25)
     public String getMeasureName() {
         return measureName;
     }

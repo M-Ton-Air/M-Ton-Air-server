@@ -10,8 +10,9 @@ public class ForecastEntityPK implements Serializable {
     private int idForecast;
     private int idStation;
     private Date idDateForecast;
+    private int idMeasure;
 
-    @Column(name = "id_forecast")
+    @Column(name = "id_forecast", nullable = false)
     @Id
     public int getIdForecast() {
         return idForecast;
@@ -21,7 +22,7 @@ public class ForecastEntityPK implements Serializable {
         this.idForecast = idForecast;
     }
 
-    @Column(name = "id_station")
+    @Column(name = "id_station", nullable = false)
     @Id
     public int getIdStation() {
         return idStation;
@@ -31,7 +32,7 @@ public class ForecastEntityPK implements Serializable {
         this.idStation = idStation;
     }
 
-    @Column(name = "id_date_forecast")
+    @Column(name = "id_date_forecast", nullable = false)
     @Id
     public Date getIdDateForecast() {
         return idDateForecast;
@@ -54,5 +55,15 @@ public class ForecastEntityPK implements Serializable {
     @Override
     public int hashCode() {
         return Objects.hash(idForecast, idStation, idDateForecast);
+    }
+
+    @Column(name = "id_measure", nullable = false)
+    @Id
+    public int getIdMeasure() {
+        return idMeasure;
+    }
+
+    public void setIdMeasure(int idMeasure) {
+        this.idMeasure = idMeasure;
     }
 }

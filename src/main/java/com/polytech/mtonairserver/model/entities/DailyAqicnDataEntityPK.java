@@ -11,7 +11,7 @@ public class DailyAqicnDataEntityPK implements Serializable {
     private int idStation;
     private Timestamp datetimeData;
 
-    @Column(name = "id_daily_aqicn_data")
+    @Column(name = "id_daily_aqicn_data", nullable = false)
     @Id
     public int getIdDailyAqicnData() {
         return idDailyAqicnData;
@@ -21,7 +21,7 @@ public class DailyAqicnDataEntityPK implements Serializable {
         this.idDailyAqicnData = idDailyAqicnData;
     }
 
-    @Column(name = "id_station")
+    @Column(name = "id_station", nullable = false)
     @Id
     public int getIdStation() {
         return idStation;
@@ -31,7 +31,7 @@ public class DailyAqicnDataEntityPK implements Serializable {
         this.idStation = idStation;
     }
 
-    @Column(name = "datetime_data")
+    @Column(name = "datetime_data", nullable = false)
     @Id
     public Timestamp getDatetimeData() {
         return datetimeData;

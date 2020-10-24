@@ -16,9 +16,12 @@ public class ForecastEntity {
     private double measureAverage;
     private double measureMin;
     private double measureMax;
+    private StationEntity stationByIdStation;
+    private MeasureEntity measureByIdMeasure;
+    private int idMeasure;
 
     @Id
-    @Column(name = "id_forecast")
+    @Column(name = "id_forecast", nullable = false)
     public int getIdForecast() {
         return idForecast;
     }
@@ -28,7 +31,7 @@ public class ForecastEntity {
     }
 
     @Id
-    @Column(name = "id_station")
+    @Column(name = "id_station", nullable = false)
     public int getIdStation() {
         return idStation;
     }
@@ -38,7 +41,7 @@ public class ForecastEntity {
     }
 
     @Id
-    @Column(name = "id_date_forecast")
+    @Column(name = "id_date_forecast", nullable = false)
     public Date getIdDateForecast() {
         return idDateForecast;
     }
@@ -48,7 +51,7 @@ public class ForecastEntity {
     }
 
     @Basic
-    @Column(name = "date_forecasted")
+    @Column(name = "date_forecasted", nullable = false)
     public Timestamp getDateForecasted() {
         return dateForecasted;
     }
@@ -58,7 +61,7 @@ public class ForecastEntity {
     }
 
     @Basic
-    @Column(name = "measure_average")
+    @Column(name = "measure_average", nullable = false, precision = 0)
     public double getMeasureAverage() {
         return measureAverage;
     }
@@ -68,7 +71,7 @@ public class ForecastEntity {
     }
 
     @Basic
-    @Column(name = "measure_min")
+    @Column(name = "measure_min", nullable = false, precision = 0)
     public double getMeasureMin() {
         return measureMin;
     }
@@ -78,7 +81,7 @@ public class ForecastEntity {
     }
 
     @Basic
-    @Column(name = "measure_max")
+    @Column(name = "measure_max", nullable = false, precision = 0)
     public double getMeasureMax() {
         return measureMax;
     }
@@ -104,5 +107,35 @@ public class ForecastEntity {
     @Override
     public int hashCode() {
         return Objects.hash(idForecast, idStation, idDateForecast, dateForecasted, measureAverage, measureMin, measureMax);
+    }
+
+    @ManyToOne
+    @JoinColumn(name = "id_station", referencedColumnName = "id_station", nullable = false)
+    public StationEntity getStationByIdStation() {
+        return stationByIdStation;
+    }
+
+    public void setStationByIdStation(StationEntity stationByIdStation) {
+        this.stationByIdStation = stationByIdStation;
+    }
+
+    @ManyToOne
+    @JoinColumn(name = "id_measure", referencedColumnName = "id_measure", nullable = false)
+    public MeasureEntity getMeasureByIdMeasure() {
+        return measureByIdMeasure;
+    }
+
+    public void setMeasureByIdMeasure(MeasureEntity measureByIdMeasure) {
+        this.measureByIdMeasure = measureByIdMeasure;
+    }
+
+    @Id
+    @Column(name = "id_measure", nullable = false)
+    public int getIdMeasure() {
+        return idMeasure;
+    }
+
+    public void setIdMeasure(int idMeasure) {
+        this.idMeasure = idMeasure;
     }
 }

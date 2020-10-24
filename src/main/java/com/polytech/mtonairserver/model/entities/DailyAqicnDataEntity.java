@@ -17,9 +17,10 @@ public class DailyAqicnDataEntity {
     private double pressure;
     private double humidity;
     private double wind;
+    private StationEntity stationByIdStation;
 
     @Id
-    @Column(name = "id_daily_aqicn_data")
+    @Column(name = "id_daily_aqicn_data", nullable = false)
     public int getIdDailyAqicnData() {
         return idDailyAqicnData;
     }
@@ -29,7 +30,7 @@ public class DailyAqicnDataEntity {
     }
 
     @Id
-    @Column(name = "id_station")
+    @Column(name = "id_station", nullable = false)
     public int getIdStation() {
         return idStation;
     }
@@ -39,7 +40,7 @@ public class DailyAqicnDataEntity {
     }
 
     @Id
-    @Column(name = "datetime_data")
+    @Column(name = "datetime_data", nullable = false)
     public Timestamp getDatetimeData() {
         return datetimeData;
     }
@@ -49,7 +50,7 @@ public class DailyAqicnDataEntity {
     }
 
     @Basic
-    @Column(name = "air_quality")
+    @Column(name = "air_quality", nullable = false, precision = 0)
     public double getAirQuality() {
         return airQuality;
     }
@@ -59,7 +60,7 @@ public class DailyAqicnDataEntity {
     }
 
     @Basic
-    @Column(name = "pm2_5")
+    @Column(name = "pm2_5", nullable = false, precision = 0)
     public double getPm25() {
         return pm25;
     }
@@ -69,7 +70,7 @@ public class DailyAqicnDataEntity {
     }
 
     @Basic
-    @Column(name = "o3")
+    @Column(name = "o3", nullable = false, precision = 0)
     public double getO3() {
         return o3;
     }
@@ -79,7 +80,7 @@ public class DailyAqicnDataEntity {
     }
 
     @Basic
-    @Column(name = "pressure")
+    @Column(name = "pressure", nullable = false, precision = 0)
     public double getPressure() {
         return pressure;
     }
@@ -89,7 +90,7 @@ public class DailyAqicnDataEntity {
     }
 
     @Basic
-    @Column(name = "humidity")
+    @Column(name = "humidity", nullable = false, precision = 0)
     public double getHumidity() {
         return humidity;
     }
@@ -99,7 +100,7 @@ public class DailyAqicnDataEntity {
     }
 
     @Basic
-    @Column(name = "wind")
+    @Column(name = "wind", nullable = false, precision = 0)
     public double getWind() {
         return wind;
     }
@@ -127,5 +128,15 @@ public class DailyAqicnDataEntity {
     @Override
     public int hashCode() {
         return Objects.hash(idDailyAqicnData, idStation, datetimeData, airQuality, pm25, o3, pressure, humidity, wind);
+    }
+
+    @ManyToOne
+    @JoinColumn(name = "id_station", referencedColumnName = "id_station", nullable = false)
+    public StationEntity getStationByIdStation() {
+        return stationByIdStation;
+    }
+
+    public void setStationByIdStation(StationEntity stationByIdStation) {
+        this.stationByIdStation = stationByIdStation;
     }
 }

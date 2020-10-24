@@ -11,7 +11,7 @@ import java.util.Objects;
 import java.util.Set;
 
 @Entity
-@Table(name = "user", schema = "mtonairserver")
+@Table(name = "user", schema = "mtonairserver", catalog = "")
 public class UserEntity {
     private int idUser;
     private String name;
@@ -43,10 +43,20 @@ public class UserEntity {
         return idUser;
     }
 
+    public void setIdUser(int idUser)
+    {
+        this.idUser = idUser;
+    }
+
     @Basic
     @Column(name = "name", nullable = false, length = 50)
     public String getName() {
         return name;
+    }
+
+    public void setName(String name)
+    {
+        this.name = name;
     }
 
     @Basic
@@ -55,12 +65,21 @@ public class UserEntity {
         return firstname;
     }
 
+    public void setFirstname(String firstname)
+    {
+        this.firstname = firstname;
+    }
+
     @Basic
     @Column(name = "email", nullable = false, length = 75)
     public String getEmail() {
         return email;
     }
 
+    public void setEmail(String email)
+    {
+        this.email = email;
+    }
 
     @Basic
     @Column(name = "password", nullable = false, length = 400)
@@ -68,11 +87,20 @@ public class UserEntity {
         return password;
     }
 
+    public void setPassword(String password)
+    {
+        this.password = password;
+    }
 
     @Basic
     @Column(name = "api_key", nullable = false, length = 45)
     public String getApiKey() {
         return apiKey;
+    }
+
+    public void setApiKey(String apiKey)
+    {
+        this.apiKey = apiKey;
     }
 
     @ManyToMany(fetch = FetchType.LAZY)
@@ -82,36 +110,6 @@ public class UserEntity {
     public Set<StationEntity> getUserFavoriteStationsByIdUser()
     {
         return userFavoriteStationsByIdUser;
-    }
-
-    public void setIdUser(int idUser)
-    {
-        this.idUser = idUser;
-    }
-
-    public void setName(String name)
-    {
-        this.name = name;
-    }
-
-    public void setFirstname(String firstname)
-    {
-        this.firstname = firstname;
-    }
-
-    public void setEmail(String email)
-    {
-        this.email = email;
-    }
-
-    public void setPassword(String password)
-    {
-        this.password = password;
-    }
-
-    public void setApiKey(String apiKey)
-    {
-        this.apiKey = apiKey;
     }
 
     public void setUserFavoriteStationsByIdUser(Set<StationEntity> userFavoriteStationsByIdUser)

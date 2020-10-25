@@ -11,6 +11,7 @@ public class MeasureEntity {
 
     @Id
     @Column(name = "id_measure", nullable = false)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     public int getIdMeasure() {
         return idMeasure;
     }

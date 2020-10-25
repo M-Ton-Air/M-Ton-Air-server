@@ -30,6 +30,9 @@ public class SwaggerConfig
     public static final String DEFAULT_TAG = "Default fallback";
     private static final String DEFAULT_DESCRIPTION_TAG = "Handle all unsupported requests";
 
+    public static final String DAILY_AQICN_DATA_NAME_TAG = "Daily AQICN data";
+    private static final String DAILY_AQICN_DATA_DESCRIPTION_TAG = "Daily AQICN data management API";
+
     @Bean
     /**
      * M-Ton-Air docker api config
@@ -48,7 +51,8 @@ public class SwaggerConfig
                         new Tag(USERS_NAME_TAG, USERS_DESCRIPTION_TAG),
                         new Tag(AUTHENTICATION_NAME_TAG, AUTHENTICATION_DESCRIPTION_TAG),
                         new Tag(DEFAULT_TAG, DEFAULT_DESCRIPTION_TAG),
-                        new Tag(AQICN_NAME_TAG, AQICN_DESCRIPTION_TAG));
+                        new Tag(AQICN_NAME_TAG, AQICN_DESCRIPTION_TAG),
+                        new Tag(DAILY_AQICN_DATA_NAME_TAG, DAILY_AQICN_DATA_DESCRIPTION_TAG));
 
     }
 

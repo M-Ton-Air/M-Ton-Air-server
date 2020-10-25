@@ -32,6 +32,7 @@ public class StationEntity
 
     @Id
     @Column(name = "id_station", nullable = false)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     public int getIdStation()
     {
         return idStation;

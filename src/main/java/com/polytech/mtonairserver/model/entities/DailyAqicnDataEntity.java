@@ -1,5 +1,7 @@
 package com.polytech.mtonairserver.model.entities;
 
+import com.polytech.mtonairserver.model.entities.keys.DailyAqicnDataEntityPK;
+
 import javax.persistence.*;
 import java.sql.Timestamp;
 import java.util.Objects;
@@ -7,7 +9,7 @@ import java.util.Objects;
 @Entity
 @Table(name = "daily_aqicn_data", schema = "mtonairserver", catalog = "")
 @IdClass(DailyAqicnDataEntityPK.class)
-public class DailyAqicnDataEntity {
+public class DailyAqicnDataEntity  {
     private int idDailyAqicnData;
     private int idStation;
     private Timestamp datetimeData;
@@ -21,6 +23,7 @@ public class DailyAqicnDataEntity {
 
     @Id
     @Column(name = "id_daily_aqicn_data", nullable = false)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     public int getIdDailyAqicnData() {
         return idDailyAqicnData;
     }
@@ -30,7 +33,7 @@ public class DailyAqicnDataEntity {
     }
 
     @Id
-    @Column(name = "id_station", nullable = false)
+    @Column(name = "id_station", nullable = false, insertable = false, updatable = false)
     public int getIdStation() {
         return idStation;
     }

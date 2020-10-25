@@ -1,5 +1,7 @@
 package com.polytech.mtonairserver.model.entities;
 
+import com.polytech.mtonairserver.model.entities.keys.ForecastEntityPK;
+
 import javax.persistence.*;
 import java.sql.Date;
 import java.sql.Timestamp;
@@ -8,7 +10,7 @@ import java.util.Objects;
 @Entity
 @Table(name = "forecast", schema = "mtonairserver", catalog = "")
 @IdClass(ForecastEntityPK.class)
-public class ForecastEntity {
+public class ForecastEntity  {
     private int idForecast;
     private int idStation;
     private Date idDateForecast;
@@ -22,6 +24,7 @@ public class ForecastEntity {
 
     @Id
     @Column(name = "id_forecast", nullable = false)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     public int getIdForecast() {
         return idForecast;
     }
@@ -31,7 +34,7 @@ public class ForecastEntity {
     }
 
     @Id
-    @Column(name = "id_station", nullable = false)
+    @Column(name = "id_station", nullable = false, insertable = false, updatable = false)
     public int getIdStation() {
         return idStation;
     }
@@ -130,7 +133,7 @@ public class ForecastEntity {
     }
 
     @Id
-    @Column(name = "id_measure", nullable = false)
+    @Column(name = "id_measure", nullable = false, insertable = false, updatable = false)
     public int getIdMeasure() {
         return idMeasure;
     }

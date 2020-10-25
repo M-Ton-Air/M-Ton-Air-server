@@ -1,6 +1,8 @@
-package com.polytech.mtonairserver.model.entities;
+package com.polytech.mtonairserver.model.entities.keys;
 
 import javax.persistence.Column;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import java.io.Serializable;
 import java.sql.Timestamp;
@@ -11,6 +13,7 @@ public class DailyAqicnDataEntityPK implements Serializable {
     private int idStation;
     private Timestamp datetimeData;
 
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_daily_aqicn_data", nullable = false)
     @Id
     public int getIdDailyAqicnData() {
@@ -21,7 +24,7 @@ public class DailyAqicnDataEntityPK implements Serializable {
         this.idDailyAqicnData = idDailyAqicnData;
     }
 
-    @Column(name = "id_station", nullable = false)
+    @Column(name = "id_station", nullable = false, insertable = false, updatable = false)
     @Id
     public int getIdStation() {
         return idStation;

@@ -18,7 +18,7 @@ public class InvalidVariablesLengthException extends LoggableException
     {
         super(_errorMessage, classInWhichExceptionOccured);
         this.fieldsLength = _fieldsLength;
-        ExceptionLogger.logException(this);
+        this.logException();
     }
 
     // a hashmap containing the field names and their length when they exceed / are below the needed size.

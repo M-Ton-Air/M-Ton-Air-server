@@ -1,6 +1,8 @@
 package com.polytech.mtonairserver.model.entities;
 
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+
 import javax.persistence.*;
 import java.util.Objects;
 
@@ -12,14 +14,38 @@ public class StationEntity
     private String stationName;
     private String url;
     private String country;
-    private String region;
-    private String city;
+    private String subdivision1;
+    private String subdivision2;
+    private String subdivision3;
+    private String iso2;
 
+    public StationEntity() {}
+
+
+
+    public StationEntity(int idStation, String stationName, String url, String country, String subdivision1, String subdivision2, String subdivision3, String iso2)
+    {
+        this.idStation = idStation;
+        this.stationName = stationName;
+        this.url = url;
+        this.country = country;
+        this.subdivision1 = subdivision1;
+        this.subdivision2 = subdivision2;
+        this.subdivision3 = subdivision3;
+        this.iso2 = iso2;
+    }
+
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     @Column(name = "id_station", nullable = false)
     public int getIdStation()
     {
         return idStation;
+    }
+
+    public void setIdStation(int idStation)
+    {
+        this.idStation = idStation;
     }
 
     @Basic
@@ -29,11 +55,21 @@ public class StationEntity
         return stationName;
     }
 
+    public void setStationName(String stationName)
+    {
+        this.stationName = stationName;
+    }
+
     @Basic
     @Column(name = "url", nullable = false, length = 300)
     public String getUrl()
     {
         return url;
+    }
+
+    public void setUrl(String url)
+    {
+        this.url = url;
     }
 
     @Basic
@@ -43,61 +79,58 @@ public class StationEntity
         return country;
     }
 
-    @Basic
-    @Column(name = "region", nullable = false, length = 100)
-    public String getRegion()
-    {
-        return region;
-    }
-
-    @Basic
-    @Column(name = "city", nullable = false, length = 100)
-    public String getCity()
-    {
-        return city;
-    }
-
-    public void setIdStation(int idStation)
-    {
-        this.idStation = idStation;
-    }
-
-    public void setStationName(String stationName)
-    {
-        this.stationName = stationName;
-    }
-
-    public void setUrl(String url)
-    {
-        this.url = url;
-    }
-
     public void setCountry(String country)
     {
         this.country = country;
     }
 
-    public void setRegion(String region)
+    @Basic
+    @Column(name = "subdivision1", nullable = true, length = 100)
+    public String getSubdivision1()
     {
-        this.region = region;
+        return subdivision1;
     }
 
-    public void setCity(String city)
+    public void setSubdivision1(String subdivision1)
     {
-        this.city = city;
+        this.subdivision1 = subdivision1;
     }
 
-    public StationEntity(int idStation, String stationName, String url, String country, String region, String city)
+    @Basic
+    @Column(name = "subdivision2", nullable = true, length = 100)
+    public String getSubdivision2()
     {
-        this.idStation = idStation;
-        this.stationName = stationName;
-        this.url = url;
-        this.country = country;
-        this.region = region;
-        this.city = city;
+        return subdivision2;
     }
 
-    public StationEntity() {}
+    public void setSubdivision2(String subdivision2)
+    {
+        this.subdivision2 = subdivision2;
+    }
+
+    @Basic
+    @Column(name = "subdivision3", nullable = true, length = 100)
+    public String getSubdivision3()
+    {
+        return subdivision3;
+    }
+
+    public void setSubdivision3(String subdivision3)
+    {
+        this.subdivision3 = subdivision3;
+    }
+
+    @Basic
+    @Column(name = "iso2", nullable = false, length = 3)
+    public String getIso2()
+    {
+        return iso2;
+    }
+
+    public void setIso2(String iso2)
+    {
+        this.iso2 = iso2;
+    }
 
     @Override
     public boolean equals(Object o)
@@ -109,16 +142,17 @@ public class StationEntity
                 Objects.equals(stationName, that.stationName) &&
                 Objects.equals(url, that.url) &&
                 Objects.equals(country, that.country) &&
-                Objects.equals(region, that.region) &&
-                Objects.equals(city, that.city);
+                Objects.equals(subdivision1, that.subdivision1) &&
+                Objects.equals(subdivision2, that.subdivision2) &&
+                Objects.equals(subdivision3, that.subdivision3) &&
+                Objects.equals(iso2, that.iso2);
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hash(idStation, stationName, url, country, region, city);
+        return Objects.hash(idStation, stationName, url, country, subdivision1, subdivision2, subdivision3, iso2);
     }
-
 
     @Override
     public String toString()
@@ -128,8 +162,10 @@ public class StationEntity
                 ", stationName='" + stationName + '\'' +
                 ", url='" + url + '\'' +
                 ", country='" + country + '\'' +
-                ", region='" + region + '\'' +
-                ", city='" + city + '\'' +
+                ", subdivision1='" + subdivision1 + '\'' +
+                ", subdivision2='" + subdivision2 + '\'' +
+                ", subdivision3='" + subdivision3 + '\'' +
+                ", iso2='" + iso2 + '\'' +
                 '}';
     }
 }

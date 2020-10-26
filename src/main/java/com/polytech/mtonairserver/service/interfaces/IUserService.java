@@ -5,7 +5,6 @@ import com.polytech.mtonairserver.customexceptions.loginexception.UnknownEmailEx
 import com.polytech.mtonairserver.customexceptions.loginexception.WrongPasswordException;
 import com.polytech.mtonairserver.model.entities.StationEntity;
 import com.polytech.mtonairserver.model.entities.UserEntity;
-import com.polytech.mtonairserver.repository.UserRepository;
 
 import java.util.List;
 import java.util.Set;
@@ -22,7 +21,7 @@ public interface IUserService
 
     boolean existsByApiKey(String apiKey);
 
-    void createAccount(UserEntity user) throws NamesMissingException, InvalidVariablesLengthException, UnvalidEmailException, AccountAlreadyExistsException, TokenGenerationException;
+    void createAccount(UserEntity user) throws NamesMissingException, InvalidVariablesLengthException, InvalidEmailException, AccountAlreadyExistsException, TokenGenerationException;
 
     public UserEntity login(UserEntity loginPassword) throws UnknownEmailException, WrongPasswordException;
 

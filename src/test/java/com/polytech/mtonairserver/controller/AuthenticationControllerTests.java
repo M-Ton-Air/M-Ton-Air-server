@@ -1,4 +1,4 @@
-package com.polytech.mtonairserver;
+package com.polytech.mtonairserver.controller;
 
 import com.polytech.mtonairserver.controller.AuthenticationController;
 import com.polytech.mtonairserver.controller.UserController;

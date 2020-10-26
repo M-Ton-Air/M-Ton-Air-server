@@ -1,5 +1,6 @@
 package com.polytech.mtonairserver.customexceptions.requestaqicnexception;
 
+import com.polytech.mtonairserver.customexceptions.ExceptionLogger;
 import com.polytech.mtonairserver.customexceptions.LoggableException;
 
 public class InvalidTokenException extends LoggableException {
@@ -11,5 +12,6 @@ public class InvalidTokenException extends LoggableException {
      */
     public InvalidTokenException(String _errorMessage, Class<?> classInWhichExceptionOccured) {
         super(_errorMessage, classInWhichExceptionOccured);
+        this.logException();
     }
 }

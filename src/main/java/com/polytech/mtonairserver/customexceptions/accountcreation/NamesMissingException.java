@@ -14,6 +14,6 @@ public class NamesMissingException extends LoggableException
     public NamesMissingException(String _errorMessage, Class<?> classInWhichExceptionOccured)
     {
         super(_errorMessage, classInWhichExceptionOccured);
-        ExceptionLogger.logException(this);
+        this.logException();
     }
 }

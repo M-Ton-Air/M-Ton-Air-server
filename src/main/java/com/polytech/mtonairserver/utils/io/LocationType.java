@@ -1,5 +1,8 @@
 package com.polytech.mtonairserver.utils.io;
 
-public enum LOCATION_TYPE
+public enum LocationType
 {
+    COUNTRY,
+    REGION,
+    CITY
 }

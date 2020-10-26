@@ -21,8 +21,13 @@ public class DefaultController implements org.springframework.boot.web.servlet.e
 {
     private static final String PATH = "/error";
 
-    @Autowired
     private ServletContext servletContext;
+
+    @Autowired
+    public DefaultController(ServletContext servlet)
+    {
+        this.servletContext = servlet;
+    }
 
     @RequestMapping(value = PATH)
     public ApiErrorResponse error()

@@ -1,5 +1,6 @@
 package com.polytech.mtonairserver.customexceptions.loginexception;
 
+import com.polytech.mtonairserver.customexceptions.ExceptionLogger;
 import com.polytech.mtonairserver.customexceptions.LoggableException;
 
 public class WrongPasswordException extends LoggableException
@@ -13,5 +14,6 @@ public class WrongPasswordException extends LoggableException
      */
     public WrongPasswordException(String _errorMessage, Class<?> classInWhichExceptionOccured) {
         super(_errorMessage, classInWhichExceptionOccured);
+        this.logException();
     }
 }

@@ -14,7 +14,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.security.SecureRandom;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
@@ -123,13 +122,13 @@ public class UserService implements IUserService
         // if the user email does not exists
         else
         {
-            throw new UnknownEmailException("Email " + loginPassword + " is unknown.", UserService.class, loginPassword.getEmail());
+            throw new UnknownEmailException("Email " + loginPassword.getEmail() + " is unknown.", UserService.class, loginPassword.getEmail());
         }
     }
 
 
     @Override
-    public void createAccount(UserEntity namesLoginPassword) throws NamesMissingException, InvalidVariablesLengthException, UnvalidEmailException, AccountAlreadyExistsException, TokenGenerationException
+    public void createAccount(UserEntity namesLoginPassword) throws NamesMissingException, InvalidVariablesLengthException, InvalidEmailException, AccountAlreadyExistsException, TokenGenerationException
     {
         // when no names are given
         if(namesLoginPassword.getName().isEmpty() || namesLoginPassword.getFirstname().isEmpty())
@@ -173,7 +172,7 @@ public class UserService implements IUserService
         EmailValidator validator = EmailValidator.getInstance();
         if(!validator.isValid(userEmail))
         {
-            throw new UnvalidEmailException("Email " + userEmail + " is invalid.", UserService.class, userEmail);
+            throw new InvalidEmailException("Email " + userEmail + " is invalid.", UserService.class, userEmail);
         }
 
         // If it is valid, then we can check if the user already has an account or not.

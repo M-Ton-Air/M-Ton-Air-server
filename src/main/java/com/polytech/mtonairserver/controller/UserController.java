@@ -24,7 +24,7 @@ import java.util.Set;
 @RequestMapping("/users")
 public class UserController {
 
-    private UserService userService;
+    private final UserService userService;
 
     @Autowired
     public UserController(UserService _userService) {
@@ -49,7 +49,6 @@ public class UserController {
      * @param id users id
      * @return a specific user
      */
-    //todo : documenter les autres méthodes de cette manière
     @ApiOperation(value = "Gets a user with his id", notes = "Retrieves a user according to a given id")
     @RequestMapping(value = "/{id}", method= RequestMethod.GET)
     public UserEntity getAUser(
@@ -60,7 +59,7 @@ public class UserController {
 
     @ApiOperation(value = "Gets the favorite stations for a given user", notes = "Returns 0, one or many stations" +
             " according to the user favorite stations.")
-    @RequestMapping(value = "/{id}/favoriteStations", method = RequestMethod.GET)
+    @RequestMapping(value = "/{id}/favorite-stations", method = RequestMethod.GET)
     public Set<StationEntity> getUserFavoriteStations(
             @ApiParam(name = "id", value = "The user id", required = true)
             @PathVariable int id) throws UserFavoriteStationsFetchException

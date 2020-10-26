@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping(value = "/auth")
 public class AuthenticationController
 {
-    private UserService userService;
+    private final UserService userService;
 
     @Autowired
     public AuthenticationController(UserService _userService) {
@@ -37,7 +37,7 @@ public class AuthenticationController
      * @return an ApiAuthenticateSuccessResponse with the user id and the user api token.
      */
     @ApiOperation(value = "User authentication", notes = "The user authenticates to his M-Ton-Air account")
-    @RequestMapping(value = "/signin", method = RequestMethod.POST)
+    @RequestMapping(value = "/sign-in", method = RequestMethod.POST)
     public ApiAuthenticateSuccessResponse login(@ApiParam(name = "loginPassword", value = "The user login and password", required = true)
                                 @RequestBody UserEntity loginPassword) throws UnknownEmailException, WrongPasswordException
     {
@@ -46,8 +46,6 @@ public class AuthenticationController
         UserEntity ue = this.userService.login(loginPassword);
         return new ApiAuthenticateSuccessResponse(HttpStatus.OK, "The user " + ue.getFirstname() + " " + ue.getName() +
                 " (" + ue.getEmail() + ") is well authenticated.", ue.getIdUser(), ue.getApiKey());
-
-            // todo returns an ApiAuthenticateSuccessResponse with the user id + user api token. Client then has to store it locally.
     }
 
     /**
@@ -61,7 +59,7 @@ public class AuthenticationController
      * - password
      */
     @ApiOperation(value = "Create an account", notes = "Allows an user to create an account with a POST request to the API. It creates an user and stores it.")
-    @RequestMapping(value = "/signup", method = RequestMethod.POST)
+    @RequestMapping(value = "/sign-up", method = RequestMethod.POST)
     @ResponseBody
     public ApiResponse createAccount(@RequestBody UserEntity namesLoginPassword) throws LoggableException
     {
@@ -109,13 +107,13 @@ public class AuthenticationController
 
     /**
      * Custom Exception Handler for invalid emails.
-     * @param ex an UnvalidEmailException
+     * @param ex an InvalidEmailException
      * @return an api error response describing what went wrong to the api user.
      */
-    @ExceptionHandler(UnvalidEmailException.class)
+    @ExceptionHandler(InvalidEmailException.class)
     @ResponseBody
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ApiErrorResponse createAccountUnvalidEmailResponse(UnvalidEmailException ex)
+    public ApiErrorResponse createAccountUnvalidEmailResponse(InvalidEmailException ex)
     {
         // ignores unuseful elements
         ex.setStackTrace(new StackTraceElement[]{ex.getStackTrace()[0]});

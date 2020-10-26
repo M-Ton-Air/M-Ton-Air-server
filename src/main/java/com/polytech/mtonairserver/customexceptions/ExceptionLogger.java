@@ -41,7 +41,7 @@ public class ExceptionLogger
         ExceptionLogger.setEnv();
         LoggableException loggable = (LoggableException)exception;
         Timestamp ts = new Timestamp(System.currentTimeMillis());
-        String filepath = (folderPath + loggable.controllerName + "-" + ts.toString() + ".json").replace(":", "-").replaceFirst("-", ":");
+        String filepath = (folderPath + loggable.controllerName + "-" + exception.getClass().getSimpleName() + "-" + ts.toString() + ".json").replace(":", "-").replaceFirst("-", ":");
         try
         {
             Gson gson = new GsonBuilder().create();

@@ -22,12 +22,12 @@ import java.security.InvalidKeyException;
 public class AqicnController {
 
 
-    static String host = "https://api.waqi.info" ;
-    static String path = "/feed/";
+    private final static String host = "https://api.waqi.info" ;
+    private final static String path = "/feed/";
     //the API AQICN token
-    static String token = "/?token=582a979a038e4dd717de2788124fd200620e1e3b";
+    private final static String token = "/?token=582a979a038e4dd717de2788124fd200620e1e3b";
     //the part of the URL to remove.
-    static String partOfUrlToRemove = "/api/v1/aqicn/";
+    private final static String partOfUrlToRemove = "/api/v1/aqicn/";
 
     /**
      * Retrieve air quality data about a city.
@@ -67,7 +67,7 @@ public class AqicnController {
 
     /**
      * Custom Exception Handler for invalid emails.
-     * @param ex an UnvalidEmailException
+     * @param ex an InvalidEmailException
      * @return an api error response describing what went wrong to the api user.
      */
     @ExceptionHandler(UnknownStationException.class)

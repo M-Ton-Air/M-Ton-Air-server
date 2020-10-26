@@ -14,6 +14,6 @@ public class TokenGenerationException extends LoggableException
     public TokenGenerationException(String _errorMessage, Class<?> classInWhichExceptionOccured)
     {
         super(_errorMessage, classInWhichExceptionOccured);
-        ExceptionLogger.logException(this);
+        this.logException();
     }
 }

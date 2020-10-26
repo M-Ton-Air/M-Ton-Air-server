@@ -26,4 +26,9 @@ public class UnvalidEmailException extends LoggableException
     {
         return invalidMail;
     }
+
+    @Override
+    public void logException()
+    {
+    }
 }

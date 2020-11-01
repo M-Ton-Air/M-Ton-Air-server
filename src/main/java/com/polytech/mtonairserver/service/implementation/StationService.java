@@ -14,10 +14,9 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.util.List;
 
-// todo : documentation
 
 /**
- * Service implementation for the station service.
+ * Handling station retrieval and station creation thanks to the DataReader.
  */
 @Service
 public class StationService implements IStationService

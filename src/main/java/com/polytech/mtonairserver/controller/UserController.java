@@ -76,6 +76,8 @@ public class UserController {
 
     //todo : add a favorite station.
 
+    //todo : delete all user favorite stations
+
 
     /* ############################################################## EXCEPTION HANDLERS ############################################################## */
 

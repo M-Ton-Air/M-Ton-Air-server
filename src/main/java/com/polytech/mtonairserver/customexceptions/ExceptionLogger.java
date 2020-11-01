@@ -15,7 +15,7 @@ import java.util.Date;
  * \target\demo-0.0.1-SNAPSHOT\WEB-INF\classes\M-TON-AIR-LOG
  * and in the WEB-INF\classes\M-TON-AIR-FOLDER in production environment.
  */
-public class ExceptionLogger
+public final class ExceptionLogger
 {
 
     private static boolean environmentSet = false;

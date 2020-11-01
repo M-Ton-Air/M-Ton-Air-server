@@ -1,6 +1,6 @@
 package com.polytech.mtonairserver.utils.string;
 
-public class StringUtils
+public final class StringUtils
 {
 
     /**

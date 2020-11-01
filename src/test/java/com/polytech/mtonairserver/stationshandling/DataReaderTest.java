@@ -44,7 +44,6 @@ class DataReaderTest
         setupIsDone = true;
     }
 
-    //todo : test = regarder si toutes les stations ont bien un ISO2 qui correspond bien au pays renseigné.
     @Test
     public void retrieveAllStationNames()
     {

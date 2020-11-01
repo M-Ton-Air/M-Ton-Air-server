@@ -69,7 +69,9 @@ public class DataReader
      * @see CountryCityRegion
      * @throws IOException file reading exception.
      */
-    public List<CountryCityRegion> retrieveCountriesCities() throws IOException {
+    public List<CountryCityRegion> retrieveCountriesCities() throws IOException
+    {
+        // todo : encoding
         List<CountryCityRegion> countryCities = new ArrayList<CountryCityRegion>();
         countryCities.addAll(this.retrieveWordlwideCountriesCities());
         countryCities.addAll(this.retrieveJapaneseCities());

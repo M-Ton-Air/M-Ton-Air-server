@@ -26,12 +26,16 @@ public abstract class LoggableException extends Exception implements Serializabl
         super(_errorMessage);
         this.controllerName = classInWhichExceptionOccured.getSimpleName();
         this.date = new Date();
-        ExceptionLogger.logException(this);
     }
 
     public Date getDate()
     {
         return date;
+    }
+
+    public void logException()
+    {
+        ExceptionLogger.logException(this);
     }
 
     public String getControllerName()

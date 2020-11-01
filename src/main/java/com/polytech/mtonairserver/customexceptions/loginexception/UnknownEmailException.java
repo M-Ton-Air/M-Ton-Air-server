@@ -15,9 +15,14 @@ public class UnknownEmailException extends LoggableException
     public UnknownEmailException(String _errorMessage, Class<?> classInWhichExceptionOccured, String _unrecognizedEmail) {
         super(_errorMessage, classInWhichExceptionOccured);
         this.unrecognizedEmail = _unrecognizedEmail;
-        ExceptionLogger.logException(this);
+        this.logException();
     }
 
     @JsonFormat(shape = JsonFormat.Shape.STRING)
     private String unrecognizedEmail;
+
+    public String getUnrecognizedEmail()
+    {
+        return unrecognizedEmail;
+    }
 }

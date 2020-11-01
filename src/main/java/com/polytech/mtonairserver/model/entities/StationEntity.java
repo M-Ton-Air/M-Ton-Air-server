@@ -1,38 +1,41 @@
 package com.polytech.mtonairserver.model.entities;
 
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+
 import javax.persistence.*;
-import java.util.Collection;
 import java.util.Objects;
 
 @Entity
-@Table(name = "station", schema = "mtonairserver", catalog = "")
+@Table(name = "station", schema = "mtonairserver")
 public class StationEntity
 {
     private int idStation;
     private String stationName;
     private String url;
     private String country;
-    private String region;
-    private String city;
-    private Collection<DailyAqicnDataEntity> dailyAqicnDataByIdStation;
-    private Collection<ForecastEntity> forecastsByIdStation;
+    private String subdivision1;
+    private String subdivision2;
+    private String subdivision3;
+    private String iso2;
 
-    public StationEntity(int idStation, String stationName, String url, String country, String region, String city)
+    public StationEntity() {}
+
+    public StationEntity(int idStation, String stationName, String url, String country, String subdivision1, String subdivision2, String subdivision3, String iso2)
     {
         this.idStation = idStation;
         this.stationName = stationName;
         this.url = url;
         this.country = country;
-        this.region = region;
-        this.city = city;
+        this.subdivision1 = subdivision1;
+        this.subdivision2 = subdivision2;
+        this.subdivision3 = subdivision3;
+        this.iso2 = iso2;
     }
 
-    public StationEntity() {}
-
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     @Column(name = "id_station", nullable = false)
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     public int getIdStation()
     {
         return idStation;
@@ -80,27 +83,51 @@ public class StationEntity
     }
 
     @Basic
-    @Column(name = "region", nullable = true, length = 100)
-    public String getRegion()
+    @Column(name = "subdivision1", nullable = true, length = 100)
+    public String getSubdivision1()
     {
-        return region;
+        return subdivision1;
     }
 
-    public void setRegion(String region)
+    public void setSubdivision1(String subdivision1)
     {
-        this.region = region;
+        this.subdivision1 = subdivision1;
     }
 
     @Basic
-    @Column(name = "city", nullable = false, length = 100)
-    public String getCity()
+    @Column(name = "subdivision2", nullable = true, length = 100)
+    public String getSubdivision2()
     {
-        return city;
+        return subdivision2;
     }
 
-    public void setCity(String city)
+    public void setSubdivision2(String subdivision2)
     {
-        this.city = city;
+        this.subdivision2 = subdivision2;
+    }
+
+    @Basic
+    @Column(name = "subdivision3", nullable = true, length = 100)
+    public String getSubdivision3()
+    {
+        return subdivision3;
+    }
+
+    public void setSubdivision3(String subdivision3)
+    {
+        this.subdivision3 = subdivision3;
+    }
+
+    @Basic
+    @Column(name = "iso2", nullable = false, length = 3)
+    public String getIso2()
+    {
+        return iso2;
+    }
+
+    public void setIso2(String iso2)
+    {
+        this.iso2 = iso2;
     }
 
     @Override
@@ -113,14 +140,16 @@ public class StationEntity
                 Objects.equals(stationName, that.stationName) &&
                 Objects.equals(url, that.url) &&
                 Objects.equals(country, that.country) &&
-                Objects.equals(region, that.region) &&
-                Objects.equals(city, that.city);
+                Objects.equals(subdivision1, that.subdivision1) &&
+                Objects.equals(subdivision2, that.subdivision2) &&
+                Objects.equals(subdivision3, that.subdivision3) &&
+                Objects.equals(iso2, that.iso2);
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hash(idStation, stationName, url, country, region, city);
+        return Objects.hash(idStation, stationName, url, country, subdivision1, subdivision2, subdivision3, iso2);
     }
 
     @Override
@@ -131,26 +160,10 @@ public class StationEntity
                 ", stationName='" + stationName + '\'' +
                 ", url='" + url + '\'' +
                 ", country='" + country + '\'' +
-                ", region='" + region + '\'' +
-                ", city='" + city + '\'' +
+                ", subdivision1='" + subdivision1 + '\'' +
+                ", subdivision2='" + subdivision2 + '\'' +
+                ", subdivision3='" + subdivision3 + '\'' +
+                ", iso2='" + iso2 + '\'' +
                 '}';
-    }
-
-    @OneToMany(mappedBy = "stationByIdStation")
-    public Collection<DailyAqicnDataEntity> getDailyAqicnDataByIdStation() {
-        return dailyAqicnDataByIdStation;
-    }
-
-    public void setDailyAqicnDataByIdStation(Collection<DailyAqicnDataEntity> dailyAqicnDataByIdStation) {
-        this.dailyAqicnDataByIdStation = dailyAqicnDataByIdStation;
-    }
-
-    @OneToMany(mappedBy = "stationByIdStation")
-    public Collection<ForecastEntity> getForecastsByIdStation() {
-        return forecastsByIdStation;
-    }
-
-    public void setForecastsByIdStation(Collection<ForecastEntity> forecastsByIdStation) {
-        this.forecastsByIdStation = forecastsByIdStation;
     }
 }

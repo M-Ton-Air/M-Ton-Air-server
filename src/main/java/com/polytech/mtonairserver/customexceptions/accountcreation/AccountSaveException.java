@@ -18,7 +18,7 @@ public class AccountSaveException extends LoggableException
     {
         super(_errorMessage, classInWhichExceptionOccured);
         this.concernedUser = user;
-        ExceptionLogger.logException(this);
+        this.logException();
     }
 
     @JsonFormat(shape = JsonFormat.Shape.OBJECT)

@@ -9,8 +9,11 @@ CREATE TABLE `station` (
   `id_station` int(11) NOT NULL AUTO_INCREMENT,
   `station_name` varchar(300) NOT NULL,
   `country` varchar(100) NOT NULL,
-  `region` varchar(100),
-  `city` varchar(100) NOT NULL,
+  `iso2` varchar(3) NOT NULL,
+  -- subdivisions are handy cause they allow us to manage region/cities the same way but we lose some information. --
+  `subdivision1` varchar(100),
+  `subdivision2` varchar(100),
+  `subdivision3` varchar(100),
   `url` varchar(300) NOT NULL,
   PRIMARY KEY (`id_station`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='Table gathering stations';

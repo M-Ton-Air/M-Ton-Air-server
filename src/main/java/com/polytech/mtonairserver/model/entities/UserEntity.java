@@ -2,6 +2,7 @@ package com.polytech.mtonairserver.model.entities;
 
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import org.hibernate.annotations.ManyToAny;
 
 import javax.persistence.*;

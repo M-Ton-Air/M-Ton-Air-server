@@ -16,7 +16,7 @@ public class AccountAlreadyExistsException extends LoggableException
     {
         super(_errorMessage, classInWhichExceptionOccured);
         this.existingMail = _existingMail;
-        ExceptionLogger.logException(this);
+        this.logException();
     }
 
     @JsonFormat(shape = JsonFormat.Shape.STRING)

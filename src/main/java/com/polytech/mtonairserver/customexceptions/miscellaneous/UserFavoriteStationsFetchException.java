@@ -1,5 +1,6 @@
 package com.polytech.mtonairserver.customexceptions.miscellaneous;
 
+import com.polytech.mtonairserver.customexceptions.ExceptionLogger;
 import com.polytech.mtonairserver.customexceptions.LoggableException;
 
 public class UserFavoriteStationsFetchException extends LoggableException
@@ -13,5 +14,6 @@ public class UserFavoriteStationsFetchException extends LoggableException
     public UserFavoriteStationsFetchException(String _errorMessage, Class<?> classInWhichExceptionOccured)
     {
         super(_errorMessage, classInWhichExceptionOccured);
+        this.logException();
     }
 }

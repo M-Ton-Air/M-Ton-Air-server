@@ -5,6 +5,7 @@ import com.polytech.mtonairserver.model.responses.ApiErrorResponse;
 import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -21,13 +22,22 @@ public class DefaultController implements org.springframework.boot.web.servlet.e
 {
     private static final String PATH = "/error";
 
-    @Autowired
     private ServletContext servletContext;
 
-    @RequestMapping(value = PATH)
-    public ApiErrorResponse error()
+    @Autowired
+    public DefaultController(ServletContext servlet)
     {
-        return new ApiErrorResponse(HttpStatus.BAD_REQUEST, "Given request could not be interpreted.", null);
+        this.servletContext = servlet;
+    }
+
+    @RequestMapping(value = PATH)
+    public ResponseEntity<ApiErrorResponse> error()
+    {
+        return new ResponseEntity<ApiErrorResponse>
+        (
+                new ApiErrorResponse(HttpStatus.BAD_REQUEST, "Given request could not be interpreted.", null),
+                HttpStatus.BAD_REQUEST
+        );
     }
 
     @Override

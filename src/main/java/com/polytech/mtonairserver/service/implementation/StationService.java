@@ -1,29 +1,17 @@
 package com.polytech.mtonairserver.service.implementation;
 
-import com.opencsv.CSVReader;
+import com.polytech.mtonairserver.customexceptions.datareader.NoProperLocationFoundException;
+import com.polytech.mtonairserver.customexceptions.datareader.UnsupportedFindOperationOnLocationException;
+import com.polytech.mtonairserver.customexceptions.stations.StationsAlreadyInitializedException;
 import com.polytech.mtonairserver.model.entities.StationEntity;
-import com.polytech.mtonairserver.model.entities.UserEntity;
-import com.polytech.mtonairserver.model.external.CountryCity;
 import com.polytech.mtonairserver.repository.StationRepository;
 import com.polytech.mtonairserver.service.interfaces.IStationService;
 
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
+import com.polytech.mtonairserver.stationshandling.io.DataReader;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 // todo : documentation
@@ -32,169 +20,88 @@ import java.util.List;
  * Service implementation for the station service.
  */
 @Service
-public class StationService implements IStationService {
-    private StationRepository stationRepository;
+public class StationService implements IStationService
+{
+    private final StationRepository stationRepository;
+
+    private final DataReader dataReader;
 
     @Autowired
-    public StationService(StationRepository stationRepository) {
-        this.stationRepository = stationRepository;
+    public StationService(StationRepository _stationRepository, DataReader dr)
+    {
+        this.stationRepository = _stationRepository;
+        this.dataReader = dr;
     }
 
-    @Value(value = "classpath:/data/stations.html")
-    private Resource stations;
+    private static String hostLinkRealTimeAQI = "http://aqicn.org/city/";
 
-
-    @Value(value = "classpath:/data/countries_cities.csv")
-    private Resource csvCountriesCities;
-
-    private static String hostLink = "http://aqicn.org/city/";
-    final String SPLITTER = "/";
-
-    public static String getHostLink() {
-        return hostLink;
+    public static String getHostLinkRealTimeAQI()
+    {
+        return hostLinkRealTimeAQI;
     }
 
-    public static void setHostLink(String hostLink) {
-        StationService.hostLink = hostLink;
+    public static void setHostLinkRealTimeAQI(String hostLinkRealTimeAQI)
+    {
+        StationService.hostLinkRealTimeAQI = hostLinkRealTimeAQI;
     }
 
-    //todo : renommer la méthode (get = pour les getter, cela porte à confusion)
-
-    //todo : refactoriser et stocker en BD. Il n'est pas pensable de parser le HTML à chaque fois qu'un utilisateur
-    // requête l'endpoint des stations. Ce code doit être refactoré dans une autre classe (en réglant la problématique
-    // de chargement du fichier). Le code ainsi refactoré doit stocker TOUTES les stations en BD (code appelé une seule
-    // fois lorsque nécessaire).
-
-
-    //todo : Cette méthode (stationService) doit
-    // ensuite requêter la BD pour effectuer les différentes opérations (récupérer une/des station(s) par ville, nom,
-    // pays, etc.
-    public List<StationEntity> getAllStationsName() throws IOException {
-
-        File htmlFile = this.stations.getFile();
-        Document document = Jsoup.parse(htmlFile, "UTF-8");
-
-        int count = 0;
-
-        List<String> listHref = new ArrayList<>();
-        List<StationEntity> listStationEntity = new ArrayList<>();
-
-        List<StationEntity> listCountryNull = new ArrayList<>();
-
-        Elements newsHealines = document.select("a");
-        for (Element headline : newsHealines) {
-            String href = headline.attr("href");
-            String stationName = href.replace(hostLink, "");
-            String geo[] = stationName.split(SPLITTER);
-
-            StationEntity stationEntity = new StationEntity();
-            stationEntity.setIdStation(count);
-            stationEntity.setUrl(href);
-            stationEntity.setStationName(stationName);
-
-            switch (geo.length) {
-                case 0:
-                    break;
-                case 1:
-                    stationEntity.setCity(geo[0]);
-                    break;
-
-                case 2:
-                    stationEntity.setCountry(geo[0]);
-                    stationEntity.setCity(geo[1]);
-                    break;
-
-                case 3:
-                    stationEntity.setCountry(geo[0]);
-                    stationEntity.setRegion(geo[1]);
-                    stationEntity.setCity(geo[2]);
-                    break;
-
-                case 4:
-                    stationEntity.setCountry(geo[0]);
-                    stationEntity.setRegion(geo[1]);
-                    stationEntity.setCity(geo[2] + " " + geo[3]);
-                    break;
-
-                case 5:
-                    stationEntity.setCountry(geo[0]);
-                    stationEntity.setRegion(geo[1]);
-                    stationEntity.setCity(geo[2] + " " + geo[3] + " " + geo[4]);
-                    break;
-
-
-            }
-
-
-            if (!href.equals("") & !stationName.contains("http")) {
-                listStationEntity.add(stationEntity);
-                count++;
-            }
-
-            // for the test
-            if (stationEntity.getCountry() == null & !href.equals("") & !stationName.contains("http")) {
-                listCountryNull.add(stationEntity);
-            }
-
-
-        }
-        return listStationEntity;
+    @Override
+    public List<StationEntity> findAll()
+    {
+        return this.stationRepository.findAll();
     }
 
-    //todo : renommer la méthode (get = pour les getter, cela porte à confusion)
-    //todo : réfléchir à comment rendre ça + propre (dans un autre endroit du code + stockage en bd todo (les stations
-    // doivent être stockées en bd)
-    public List<CountryCity> getCsvCountriesCities() throws IOException {
+    @Override
+    public List<StationEntity> findAllByCountry(String country)
+    {
+        return this.stationRepository.findAllByCountry(country);
+    }
 
-      /*  FileReader fileReader = new FileReader(this.csvCountriesCities.getFile());
-        BufferedReader bufferedReader = new BufferedReader(fileReader);
-        //CSVParser csvParser = new CSVParser(',', '"');
-        List<String[]> listRes = new ArrayList<String[]>();
-        List<CountryCity> countriesCitiesList = new ArrayList<>();
-
-        String line = "";
-        //remove the first line
-        bufferedReader.readLine();
-        while ((line = bufferedReader.readLine()) != null) {
-
-            line.replaceFirst("\"", "");
-            String[] res = line.split(",");
-            listRes.add(res);
-
-            CountryCity countryCity = new CountryCity(res[4], res[0], res [6]);
-            countriesCitiesList.add(countryCity);
-        }
-
-        return countriesCitiesList; */
+    @Override
+    public List<StationEntity> findAllByIso2(String iso2)
+    {
+        return this.stationRepository.findAllByIso2(iso2);
+    }
 
 
-//listStationEntity.stream().anyMatch(s -> s.getUrl().toLowerCase().contains("rome"))
-        //listStationEntity.stream().filter(s -> s.getUrl().toLowerCase().contains("rome")).toArray()
-        List<CountryCity> countryCities = new ArrayList<CountryCity>();
-        CSVReader reader = new CSVReader(new FileReader(this.csvCountriesCities.getFile()), ',', '"', 1);
-        String line[];
-        while( (line = reader.readNext()) != null)
+    @Override
+    public List<StationEntity> findAllByStationName(String stationName)
+    {
+        return this.stationRepository.findAllByStationName(stationName);
+    }
+
+    @Override
+    public List<StationEntity> findAllBySubdivision(String subdivision)
+    {
+        List<StationEntity> result = this.stationRepository.findAllBySubdivision1(subdivision);
+        result.addAll(               this.stationRepository.findAllBySubdivision2(subdivision));
+        result.addAll(               this.stationRepository.findAllBySubdivision3(subdivision));
+
+        return result;
+    }
+
+    @Override
+    public boolean existsByStationName(String city)
+    {
+        return this.stationRepository.existsByStationName(city);
+    }
+
+    @Override
+    public void saveAllStationsToDatabaseFromFiles() throws StationsAlreadyInitializedException, NoProperLocationFoundException, UnsupportedFindOperationOnLocationException, IOException
+    {
+        if(this.stationRepository.count() > 0)
         {
-            System.out.println();
-
-            // Myriam : obligé d'utiliser le remplacement des quotes car de toutes les librairies CSV testé (3 en tout)
-            // aucune ne retirait les délimiteurs (enclosers) du fichier. on se retrouvait alors avec deux quotes en +
-            // par valeur récupérée.
-
-            //todo
-            // La méthode fonctionne (je n'ai pas changé grand à ce que tu as fait) mais il y a un gros travail de
-            // refactorisation. Déjà comme noté dans les todos, il faut absolument déporter ce code dans d'autres classes
-            // car ce n'est pas du traitement de service mais du traitement in/out (lecture de fichiers) et potentiellement
-            // insertion en BD pour l'autre méthode + haut
-            
-            // En effet, on va insérer toutes les stations récupérées en BD, cela sera beaucoup plus rapide,
-            // car là dans l'état, cela prend environ 5s de faire le traitement de cet algo. Si les données sont
-            // indexées et stockées en BD, cela ne prendrait même pas 0.5s de tout récupérer et de tout renvoyer.
-            String lineValues[] = line[0].replace("\"", "").split(",");
-            CountryCity countryCity = new CountryCity(lineValues[4], lineValues[1], lineValues[6]);
-            countryCities.add(countryCity);
+            throw new StationsAlreadyInitializedException("There are already existing stations in the current DB.", StationService.class);
         }
-        return countryCities;
+        else
+        {
+            this.stationRepository.saveAll(this.dataReader.retrieveAllStationNames());
+        }
     }
 
+    @Override
+    public void deleteAll()
+    {
+        this.stationRepository.deleteAll();
+    }
 }

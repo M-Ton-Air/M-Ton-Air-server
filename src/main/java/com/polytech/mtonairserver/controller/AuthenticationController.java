@@ -3,19 +3,13 @@ package com.polytech.mtonairserver.controller;
 import com.polytech.mtonairserver.config.SwaggerConfig;
 import com.polytech.mtonairserver.customexceptions.LoggableException;
 import com.polytech.mtonairserver.customexceptions.accountcreation.*;
-import com.polytech.mtonairserver.customexceptions.loginexception.UnknownEmailException;
-import com.polytech.mtonairserver.customexceptions.loginexception.WrongPasswordException;
+import com.polytech.mtonairserver.customexceptions.loginexception.*;
 import com.polytech.mtonairserver.model.entities.UserEntity;
-import com.polytech.mtonairserver.model.responses.ApiAuthenticateSuccessResponse;
-import com.polytech.mtonairserver.model.responses.ApiErrorResponse;
-import com.polytech.mtonairserver.model.responses.ApiResponse;
-import com.polytech.mtonairserver.model.responses.ApiSuccessResponse;
+import com.polytech.mtonairserver.model.responses.*;
 import com.polytech.mtonairserver.service.implementation.UserService;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
+import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
+import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -30,7 +24,6 @@ public class AuthenticationController
         this.userService = _userService;
     }
 
-
     /**
      * Allows the user authentication.
      * @param loginPassword a json body that will be deserialized into a UserEntity and that contains.
@@ -38,14 +31,14 @@ public class AuthenticationController
      */
     @ApiOperation(value = "User authentication", notes = "The user authenticates to his M-Ton-Air account")
     @RequestMapping(value = "/sign-in", method = RequestMethod.POST)
-    public ApiAuthenticateSuccessResponse login(@ApiParam(name = "loginPassword", value = "The user login and password", required = true)
+    public ResponseEntity login(@ApiParam(name = "loginPassword", value = "The user login and password", required = true)
                                 @RequestBody UserEntity loginPassword) throws UnknownEmailException, WrongPasswordException
     {
-
-
         UserEntity ue = this.userService.login(loginPassword);
-        return new ApiAuthenticateSuccessResponse(HttpStatus.OK, "The user " + ue.getFirstname() + " " + ue.getName() +
-                " (" + ue.getEmail() + ") is well authenticated.", ue.getIdUser(), ue.getApiKey());
+        return new ResponseEntity<ApiAuthenticateSuccessResponse>(
+                new ApiAuthenticateSuccessResponse(HttpStatus.OK, "The user " + ue.getFirstname() + " " + ue.getName() +
+                " (" + ue.getEmail() + ") is well authenticated.", ue.getIdUser(), ue.getApiKey()),
+                HttpStatus.OK);
     }
 
     /**
@@ -61,24 +54,20 @@ public class AuthenticationController
     @ApiOperation(value = "Create an account", notes = "Allows an user to create an account with a POST request to the API. It creates an user and stores it.")
     @RequestMapping(value = "/sign-up", method = RequestMethod.POST)
     @ResponseBody
-    public ApiResponse createAccount(@RequestBody UserEntity namesLoginPassword) throws LoggableException
+    public ResponseEntity createAccount(@RequestBody UserEntity namesLoginPassword) throws LoggableException
     {
-        try
-        {
-            this.userService.createAccount(namesLoginPassword);
-        }
-        catch(Exception e)
-        {
-            e.printStackTrace();
-            return new ApiErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, "Cold not createAccount the specified UserEntity : \n " + namesLoginPassword.getEmail(), e);
-        }
-
-        return new ApiSuccessResponse(HttpStatus.OK,
+        this.userService.createAccount(namesLoginPassword);
+        return new ResponseEntity<ApiSuccessResponse>
+        (
+            new ApiSuccessResponse(
+                HttpStatus.OK,
                 "Account was successfully created. Welcome "
-                        + namesLoginPassword.getFirstname()
+                        + namesLoginPassword.getName()
                         + " ("
                         + namesLoginPassword.getEmail()
-                        + ")");
+                        + ")"),
+            HttpStatus.OK
+        );
     }
 
 
@@ -98,11 +87,13 @@ public class AuthenticationController
     @ExceptionHandler(AccountAlreadyExistsException.class)
     @ResponseBody
     @ResponseStatus(HttpStatus.CONFLICT)
-    public ApiErrorResponse createAccountEmailExistsResponse(AccountAlreadyExistsException ex)
+    private ResponseEntity createAccountEmailExistsResponse(AccountAlreadyExistsException ex)
     {
         // ignores unuseful elements
         ex.setStackTrace(new StackTraceElement[]{ex.getStackTrace()[0]});
-        return new ApiErrorResponse(HttpStatus.CONFLICT, "The given e-mail already login (" + ex.getExistingMail() + ")", ex);
+        return new ResponseEntity<ApiErrorResponse>(
+                new ApiErrorResponse(HttpStatus.CONFLICT, "The given e-mail already login (" + ex.getExistingMail() + ")", ex),
+                HttpStatus.CONFLICT);
     }
 
     /**
@@ -113,9 +104,8 @@ public class AuthenticationController
     @ExceptionHandler(InvalidEmailException.class)
     @ResponseBody
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ApiErrorResponse createAccountUnvalidEmailResponse(InvalidEmailException ex)
+    private ApiErrorResponse createAccountUnvalidEmailResponse(InvalidEmailException ex)
     {
-        // ignores unuseful elements
         ex.setStackTrace(new StackTraceElement[]{ex.getStackTrace()[0]});
         return new ApiErrorResponse(HttpStatus.BAD_REQUEST, "The given e-mail was incorrect (" + ex.getInvalidMail() + ")", ex);
     }
@@ -128,9 +118,8 @@ public class AuthenticationController
     @ExceptionHandler(AccountSaveException.class)
     @ResponseBody
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public ApiErrorResponse createAccountUnvalidEmailResponse(AccountSaveException ex)
+    private ApiErrorResponse createAccountUnvalidEmailResponse(AccountSaveException ex)
     {
-        // ignores unuseful elements
         ex.setStackTrace(new StackTraceElement[]{ex.getStackTrace()[0]});
         return new ApiErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, "Something went wrong on server side while saving the given user to our database.", ex);
     }
@@ -143,9 +132,8 @@ public class AuthenticationController
     @ExceptionHandler(NamesMissingException.class)
     @ResponseBody
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ApiErrorResponse missingNamesResponse(NamesMissingException ex)
+    private ApiErrorResponse missingNamesResponse(NamesMissingException ex)
     {
-        // ignores unuseful elements
         ex.setStackTrace(new StackTraceElement[]{ex.getStackTrace()[0]});
         return new ApiErrorResponse(HttpStatus.BAD_REQUEST, "Names are missing.", ex);
     }
@@ -158,9 +146,8 @@ public class AuthenticationController
     @ExceptionHandler(InvalidVariablesLengthException.class)
     @ResponseBody
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ApiErrorResponse invalidVarLength(InvalidVariablesLengthException ex)
+    private ApiErrorResponse invalidVarLength(InvalidVariablesLengthException ex)
     {
-        // ignores unuseful elements
         ex.setStackTrace(new StackTraceElement[]{ex.getStackTrace()[0]});
         return new ApiErrorResponse(HttpStatus.BAD_REQUEST, "Invalid variables length", ex);
     }
@@ -173,9 +160,8 @@ public class AuthenticationController
     @ExceptionHandler(TokenGenerationException.class)
     @ResponseBody
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public ApiErrorResponse tokenError(TokenGenerationException ex)
+    private ApiErrorResponse tokenError(TokenGenerationException ex)
     {
-        // ignores unuseful elements
         ex.setStackTrace(new StackTraceElement[]{ex.getStackTrace()[0]});
         return new ApiErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, "A unique token could not be found.", ex);
     }
@@ -188,11 +174,10 @@ public class AuthenticationController
     @ExceptionHandler(UnknownEmailException.class)
     @ResponseBody
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ApiErrorResponse unknownEmailResponse(UnknownEmailException ex) {
-        // ignores unuseful elements
+    private ApiErrorResponse unknownEmailResponse(UnknownEmailException ex)
+    {
         ex.setStackTrace(new StackTraceElement[]{ex.getStackTrace()[0]});
-        return
-                new ApiErrorResponse(HttpStatus.BAD_REQUEST, "The entered email does not exist in our database.", ex);
+        return new ApiErrorResponse(HttpStatus.BAD_REQUEST, "The entered email does not exist in our database.", ex);
     }
 
     /**
@@ -203,8 +188,8 @@ public class AuthenticationController
     @ExceptionHandler(WrongPasswordException.class)
     @ResponseBody
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ApiErrorResponse wrongPasswordResponse(WrongPasswordException ex) {
-        // ignores unuseful elements
+    private ApiErrorResponse wrongPasswordResponse(WrongPasswordException ex)
+    {
         ex.setStackTrace(new StackTraceElement[]{ex.getStackTrace()[0]});
         return new ApiErrorResponse(HttpStatus.BAD_REQUEST, "The entered password is wrong.", ex);
     }
@@ -217,8 +202,9 @@ public class AuthenticationController
     @ExceptionHandler(Exception.class)
     @ResponseBody
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ApiErrorResponse globalException(Exception ex) {
-            ex.setStackTrace(new StackTraceElement[]{ex.getStackTrace()[0]});
+    private ApiErrorResponse globalException(Exception ex)
+    {
+        ex.setStackTrace(new StackTraceElement[]{ex.getStackTrace()[0]});
         return new ApiErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, "An unknown exception occured.", ex);
     }
 }

@@ -1,4 +1,4 @@
-package com.polytech.mtonairserver.utils.io;
+package com.polytech.mtonairserver.stationshandling;
 
 import com.polytech.mtonairserver.model.entities.StationEntity;
 import com.polytech.mtonairserver.service.implementation.StationService;
@@ -66,6 +66,7 @@ public class DataReaderParticularCaseHandler
             if(!se.getUrl().toLowerCase().contains(georgiaCapital.toLowerCase()))
             {
                 se.setCountry(usa);
+                se.setIso2("US");
             }
         }
     }
@@ -91,61 +92,80 @@ public class DataReaderParticularCaseHandler
      */
     public void cleanSpecificSpellings()
     {
-        for(StationEntity se : this.stationEntities)
+        for(StationEntity station : this.stationEntities)
         {
-            if(se.getCountry() != null)
+            if(station.getCountry() != null)
             {
-                switch(se.getCountry().toLowerCase())
+                switch(station.getCountry().toLowerCase())
                 {
                     case "afganistan":
-                        se.setCountry("Afghanistan");
+                        station.setCountry("Afghanistan");
                         break;
                     case "el-salavor":
-                        se.setCountry("El Salvador");
+                        station.setCountry("El Salvador");
                         break;
                     case "uae":
-                        se.setCountry("United Arab Emirates");
+                        station.setCountry("United Arab Emirates");
                         break;
                     case  "hongkong":
-                        se.setCountry("Hong Kong");
-                        break;
-                    case "czechrepublic":
-                        se.setCountry("Czechia");
+                        station.setCountry("Hong Kong");
                         break;
                     case "korea":
-                        se.setCountry("South Korea");
+                        station.setCountry("South Korea");
+                        break;
+                    case "ivory-coast":
+                        station.setCountry("Côte D'Ivoire");
+                        break;
+                    case "macau":
+                        station.setCountry("Macao");
+                        break;
+                    case "maynmar":
+                        station.setCountry("Myanmar");
+                        break;
+                    case "netherland":
+                        station.setCountry("Netherlands");
+                        break;
+                    case "czechrepublic":
+                        station.setCountry("Czech Republic");
+                        break;
+                    case "bosnia-herzegovina":
+                        station.setCountry("Bosnia And Herzegovina");
+                        break;
                 }
             }
 
-            if(se.getSubdivision1() != null)
+            if(station.getSubdivision1() != null)
             {
-                switch(se.getSubdivision1().toLowerCase())
+                switch(station.getSubdivision1().toLowerCase())
                 {
                     case "cnhenan":
-                        se.setSubdivision1("Henan");
+                        station.setSubdivision1("Henan");
                         break;
                     case "massachusett":
-                        se.setSubdivision1("Massachusetts");
+                        station.setSubdivision1("Massachusetts");
                         break;
                 }
             }
 
-            if(se.getStationName() != null)
+            if(station.getStationName() != null)
             {
-                switch(se.getStationName().toLowerCase())
+                switch(station.getStationName().toLowerCase())
                 {
                     case "tel-aviv":
-                        se.setStationName("Tel Aviv Yafo");
+                        station.setStationName("Tel Aviv Yafo");
                         break;
                     case "saint-gallen":
-                        se.setStationName("Sankt Gallen");
+                        station.setStationName("Sankt Gallen");
                         break;
                     case "losangeles":
-                        se.setStationName("Los Angeles");
+                        station.setStationName("Los Angeles");
                         break;
 
                 }
             }
+
+            station.setIso2(station.getIso2().trim());
+            station.setCountry(station.getCountry().trim());
         }
     }
 
@@ -179,27 +199,27 @@ public class DataReaderParticularCaseHandler
 
             if(se.getCountry() != null)
             {
-                se.setCountry(StringUtils.upperRemoveDash(se.getCountry()));
+                se.setCountry(StringUtils.upperRemoveDashAndSlashes(se.getCountry()));
             }
 
             if(se.getSubdivision1() != null)
             {
-                se.setSubdivision1(StringUtils.upperRemoveDash(se.getSubdivision1()));
+                se.setSubdivision1(StringUtils.upperRemoveDashAndSlashes(se.getSubdivision1()));
             }
 
             if(se.getSubdivision2() != null)
             {
-                se.setSubdivision2(StringUtils.upperRemoveDash(se.getSubdivision2()));
+                se.setSubdivision2(StringUtils.upperRemoveDashAndSlashes(se.getSubdivision2()));
             }
 
             if(se.getSubdivision3() != null)
             {
-                se.setSubdivision3(StringUtils.upperRemoveDash(se.getSubdivision3()));
+                se.setSubdivision3(StringUtils.upperRemoveDashAndSlashes(se.getSubdivision3()));
             }
 
             if(se.getStationName() != null)
             {
-                se.setStationName(StringUtils.upperRemoveDash(se.getStationName()));
+                se.setStationName(StringUtils.upperRemoveDashAndSlashes(se.getStationName()));
             }
         }
     }

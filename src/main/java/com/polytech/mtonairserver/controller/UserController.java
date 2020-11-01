@@ -12,7 +12,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
@@ -40,8 +39,8 @@ public class UserController {
     @ApiOperation(value = "Get the users list", notes = "gets all the" +
             "available users stored in the M-Ton-Air database.")
     @RequestMapping(method= RequestMethod.GET)
-    public List<UserEntity> listOfUsers() {
-        return this.userService.findAll();
+    public ResponseEntity<List<UserEntity>> listOfUsers() {
+        return new ResponseEntity<List<UserEntity>>(this.userService.findAllUsersWithoutTheirFavoriteStations(), HttpStatus.OK);
     }
 
     /**
@@ -51,22 +50,22 @@ public class UserController {
      */
     @ApiOperation(value = "Gets a user with his id", notes = "Retrieves a user according to a given id")
     @RequestMapping(value = "/{id}", method= RequestMethod.GET)
-    public UserEntity getAUser(
+    public ResponseEntity<UserEntity> getAUser(
             @ApiParam(name = "id", value = "The user id", required = true)
             @PathVariable int id) {
-        return this.userService.findByIdUser(id);
+        return new ResponseEntity<UserEntity>(this.userService.findByIdUser(id), HttpStatus.OK);
     }
 
     @ApiOperation(value = "Gets the favorite stations for a given user", notes = "Returns 0, one or many stations" +
             " according to the user favorite stations.")
     @RequestMapping(value = "/{id}/favorite-stations", method = RequestMethod.GET)
-    public Set<StationEntity> getUserFavoriteStations(
+    public ResponseEntity<Set<StationEntity>> getUserFavoriteStations(
             @ApiParam(name = "id", value = "The user id", required = true)
             @PathVariable int id) throws UserFavoriteStationsFetchException
     {
         try
         {
-            return this.userService.listUserFavoriteStations(id);
+            return new ResponseEntity<Set<StationEntity>>(this.userService.listUserFavoriteStations(id), HttpStatus.OK);
         }
         catch(Exception e)
         {
@@ -90,7 +89,6 @@ public class UserController {
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ApiErrorResponse invalidVarLength(UserFavoriteStationsFetchException ex)
     {
-        // ignores unuseful elements
         ex.setStackTrace(new StackTraceElement[]{ex.getStackTrace()[0]});
         return new ApiErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, "Could not fetch the user favorite stations. Server side error occured.", ex);
     }

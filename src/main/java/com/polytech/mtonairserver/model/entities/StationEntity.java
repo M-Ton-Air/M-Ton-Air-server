@@ -21,8 +21,6 @@ public class StationEntity
 
     public StationEntity() {}
 
-
-
     public StationEntity(int idStation, String stationName, String url, String country, String subdivision1, String subdivision2, String subdivision3, String iso2)
     {
         this.idStation = idStation;

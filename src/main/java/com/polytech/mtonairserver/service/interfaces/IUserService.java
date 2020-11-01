@@ -11,7 +11,7 @@ import java.util.Set;
 
 public interface IUserService
 {
-    List<UserEntity> findAll();
+    List<UserEntity> findAllUsersWithoutTheirFavoriteStations();
 
     UserEntity findByIdUser(int id);
 

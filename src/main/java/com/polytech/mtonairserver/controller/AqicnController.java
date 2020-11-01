@@ -75,7 +75,6 @@ public class AqicnController {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ApiErrorResponse unknownStationResponse(UnknownStationException ex)
     {
-        // ignores unuseful elements
         ex.setStackTrace(new StackTraceElement[]{ex.getStackTrace()[0]});
         return new ApiErrorResponse(HttpStatus.BAD_REQUEST, "The station name does not exist.", ex);
     }
@@ -90,7 +89,6 @@ public class AqicnController {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ApiErrorResponse invalidTokenResponse(InvalidTokenException ex)
     {
-        // ignores unuseful elements
         ex.setStackTrace(new StackTraceElement[]{ex.getStackTrace()[0]});
         return new ApiErrorResponse(HttpStatus.BAD_REQUEST, "The API AQICN token is invalid.", ex);
     }

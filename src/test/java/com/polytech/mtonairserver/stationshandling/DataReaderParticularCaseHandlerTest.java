@@ -4,22 +4,31 @@ import com.polytech.mtonairserver.customexceptions.datareader.NoProperLocationFo
 import com.polytech.mtonairserver.customexceptions.datareader.UnsupportedFindOperationOnLocationException;
 import com.polytech.mtonairserver.model.entities.StationEntity;
 import org.junit.Assert;
-import org.junit.jupiter.api.Test;
+import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
+import org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit4.SpringRunner;
 
 import java.io.IOException;
 import java.util.List;
 
 @SpringBootTest
-class DataReaderParticularCaseHandlerTest
+@RunWith(SpringJUnit4ClassRunner.class)
+@AutoConfigureTestDatabase
+public class DataReaderParticularCaseHandlerTest
 {
 
     @Autowired
     private DataReader dr;
 
     @Test
-    void executeAllCleaningMethods() throws IOException, NoProperLocationFoundException, UnsupportedFindOperationOnLocationException
+    public void executeAllCleaningMethods() throws IOException, NoProperLocationFoundException, UnsupportedFindOperationOnLocationException
     {
         List<StationEntity> se = dr.retrieveAllStationNames();
 

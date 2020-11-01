@@ -1,4 +1,4 @@
-package com.polytech.mtonairserver.utils.io;
+package com.polytech.mtonairserver.stationshandling;
 
 public enum LocationType
 {

@@ -7,7 +7,7 @@ import com.polytech.mtonairserver.model.entities.StationEntity;
 import com.polytech.mtonairserver.repository.StationRepository;
 import com.polytech.mtonairserver.service.interfaces.IStationService;
 
-import com.polytech.mtonairserver.utils.io.DataReader;
+import com.polytech.mtonairserver.stationshandling.io.DataReader;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

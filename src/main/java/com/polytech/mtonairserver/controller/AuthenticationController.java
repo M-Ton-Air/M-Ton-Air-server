@@ -1,5 +1,6 @@
 package com.polytech.mtonairserver.controller;
 
+import com.nimbusds.oauth2.sdk.ErrorResponse;
 import com.polytech.mtonairserver.config.SwaggerConfig;
 import com.polytech.mtonairserver.customexceptions.LoggableException;
 import com.polytech.mtonairserver.customexceptions.accountcreation.*;
@@ -11,6 +12,8 @@ import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
+
+import static com.polytech.mtonairserver.customexceptions.ControllerExceptionBuilder.buildErrorResponseAndPrintStackTrace;
 
 @RestController
 @Api(tags = SwaggerConfig.AUTHENTICATION_NAME_TAG)
@@ -71,140 +74,78 @@ public class AuthenticationController
     }
 
 
-
-
-
     /* ############################################################## EXCEPTION HANDLERS ############################################################## */
 
 
-    /**
-     * Custom Exception Handler that will provide data to the API user when an AccountAlreadyExistsException is
-     * raised.
-     * @param ex the raised exception.
-     * @return an ApiErrorResponse describing the error.
-     * @see ApiErrorResponse
-     */
     @ExceptionHandler(AccountAlreadyExistsException.class)
     @ResponseBody
     @ResponseStatus(HttpStatus.CONFLICT)
-    private ResponseEntity createAccountEmailExistsResponse(AccountAlreadyExistsException ex)
+    private ResponseEntity<ApiErrorResponse> createAccountEmailExistsResponse(AccountAlreadyExistsException ex)
     {
-        // ignores unuseful elements
-        ex.setStackTrace(new StackTraceElement[]{ex.getStackTrace()[0]});
-        return new ResponseEntity<ApiErrorResponse>(
-                new ApiErrorResponse(HttpStatus.CONFLICT, "Email is already registered. (" + ex.getExistingMail() + ")", ex),
-                HttpStatus.CONFLICT);
+        return buildErrorResponseAndPrintStackTrace(HttpStatus.CONFLICT, "Email is already registered. (" + ex.getExistingMail() + ")", ex);
     }
 
-    /**
-     * Custom Exception Handler for invalid emails.
-     * @param ex an InvalidEmailException
-     * @return an api error response describing what went wrong to the api user.
-     */
     @ExceptionHandler(InvalidEmailException.class)
     @ResponseBody
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    private ApiErrorResponse createAccountUnvalidEmailResponse(InvalidEmailException ex)
+    private ResponseEntity<ApiErrorResponse> createAccountUnvalidEmailResponse(InvalidEmailException ex)
     {
-        ex.setStackTrace(new StackTraceElement[]{ex.getStackTrace()[0]});
-        return new ApiErrorResponse(HttpStatus.BAD_REQUEST, "The given e-mail was incorrect (" + ex.getInvalidMail() + ")", ex);
+        return buildErrorResponseAndPrintStackTrace(HttpStatus.BAD_REQUEST, "The given e-mail was incorrect (" + ex.getInvalidMail() + ")", ex);
     }
 
-    /**
-     * Custom Exception Handler for account creation errors while saving an user to the db.
-     * @param ex an AccountSaveException.
-     * @return an api error response describing what went wrong to the api user.
-     */
     @ExceptionHandler(AccountSaveException.class)
     @ResponseBody
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    private ApiErrorResponse createAccountUnvalidEmailResponse(AccountSaveException ex)
+    private ResponseEntity<ApiErrorResponse> createAccountUnvalidEmailResponse(AccountSaveException ex)
     {
-        ex.setStackTrace(new StackTraceElement[]{ex.getStackTrace()[0]});
-        return new ApiErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, "Something went wrong on server side while saving the given user to our database.", ex);
+        return buildErrorResponseAndPrintStackTrace(HttpStatus.INTERNAL_SERVER_ERROR, "Something went wrong on server side while saving the given user to our database.", ex);
     }
 
-    /**
-     * Custom Exception Handler for missing names.
-     * @param ex an NamesMissingException.
-     * @return an ApiErrorResponse describing the error.
-     */
     @ExceptionHandler(NamesMissingException.class)
     @ResponseBody
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    private ApiErrorResponse missingNamesResponse(NamesMissingException ex)
+    private ResponseEntity<ApiErrorResponse> missingNamesResponse(NamesMissingException ex)
     {
-        ex.setStackTrace(new StackTraceElement[]{ex.getStackTrace()[0]});
-        return new ApiErrorResponse(HttpStatus.BAD_REQUEST, "Names are missing.", ex);
+        return buildErrorResponseAndPrintStackTrace(HttpStatus.BAD_REQUEST, "Names are missing.", ex);
     }
 
-    /**
-     * Custom Exception Handler for invalid variables length.
-     * @param ex an InvalidVariablesLengthException.
-     * @return an ApiErrorResponse describing the error.
-     */
     @ExceptionHandler(InvalidVariablesLengthException.class)
     @ResponseBody
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    private ApiErrorResponse invalidVarLength(InvalidVariablesLengthException ex)
+    private ResponseEntity<ApiErrorResponse> invalidVarLength(InvalidVariablesLengthException ex)
     {
-        ex.setStackTrace(new StackTraceElement[]{ex.getStackTrace()[0]});
-        return new ApiErrorResponse(HttpStatus.BAD_REQUEST, "Invalid variables length", ex);
+        return buildErrorResponseAndPrintStackTrace(HttpStatus.BAD_REQUEST, "Invalid variables length", ex);
     }
 
-    /**
-     * Custom Exception Handler for token generation.
-     * @param ex an TokenGenerationException.
-     * @return an ApiErrorResponse describing the error.
-     */
     @ExceptionHandler(TokenGenerationException.class)
     @ResponseBody
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    private ApiErrorResponse tokenError(TokenGenerationException ex)
+    private ResponseEntity<ApiErrorResponse> tokenError(TokenGenerationException ex)
     {
-        ex.setStackTrace(new StackTraceElement[]{ex.getStackTrace()[0]});
-        return new ApiErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, "A unique token could not be found.", ex);
+        return buildErrorResponseAndPrintStackTrace(HttpStatus.INTERNAL_SERVER_ERROR, "A unique token could not be found.", ex);
     }
 
-    /**
-     * Custom Exception Handler for non existing emails.
-     * @param ex an UnknownEmailException.
-     * @return an ApiErrorResponse describing the error.
-     */
     @ExceptionHandler(UnknownEmailException.class)
     @ResponseBody
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    private ApiErrorResponse unknownEmailResponse(UnknownEmailException ex)
+    private ResponseEntity<ApiErrorResponse> unknownEmailResponse(UnknownEmailException ex)
     {
-        ex.setStackTrace(new StackTraceElement[]{ex.getStackTrace()[0]});
-        return new ApiErrorResponse(HttpStatus.BAD_REQUEST, "The entered email does not exist in our database.", ex);
+        return buildErrorResponseAndPrintStackTrace(HttpStatus.BAD_REQUEST, "The entered email does not exist in our database.", ex);
     }
 
-    /**
-     * Custom Exception Handler for wrong passwords.
-     * @param ex an WrongPasswordException.
-     * @return an ApiErrorResponse describing the error.
-     */
     @ExceptionHandler(WrongPasswordException.class)
     @ResponseBody
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    private ApiErrorResponse wrongPasswordResponse(WrongPasswordException ex)
+    private ResponseEntity<ApiErrorResponse> wrongPasswordResponse(WrongPasswordException ex)
     {
-        ex.setStackTrace(new StackTraceElement[]{ex.getStackTrace()[0]});
-        return new ApiErrorResponse(HttpStatus.BAD_REQUEST, "The entered password is wrong.", ex);
+        return buildErrorResponseAndPrintStackTrace(HttpStatus.BAD_REQUEST, "The entered password is wrong.", ex);
     }
 
-    /**
-     * Custom Exception Handler for wrong passwords.
-     * @param ex an WrongPasswordException.
-     * @return an ApiErrorResponse describing the error.
-     */
     @ExceptionHandler(Exception.class)
     @ResponseBody
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    private ApiErrorResponse globalException(Exception ex)
+    private ResponseEntity<ApiErrorResponse> globalException(Exception ex)
     {
-        ex.setStackTrace(new StackTraceElement[]{ex.getStackTrace()[0]});
-        return new ApiErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, "An unknown exception occured.", ex);
+        return buildErrorResponseAndPrintStackTrace(HttpStatus.INTERNAL_SERVER_ERROR, "An unknown exception occured.", ex);
     }
 }

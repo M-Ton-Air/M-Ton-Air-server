@@ -21,17 +21,20 @@ public class SwaggerConfig
     private static final String USERS_DESCRIPTION_TAG = "Users management API";
 
     public static final String AUTHENTICATION_NAME_TAG = "Authentication";
-    private static final String AUTHENTICATION_DESCRIPTION_TAG = "Authentication API, to allow users authentication";
+    private static final String AUTHENTICATION_DESCRIPTION_TAG = "Authentication API, for users to sign-in and/or sign-up";
 
 
     public static final String AQICN_NAME_TAG = "AQICN requests";
     private static final String AQICN_DESCRIPTION_TAG = "AQICN requests management API";
 
     public static final String DEFAULT_TAG = "Default fallback";
-    private static final String DEFAULT_DESCRIPTION_TAG = "Handle all unsupported requests";
+    private static final String DEFAULT_DESCRIPTION_TAG = "Handles all unsupported requests";
 
     public static final String DAILY_AQICN_DATA_NAME_TAG = "Daily AQICN data";
     private static final String DAILY_AQICN_DATA_DESCRIPTION_TAG = "Daily AQICN data management API";
+
+    public static final String STATIONS_NAME_TAG = "Stations";
+    private static final String STATIONS_DESCRIPTION_TAG = "Stations creation and retrieval";
 
     @Bean
     /**
@@ -52,7 +55,8 @@ public class SwaggerConfig
                         new Tag(AUTHENTICATION_NAME_TAG, AUTHENTICATION_DESCRIPTION_TAG),
                         new Tag(DEFAULT_TAG, DEFAULT_DESCRIPTION_TAG),
                         new Tag(AQICN_NAME_TAG, AQICN_DESCRIPTION_TAG),
-                        new Tag(DAILY_AQICN_DATA_NAME_TAG, DAILY_AQICN_DATA_DESCRIPTION_TAG));
+                        new Tag(DAILY_AQICN_DATA_NAME_TAG, DAILY_AQICN_DATA_DESCRIPTION_TAG),
+                        new Tag(STATIONS_NAME_TAG, STATIONS_DESCRIPTION_TAG));
 
     }
 

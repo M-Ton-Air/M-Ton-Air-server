@@ -17,6 +17,8 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 
+import static com.polytech.mtonairserver.customexceptions.ControllerExceptionBuilder.buildErrorResponseAndPrintStackTrace;
+
 /**
  * AQICN Controller
  */
@@ -53,31 +55,19 @@ public class AqicnController {
 
     /* ############################################################## EXCEPTION HANDLERS ############################################################## */
 
-    /**
-     * Custom Exception Handler for invalid emails.
-     * @param ex an InvalidEmailException
-     * @return an api error response describing what went wrong to the api user.
-     */
     @ExceptionHandler(UnknownStationException.class)
     @ResponseBody
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ApiErrorResponse unknownStationResponse(UnknownStationException ex)
+    public ResponseEntity<ApiErrorResponse>  unknownStationResponse(UnknownStationException ex)
     {
-        ex.setStackTrace(new StackTraceElement[]{ex.getStackTrace()[0]});
-        return new ApiErrorResponse(HttpStatus.BAD_REQUEST, "The station name does not exist.", ex);
+        return buildErrorResponseAndPrintStackTrace(HttpStatus.BAD_REQUEST, "The station name does not exist.", ex);
     }
 
-    /**
-     * Custom Exception Handler for invalid tokens.
-     * @param ex an InvalidTokenException.
-     * @return an api error response describing what went wrong to the api user.
-     */
     @ExceptionHandler(InvalidTokenException.class)
     @ResponseBody
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ApiErrorResponse invalidTokenResponse(InvalidTokenException ex)
+    public ResponseEntity<ApiErrorResponse> invalidTokenResponse(InvalidTokenException ex)
     {
-        ex.setStackTrace(new StackTraceElement[]{ex.getStackTrace()[0]});
-        return new ApiErrorResponse(HttpStatus.BAD_REQUEST, "The API AQICN token is invalid.", ex);
+        return buildErrorResponseAndPrintStackTrace(HttpStatus.BAD_REQUEST, "The API AQICN token is invalid.", ex);
     }
 }

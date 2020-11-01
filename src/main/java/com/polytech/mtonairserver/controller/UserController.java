@@ -89,9 +89,8 @@ public class UserController {
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ApiErrorResponse invalidVarLength(UserFavoriteStationsFetchException ex)
     {
+        ex.printStackTrace();
         ex.setStackTrace(new StackTraceElement[]{ex.getStackTrace()[0]});
         return new ApiErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, "Could not fetch the user favorite stations. Server side error occured.", ex);
     }
-
-
 }

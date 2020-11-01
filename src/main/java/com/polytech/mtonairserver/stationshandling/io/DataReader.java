@@ -1,4 +1,4 @@
-package com.polytech.mtonairserver.utils.io;
+package com.polytech.mtonairserver.stationshandling.io;
 
 import com.opencsv.CSVReader;
 import com.polytech.mtonairserver.customexceptions.datareader.NoProperLocationFoundException;
@@ -6,6 +6,8 @@ import com.polytech.mtonairserver.customexceptions.datareader.UnsupportedFindOpe
 import com.polytech.mtonairserver.model.entities.StationEntity;
 import com.polytech.mtonairserver.model.external.CountryCityRegion;
 import com.polytech.mtonairserver.service.implementation.StationService;
+import com.polytech.mtonairserver.stationshandling.LocationType;
+import com.polytech.mtonairserver.stationshandling.DataReaderParticularCaseHandler;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -61,6 +63,57 @@ public class DataReader
     }
 
     /**
+     * Reads all the cities in the world and their associate countries, from csv data.
+     * https://simplemaps.com/data/world-cities
+     * @return a list of CountryCityRegion.
+     * @see CountryCityRegion
+     * @throws IOException file reading exception.
+     */
+    public List<CountryCityRegion> retrieveCountriesCities() throws IOException {
+        List<CountryCityRegion> countryCities = new ArrayList<CountryCityRegion>();
+        countryCities.addAll(this.retrieveWordlwideCountriesCities());
+        countryCities.addAll(this.retrieveJapaneseCities());
+        return countryCities;
+    }
+
+    private List<CountryCityRegion> retrieveJapaneseCities() throws IOException
+    {
+        List<CountryCityRegion> countryCities = new ArrayList<CountryCityRegion>();
+
+        String[] japaneseCityRegionRecord;
+        CSVReader japanReader = new CSVReader(new FileReader(this.csvJapan.getFile()), ',', '"', 1);
+        while ( (japaneseCityRegionRecord = japanReader.readNext()) != null)
+        {
+            String line = japaneseCityRegionRecord[0];
+            String[] japaneseCityAndRegion = line.split(",");
+            // see the cities_in_japan_2019 csv to understand this behavior.
+            if(japaneseCityAndRegion.length > 1)
+            {
+                CountryCityRegion ccr = new CountryCityRegion("Japan", japaneseCityAndRegion[0], "JP", "JAP", japaneseCityAndRegion[1]);
+                countryCities.add(ccr);
+            }
+            // ignore the other cities (if we don't have the region).
+        }
+        return countryCities;
+    }
+
+    private List<CountryCityRegion> retrieveWordlwideCountriesCities() throws IOException
+    {
+        List<CountryCityRegion> countryCities = new ArrayList<CountryCityRegion>();
+        CSVReader reader = new CSVReader(new FileReader(this.csvCountriesCities.getFile()), ',', '"', 1);
+        String[] line;
+        while( (line = reader.readNext()) != null)
+        {
+            String[] lineValues= line[0].replace("\"", "").split(",");
+            // [4] = country, [1] = city, [6] = ISO3 country code (3chars code), [7] region / administration_name
+            CountryCityRegion countryCityRegion = new CountryCityRegion(lineValues[4], lineValues[1], lineValues[5], lineValues[6]  ,lineValues[7]);
+            countryCities.add(countryCityRegion);
+        }
+        return countryCities;
+    }
+
+
+    /**
      * Retrieves all the station names by making joins with the aqicn url links (a href)
      * and the csv file (csvCountriesCities).
      * @throws IOException in case of file reading exception.
@@ -76,12 +129,21 @@ public class DataReader
         htmlLinks.removeAll(htmlLinks.stream().filter(element -> element.toString().contains(this.UNKNOWN_ENDPOINT)).collect(Collectors.toList()));
         // removes some unused links / wrong links.
         htmlLinks.removeAll(DataReaderParticularCaseHandler.removeParticularCases(htmlLinks));
-        for(Element e : htmlLinks)
+
+        initializeCountriesCities(initializedStations, htmlLinks);
+
+        DataReaderParticularCaseHandler cleaner = new DataReaderParticularCaseHandler(initializedStations);
+        cleaner.executeAllCleaningMethods();
+        return initializedStations;
+    }
+
+    private void initializeCountriesCities(List<StationEntity> initializedStations, Elements htmlLinks) throws UnsupportedFindOperationOnLocationException, NoProperLocationFoundException
+    {
+        for(Element htmlElement : htmlLinks)
         {
-            // FIRST STEP : INITIALIZE THE COUNTRY //
 
             // only retrieves the href links.
-            String url = e.attr("href");
+            String url = htmlElement.attr("href");
 
             // gets the endpoint (url) without the https://aqicn.org/city stuff.
             String endpoint = url.toString().replace(StationService.getHostLinkRealTimeAQI(), "");
@@ -164,47 +226,45 @@ public class DataReader
                     }
                 }
             }
-
             // SECOND STEP : INITIALIZE THE SUBDIVISIONS / STATION NAME
-            for(int i = 1; i < locations.length; i++)
+            this.initializeSubdivisionsAndStationsNames(locations, station);
+        }
+    }
+
+
+    private void initializeSubdivisionsAndStationsNames(String[] locations, StationEntity station)
+    {
+        for(int i = 1; i < locations.length; i++)
+        {
+            // if we're in presence of the last element,
+            if(i == locations.length - 1)
             {
-                // if we're in presence of the last element,
-                if(i == locations.length - 1)
+                // then we initialize the station name
+                if(station.getStationName() == null)
                 {
-                    // then we initialize the station name
-                    if(station.getStationName() == null)
-                    {
-                        station.setStationName(locations[i]);
-                    }
+                    station.setStationName(locations[i]);
                 }
-                else
+            }
+            else
+            {
+                //otherwise we initialize the subdivisions.
+                switch(i)
                 {
-                    //otherwise we initialize the subdivisions.
-                    switch(i)
-                    {
-                        case 1:
-                            //initialize subdivision1
-                            if(station.getSubdivision1() == null)
-                            {
-                                station.setSubdivision1(locations[i]);
-                            }
-                            break;
-                        case 2:
-                            //initialize subdivision2
-                            station.setSubdivision2(locations[i]);
-                            break;
-                        case 3:
-                            //initialize subdivision3
-                            station.setSubdivision3(locations[i]);
-                            break;
-                    }
+                    case 1:
+                        if(station.getSubdivision1() == null)
+                        {
+                            station.setSubdivision1(locations[i]);
+                        }
+                        break;
+                    case 2:
+                        station.setSubdivision2(locations[i]);
+                        break;
+                    case 3:
+                        station.setSubdivision3(locations[i]);
+                        break;
                 }
             }
         }
-        // FINAL STEP : cleaning up the cities / regions / countries names. //
-        DataReaderParticularCaseHandler drpch = new DataReaderParticularCaseHandler(initializedStations);
-        drpch.executeAllCleaningMethods();
-        return initializedStations;
     }
 
 
@@ -220,7 +280,7 @@ public class DataReader
      * @return an Optional containing the found value or nothing.
      * @throws UnsupportedFindOperationOnLocationException if the location type is o not handled for any reason.
      */
-    public Optional<CountryCityRegion> findByCountryRegionCity(String countryRegionCityName, LocationType locationType) throws UnsupportedFindOperationOnLocationException
+    private Optional<CountryCityRegion> findByCountryRegionCity(String countryRegionCityName, LocationType locationType) throws UnsupportedFindOperationOnLocationException
     {
         for(CountryCityRegion ccr : this.countriesCitiesRegions)
         {
@@ -229,10 +289,8 @@ public class DataReader
                 case COUNTRY:
                     // sometimes, the country is set as an ISO code in the aqicn urls (USA for United States). So we'll check both
                     // the country and the iso3 fields.
-                    if (ccr.getCountry().toLowerCase().equals(countryRegionCityName.toLowerCase())
-                    ||  ccr.getIso3().toLowerCase().   equals(countryRegionCityName.toLowerCase()))
+                    if (this.isSameCountry(ccr, countryRegionCityName))
                     {
-
                         return Optional.of(ccr);
                     }
                     break;
@@ -258,39 +316,9 @@ public class DataReader
         return Optional.empty();
     }
 
-    /**
-     * Reads all the cities in the world and their associate countries, from csv data.
-     * https://simplemaps.com/data/world-cities
-     * @return a list of CountryCityRegion.
-     * @see CountryCityRegion
-     * @throws IOException file reading exception.
-     */
-    public List<CountryCityRegion> retrieveCountriesCities() throws IOException {
-        List<CountryCityRegion> countryCities = new ArrayList<CountryCityRegion>();
-        CSVReader reader = new CSVReader(new FileReader(this.csvCountriesCities.getFile()), ',', '"', 1);
-        String[] line;
-        while( (line = reader.readNext()) != null)
-        {
-            String[] lineValues= line[0].replace("\"", "").split(",");
-            // [4] = country, [1] = city, [6] = ISO3 country code (3chars code), [7] region / administration_name
-            CountryCityRegion countryCityRegion = new CountryCityRegion(lineValues[4], lineValues[1], lineValues[5], lineValues[6]  ,lineValues[7]);
-            countryCities.add(countryCityRegion);
-        }
-
-        String[] jpLine;
-        CSVReader japanReader = new CSVReader(new FileReader(this.csvJapan.getFile()), ',', '"', 1);
-        while ( (jpLine = japanReader.readNext()) != null)
-        {
-            String jplineValues = jpLine[0];
-            String[] cityRegion = jplineValues.split(",");
-            // see the cities_in_japan_2019 csv to understand this behavior.
-            if(cityRegion.length > 1)
-            {
-                CountryCityRegion ccr = new CountryCityRegion("Japan", cityRegion[0], "JP", "JAP", cityRegion[1]);
-                countryCities.add(ccr);
-            }
-            // ignore the other cities (if we don't have the region).
-        }
-        return countryCities;
+    private boolean isSameCountry(CountryCityRegion current, String expectedCountryRegionCityName)
+    {
+        return current.getCountry().toLowerCase().equals(expectedCountryRegionCityName.toLowerCase())
+                || current.getIso3().toLowerCase().   equals(expectedCountryRegionCityName.toLowerCase());
     }
 }

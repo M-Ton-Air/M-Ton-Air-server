@@ -72,7 +72,7 @@ public class AuthenticationController
         catch(Exception e)
         {
             e.printStackTrace();
-            return new ApiErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, "Cold not createAccount the specified UserEntity : \n " + namesLoginPassword.getEmail(), e);
+            return new ApiErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, "Could not createAccount the specified UserEntity : \n " + namesLoginPassword.getEmail(), e);
         }
 
         return new ApiSuccessResponse(HttpStatus.OK,

@@ -14,7 +14,6 @@ public class ForecastEntityPK implements Serializable {
     private int idMeasure;
     private Date idDateForecast;
 
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_forecast", nullable = false)
     @Id
     public int getIdForecast() {

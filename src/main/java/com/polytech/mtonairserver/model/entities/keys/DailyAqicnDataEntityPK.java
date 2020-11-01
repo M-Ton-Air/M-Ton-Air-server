@@ -13,7 +13,6 @@ public class DailyAqicnDataEntityPK implements Serializable {
     private int idStation;
     private Timestamp datetimeData;
 
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_daily_aqicn_data", nullable = false)
     @Id
     public int getIdDailyAqicnData() {

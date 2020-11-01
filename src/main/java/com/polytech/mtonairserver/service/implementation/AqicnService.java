@@ -39,7 +39,9 @@ public class AqicnService
         String stationName = request.getRequestURI().replace(partOfUrlToRemove, "");
 
         RestTemplate restTemplate = new RestTemplate();
-        ResponseEntity<String> stringResponseEntity = restTemplate.getForEntity(hostLinkJsonAPI + path + stationName + token, String.class);
+        //ResponseEntity<String> stringResponseEntity = restTemplate.getForEntity(hostLinkJsonAPI + path + stationName + token, String.class);
+        ResponseEntity<String> stringResponseEntity = restTemplate.getForEntity(hostLinkJsonAPI + path + stationBase + token, String.class);
+
 
         // if the station is unknown ...
         if (stringResponseEntity.getBody().contains("Unknown station")) {

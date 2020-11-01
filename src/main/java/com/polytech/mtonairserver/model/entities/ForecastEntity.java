@@ -113,7 +113,8 @@ public class ForecastEntity  {
     }
 
     @ManyToOne
-    @JoinColumn(name = "id_station", referencedColumnName = "id_station", nullable = false)
+    //@JoinColumn(name = "id_station", referencedColumnName = "id_station", nullable = false)
+    @JoinColumn(name = "id_station", updatable = false, insertable = false)
     public StationEntity getStationByIdStation() {
         return stationByIdStation;
     }
@@ -123,7 +124,8 @@ public class ForecastEntity  {
     }
 
     @ManyToOne
-    @JoinColumn(name = "id_measure", referencedColumnName = "id_measure", nullable = false)
+    //@JoinColumn(name = "id_measure", referencedColumnName = "id_measure", nullable = false)
+    @JoinColumn(name = "id_measure", updatable = false, insertable = false)
     public MeasureEntity getMeasureByIdMeasure() {
         return measureByIdMeasure;
     }

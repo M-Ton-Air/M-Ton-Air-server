@@ -60,10 +60,8 @@ public class AuthenticationController
     public ResponseEntity createAccount(@RequestBody UserEntity namesLoginPassword) throws LoggableException
     {
         this.userService.createAccount(namesLoginPassword);
-        return new ResponseEntity<ApiSuccessResponse>
-        (
-            new ApiSuccessResponse(
-                HttpStatus.OK,
+
+        return new ApiSuccessResponse(HttpStatus.OK,
                 "Account was successfully created. Welcome "
                         + namesLoginPassword.getName()
                         + " ("

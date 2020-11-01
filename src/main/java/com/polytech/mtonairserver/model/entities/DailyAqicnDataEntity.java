@@ -20,6 +20,9 @@ public class DailyAqicnDataEntity  {
     private double humidity;
     private double wind;
     private StationEntity stationByIdStation;
+    private double pm10;
+    private double no2;
+    private double temperature;
 
     @Id
     @Column(name = "id_daily_aqicn_data", nullable = false)
@@ -133,13 +136,45 @@ public class DailyAqicnDataEntity  {
         return Objects.hash(idDailyAqicnData, idStation, datetimeData, airQuality, pm25, o3, pressure, humidity, wind);
     }
 
+    //@ManyToOne(targetEntity = StationEntity.class)
+    //@JoinTable(name = "station")
     @ManyToOne
-    @JoinColumn(name = "id_station", referencedColumnName = "id_station", nullable = false)
+    @JoinColumn(name = "id_station", updatable = false, insertable = false)
     public StationEntity getStationByIdStation() {
         return stationByIdStation;
     }
 
     public void setStationByIdStation(StationEntity stationByIdStation) {
         this.stationByIdStation = stationByIdStation;
+    }
+
+    @Basic
+    @Column(name = "pm10", nullable = false, precision = 0)
+    public double getPm10() {
+        return pm10;
+    }
+
+    public void setPm10(double pm10) {
+        this.pm10 = pm10;
+    }
+
+    @Basic
+    @Column(name = "no2", nullable = false, precision = 0)
+    public double getNo2() {
+        return no2;
+    }
+
+    public void setNo2(double no2) {
+        this.no2 = no2;
+    }
+
+    @Basic
+    @Column(name = "temperature", nullable = false, precision = 0)
+    public double getTemperature() {
+        return temperature;
+    }
+
+    public void setTemperature(double temperature) {
+        this.temperature = temperature;
     }
 }

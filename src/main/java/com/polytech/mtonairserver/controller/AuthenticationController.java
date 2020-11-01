@@ -44,7 +44,7 @@ public class AuthenticationController
     /**
      * Method that creates an user account.
      * @param namesLoginPassword the user login and password.
-     * @return 200 OK and a custom message if the account creation was okay. 409 if account with the given email already login.
+     * @return 200 OK and a custom message if the account creation was okay. 409 if account with the given email already exists.
      * UserEntity should have the following fields correctly set :
      * - Name
      * - First Name
@@ -92,7 +92,7 @@ public class AuthenticationController
         // ignores unuseful elements
         ex.setStackTrace(new StackTraceElement[]{ex.getStackTrace()[0]});
         return new ResponseEntity<ApiErrorResponse>(
-                new ApiErrorResponse(HttpStatus.CONFLICT, "The given e-mail already login (" + ex.getExistingMail() + ")", ex),
+                new ApiErrorResponse(HttpStatus.CONFLICT, "Email is already registered. (" + ex.getExistingMail() + ")", ex),
                 HttpStatus.CONFLICT);
     }
 

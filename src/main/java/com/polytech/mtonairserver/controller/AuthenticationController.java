@@ -57,17 +57,19 @@ public class AuthenticationController
     @ApiOperation(value = "Create an account", notes = "Allows an user to create an account with a POST request to the API. It creates an user and stores it.")
     @RequestMapping(value = "/sign-up", method = RequestMethod.POST)
     @ResponseBody
-    public ResponseEntity createAccount(@RequestBody UserEntity namesLoginPassword) throws LoggableException
+    public ResponseEntity<ApiSuccessResponse> createAccount(@RequestBody UserEntity namesLoginPassword) throws LoggableException
     {
         this.userService.createAccount(namesLoginPassword);
 
-        return new ApiSuccessResponse(HttpStatus.OK,
-                "Account was successfully created. Welcome "
-                        + namesLoginPassword.getName()
-                        + " ("
-                        + namesLoginPassword.getEmail()
-                        + ")"),
-            HttpStatus.OK
+        return new ResponseEntity<ApiSuccessResponse>(
+                new ApiSuccessResponse(
+                        HttpStatus.OK,
+                        "Account was successfully created. Welcome "
+                                + namesLoginPassword.getName()
+                                + " ("
+                                + namesLoginPassword.getEmail()
+                                + ")"),
+                HttpStatus.OK
         );
     }
 

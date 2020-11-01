@@ -4,6 +4,7 @@ package com.polytech.mtonairserver.model.entities;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
 import javax.persistence.*;
+import java.util.Collection;
 import java.util.Objects;
 
 @Entity
@@ -18,6 +19,8 @@ public class StationEntity
     private String subdivision2;
     private String subdivision3;
     private String iso2;
+    private Collection<DailyAqicnDataEntity> dailyAqicnDataByIdStation;
+    private Collection<ForecastEntity> forecastsByIdStation;
 
     public StationEntity() {}
 
@@ -165,5 +168,23 @@ public class StationEntity
                 ", subdivision3='" + subdivision3 + '\'' +
                 ", iso2='" + iso2 + '\'' +
                 '}';
+    }
+
+    @OneToMany(mappedBy = "stationByIdStation")
+    public Collection<DailyAqicnDataEntity> getDailyAqicnDataByIdStation() {
+        return dailyAqicnDataByIdStation;
+    }
+
+    public void setDailyAqicnDataByIdStation(Collection<DailyAqicnDataEntity> dailyAqicnDataByIdStation) {
+        this.dailyAqicnDataByIdStation = dailyAqicnDataByIdStation;
+    }
+
+    @OneToMany(mappedBy = "stationByIdStation")
+    public Collection<ForecastEntity> getForecastsByIdStation() {
+        return forecastsByIdStation;
+    }
+
+    public void setForecastsByIdStation(Collection<ForecastEntity> forecastsByIdStation) {
+        this.forecastsByIdStation = forecastsByIdStation;
     }
 }

@@ -9,6 +9,7 @@ import io.swagger.annotations.ApiResponse;
 import java.io.IOException;
 import java.text.ParseException;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 public interface IDailyAqicnDataService {
 
@@ -16,7 +17,7 @@ public interface IDailyAqicnDataService {
 
     List<ForecastEntity> listOfAqicnForecastData();
 
-    void fillOutDailyAqicnData() throws UnknownStationException, InvalidTokenException, ParseException, IOException;
+    void fillOutDailyAqicnData() throws UnknownStationException, InvalidTokenException, ParseException, IOException, ExecutionException, InterruptedException;
 
     List<DailyAqicnDataEntity> getAqicnDatasByIdStation(int idStation);
 

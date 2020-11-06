@@ -163,7 +163,7 @@ public class DataReader
             // we'll get that potential country and check if it is really one thanks to the countries_cities.csv file.
             Optional<CountryCityRegion> realCountryObject = this.findByCountryRegionCity(potentialCountry, LocationType.COUNTRY);
 
-            station.setUrl(url);
+            station.setUrl(endpoint);
             initializedStations.add(station);
             // if we got a country at the first place of the endpoint, we initialize it
             if(realCountryObject.isPresent())

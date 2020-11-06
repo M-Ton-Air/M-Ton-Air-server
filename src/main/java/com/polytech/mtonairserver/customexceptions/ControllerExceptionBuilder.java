@@ -4,7 +4,7 @@ import com.polytech.mtonairserver.model.responses.ApiErrorResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-public class ControllerExceptionBuilder
+public final class ControllerExceptionBuilder
 {
     public static ResponseEntity<ApiErrorResponse> buildErrorResponseAndPrintStackTrace(HttpStatus status, String message, Exception ex)
     {

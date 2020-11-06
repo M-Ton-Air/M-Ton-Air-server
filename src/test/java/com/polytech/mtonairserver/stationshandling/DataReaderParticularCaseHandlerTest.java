@@ -23,29 +23,29 @@ public class DataReaderParticularCaseHandlerTest extends DataReaderTest
     @Test
     public void executeAllCleaningMethods() throws IOException, NoProperLocationFoundException, UnsupportedFindOperationOnLocationException
     {
-        Assert.assertTrue(this.stationEntities.stream().anyMatch(c -> c.getCountry().toLowerCase().equals(("Georgia").toLowerCase())));
-        Assert.assertTrue(this.stationEntities.stream().anyMatch(c -> c.getCountry().toLowerCase().equals(("Afghanistan").toLowerCase())));
-        Assert.assertTrue(this.stationEntities.stream().anyMatch(c -> c.getCountry().toLowerCase().equals(("El Salvador").toLowerCase())));
-        Assert.assertTrue(this.stationEntities.stream().anyMatch(c -> c.getCountry().toLowerCase().equals(("United Arab Emirates").toLowerCase())));
-        Assert.assertTrue(this.stationEntities.stream().anyMatch(c -> c.getCountry().toLowerCase().equals(("Hong Kong").toLowerCase())));
-        Assert.assertTrue(this.stationEntities.stream().anyMatch(c -> c.getCountry().toLowerCase().equals(("Côte D'Ivoire").toLowerCase())));
-        Assert.assertTrue(this.stationEntities.stream().anyMatch(c -> c.getCountry().toLowerCase().equals(("South Korea").toLowerCase())));
-        Assert.assertTrue(this.stationEntities.stream().anyMatch(c -> c.getCountry().toLowerCase().equals(("Macao").toLowerCase())));
-        Assert.assertTrue(this.stationEntities.stream().anyMatch(c -> c.getCountry().toLowerCase().equals(("Myanmar").toLowerCase())));
-        Assert.assertTrue(this.stationEntities.stream().anyMatch(c -> c.getCountry().toLowerCase().equals(("Netherlands").toLowerCase())));
-        Assert.assertTrue(this.stationEntities.stream().anyMatch(c -> c.getCountry().toLowerCase().equals(("Czech Republic").toLowerCase())));
-        Assert.assertTrue(this.stationEntities.stream().anyMatch(c -> c.getCountry().toLowerCase().equals(("Bosnia And Herzegovina").toLowerCase())));
+        Assert.assertTrue(DataReaderTest.stationEntities.stream().anyMatch(c -> c.getCountry().toLowerCase().equals(("Georgia").toLowerCase())));
+        Assert.assertTrue(DataReaderTest.stationEntities.stream().anyMatch(c -> c.getCountry().toLowerCase().equals(("Afghanistan").toLowerCase())));
+        Assert.assertTrue(DataReaderTest.stationEntities.stream().anyMatch(c -> c.getCountry().toLowerCase().equals(("El Salvador").toLowerCase())));
+        Assert.assertTrue(DataReaderTest.stationEntities.stream().anyMatch(c -> c.getCountry().toLowerCase().equals(("United Arab Emirates").toLowerCase())));
+        Assert.assertTrue(DataReaderTest.stationEntities.stream().anyMatch(c -> c.getCountry().toLowerCase().equals(("Hong Kong").toLowerCase())));
+        Assert.assertTrue(DataReaderTest.stationEntities.stream().anyMatch(c -> c.getCountry().toLowerCase().equals(("Côte D'Ivoire").toLowerCase())));
+        Assert.assertTrue(DataReaderTest.stationEntities.stream().anyMatch(c -> c.getCountry().toLowerCase().equals(("South Korea").toLowerCase())));
+        Assert.assertTrue(DataReaderTest.stationEntities.stream().anyMatch(c -> c.getCountry().toLowerCase().equals(("Macao").toLowerCase())));
+        Assert.assertTrue(DataReaderTest.stationEntities.stream().anyMatch(c -> c.getCountry().toLowerCase().equals(("Myanmar").toLowerCase())));
+        Assert.assertTrue(DataReaderTest.stationEntities.stream().anyMatch(c -> c.getCountry().toLowerCase().equals(("Netherlands").toLowerCase())));
+        Assert.assertTrue(DataReaderTest.stationEntities.stream().anyMatch(c -> c.getCountry().toLowerCase().equals(("Czech Republic").toLowerCase())));
+        Assert.assertTrue(DataReaderTest.stationEntities.stream().anyMatch(c -> c.getCountry().toLowerCase().equals(("Bosnia And Herzegovina").toLowerCase())));
 
 
-        Assert.assertTrue(this.stationEntities.stream().anyMatch(c -> c.getSubdivision1() != null && c.getSubdivision1().toLowerCase().equals(("Henan").toLowerCase())));
-        Assert.assertTrue(this.stationEntities.stream().anyMatch(c -> c.getSubdivision1() != null && c.getSubdivision1().toLowerCase().equals(("Massachusetts").toLowerCase())));
+        Assert.assertTrue(DataReaderTest.stationEntities.stream().anyMatch(c -> c.getSubdivision1() != null && c.getSubdivision1().toLowerCase().equals(("Henan").toLowerCase())));
+        Assert.assertTrue(DataReaderTest.stationEntities.stream().anyMatch(c -> c.getSubdivision1() != null && c.getSubdivision1().toLowerCase().equals(("Massachusetts").toLowerCase())));
 
-        Assert.assertTrue(this.stationEntities.stream().anyMatch(c -> c.getStationName() != null && c.getStationName().toLowerCase().equals(("Tel Aviv Yafo").toLowerCase())));
-        Assert.assertTrue(this.stationEntities.stream().anyMatch(c -> c.getStationName() != null && c.getStationName().toLowerCase().equals(("Sankt Gallen").toLowerCase())));
-        Assert.assertTrue(this.stationEntities.stream().anyMatch(c -> c.getStationName() != null && c.getStationName().toLowerCase().equals(("Los Angeles").toLowerCase())));
+        Assert.assertTrue(DataReaderTest.stationEntities.stream().anyMatch(c -> c.getStationName() != null && c.getStationName().toLowerCase().equals(("Tel Aviv Yafo").toLowerCase())));
+        Assert.assertTrue(DataReaderTest.stationEntities.stream().anyMatch(c -> c.getStationName() != null && c.getStationName().toLowerCase().equals(("Sankt Gallen").toLowerCase())));
+        Assert.assertTrue(DataReaderTest.stationEntities.stream().anyMatch(c -> c.getStationName() != null && c.getStationName().toLowerCase().equals(("Los Angeles").toLowerCase())));
 
 
-        Assert.assertFalse(this.stationEntities.stream().anyMatch(c -> c.getSubdivision1() != null && c.getSubdivision1().contains("-")));
-        Assert.assertFalse(this.stationEntities.stream().anyMatch(c -> c.getStationName() != null && c.getStationName().contains("-")));
+        Assert.assertFalse(DataReaderTest.stationEntities.stream().anyMatch(c -> c.getSubdivision1() != null && c.getSubdivision1().contains("-")));
+        Assert.assertFalse(DataReaderTest.stationEntities.stream().anyMatch(c -> c.getStationName() != null && c.getStationName().contains("-")));
     }
 }

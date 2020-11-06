@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 import static com.polytech.mtonairserver.customexceptions.ControllerExceptionBuilder.buildErrorResponseAndPrintStackTrace;
 
@@ -55,11 +56,12 @@ public class StationController {
      */
     @ApiOperation(value = "Stations creation", notes = "Creates and inserts all the aqicn stations into the database.")
     @RequestMapping(value = "/create-stations", method = RequestMethod.PUT)
-    public ResponseEntity insertAllStations() throws IOException, StationsAlreadyInitializedException, UnsupportedFindOperationOnLocationException, NoProperLocationFoundException
+    public ResponseEntity insertAllStations() throws IOException, StationsAlreadyInitializedException, UnsupportedFindOperationOnLocationException, NoProperLocationFoundException, ExecutionException, InterruptedException
     {
         // todo : for each url of each record of the database : retrieve the geo (latitude / longitude) and store it.
         // todo : add a longitude / latitude field for the station (database)
 
+        // todo : handle ExecutionException, InterruptedException
         this.stationService.saveAllStationsToDatabaseFromFiles();
         return new ResponseEntity<ApiSuccessResponse>
         (

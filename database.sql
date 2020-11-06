@@ -16,7 +16,7 @@ CREATE TABLE `station` (
   `subdivision3` varchar(100),
   `url` varchar(300) NOT NULL,
   PRIMARY KEY (`id_station`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='Table gathering stations';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci COMMENT='Table gathering stations';
 
 CREATE TABLE `user` (
   `id_user` int(11) NOT NULL AUTO_INCREMENT,
@@ -26,7 +26,7 @@ CREATE TABLE `user` (
   `password` varchar(400) NOT NULL,
   `api_key` varchar(45) NOT NULL,
   PRIMARY KEY (`id_user`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='Table managing people creating an account on the M'' Ton Air application';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci COMMENT='Table managing people creating an account on the M'' Ton Air application';
 
 CREATE TABLE `user_favorite_station` (
   `id_user_favorite_station` int(11) NOT NULL AUTO_INCREMENT,
@@ -35,7 +35,7 @@ CREATE TABLE `user_favorite_station` (
   PRIMARY KEY (`id_user_favorite_station`),
   CONSTRAINT `id_station_fk` FOREIGN KEY (`id_station`) REFERENCES `station` (`id_station`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `id_user_fk` FOREIGN KEY (`id_user`) REFERENCES `user` (`id_user`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='Table gathering favorite stations according to users';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci COMMENT='Table gathering favorite stations according to users';
 
 
 CREATE TABLE `daily_aqicn_data` (
@@ -54,13 +54,13 @@ CREATE TABLE `daily_aqicn_data` (
   PRIMARY KEY (`id_station`,`datetime_data`,`id_daily_aqicn_data`),
   UNIQUE KEY `id_daily_aqicn_data_UNIQUE` (`id_daily_aqicn_data`),
   CONSTRAINT `fk_id_station` FOREIGN KEY (`id_station`) REFERENCES `station` (`id_station`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='Table gathering the information of a station for a given datetime';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci COMMENT='Table gathering the information of a station for a given datetime';
 
 CREATE TABLE `measure` (
   `id_measure` int(11) NOT NULL AUTO_INCREMENT,
   `measure_name` varchar(25) DEFAULT NULL,
   PRIMARY KEY (`id_measure`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=latin1 COMMENT='Table gathering useful measures and particulates for forcasting';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci COMMENT='Table gathering useful measures and particulates for forcasting';
 
 CREATE TABLE `forecast` (
   `id_forecast` int(11) NOT NULL AUTO_INCREMENT,
@@ -74,4 +74,4 @@ CREATE TABLE `forecast` (
   PRIMARY KEY (`id_forecast`,`id_station`,`id_date_forecast`,`id_measure`),
   CONSTRAINT `fk_id_measure` FOREIGN KEY (`id_measure`) REFERENCES `measure` (`id_measure`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `fk_id_station_bis` FOREIGN KEY (`id_station`) REFERENCES `station` (`id_station`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='Table gathering forecasts according to station name, date and particulates';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci COMMENT='Table gathering forecasts according to station name, date and particulates';

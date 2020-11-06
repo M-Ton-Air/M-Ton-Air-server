@@ -7,6 +7,7 @@ import com.polytech.mtonairserver.model.entities.StationEntity;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 public interface IStationService
 {
@@ -22,7 +23,7 @@ public interface IStationService
 
     public boolean existsByStationName(String stationName);
 
-    public void saveAllStationsToDatabaseFromFiles() throws StationsAlreadyInitializedException, NoProperLocationFoundException, UnsupportedFindOperationOnLocationException, IOException;
+    public void saveAllStationsToDatabaseFromFiles() throws StationsAlreadyInitializedException, NoProperLocationFoundException, UnsupportedFindOperationOnLocationException, IOException, ExecutionException, InterruptedException;
 
     public void deleteAll();
 }

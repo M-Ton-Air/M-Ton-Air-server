@@ -13,11 +13,11 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
-// todo : documentation
 
 /**
- * Service implementation for the station service.
+ * Handling station retrieval and station creation thanks to the DataReader.
  */
 @Service
 public class StationService implements IStationService
@@ -87,7 +87,7 @@ public class StationService implements IStationService
     }
 
     @Override
-    public void saveAllStationsToDatabaseFromFiles() throws StationsAlreadyInitializedException, NoProperLocationFoundException, UnsupportedFindOperationOnLocationException, IOException
+    public void saveAllStationsToDatabaseFromFiles() throws StationsAlreadyInitializedException, NoProperLocationFoundException, UnsupportedFindOperationOnLocationException, IOException, ExecutionException, InterruptedException
     {
         if(this.stationRepository.count() > 0)
         {
@@ -95,7 +95,7 @@ public class StationService implements IStationService
         }
         else
         {
-            this.stationRepository.saveAll(this.dataReader.retrieveAllStationNames());
+            this.stationRepository.saveAll(this.dataReader.initializeAllStationsFromAqicnStationsHtmlFile());
         }
     }
 

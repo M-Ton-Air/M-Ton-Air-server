@@ -2,30 +2,34 @@ package com.polytech.mtonairserver.service.implementation;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
-import com.polytech.mtonairserver.controller.AqicnController;
 import com.polytech.mtonairserver.customexceptions.requestaqicnexception.InvalidTokenException;
+import com.polytech.mtonairserver.customexceptions.requestaqicnexception.RequestErrorException;
 import com.polytech.mtonairserver.customexceptions.requestaqicnexception.UnknownStationException;
+import com.polytech.mtonairserver.external.aqicn.AqicnHttpCaller;
 import com.polytech.mtonairserver.model.entities.*;
-import com.polytech.mtonairserver.model.responses.ApiSuccessResponse;
 import com.polytech.mtonairserver.repository.DailyAqicnDataRepository;
 import com.polytech.mtonairserver.repository.ForecastRepository;
 import com.polytech.mtonairserver.repository.MeasureRepository;
 import com.polytech.mtonairserver.repository.StationRepository;
 import com.polytech.mtonairserver.service.interfaces.IDailyAqicnDataService;
-import com.polytech.mtonairserver.service.interfaces.IStationService;
-import io.swagger.annotations.ApiResponse;
+import com.polytech.mtonairserver.utils.doubleextensions.DoubleUtils;
+import javafx.util.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
-import java.io.IOException;
-import java.sql.Date;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 /**
  * Service implementation for the daily AQICN data.
@@ -35,27 +39,24 @@ public class DailyAqicnDataService implements IDailyAqicnDataService {
 
     private DailyAqicnDataRepository dailyAqicnDataRepository;
 
-    @Autowired
-    private AqicnService aqicnService;
-
-    @Autowired
-    private HttpServletRequest request;
-
-    @Autowired
     private StationRepository stationRepository;
 
-    @Autowired
     private MeasureRepository measureRepository;
 
-    @Autowired
     private ForecastRepository forecastRepository;
+
+    private AqicnHttpCaller aqicnHttpCaller;
 
     private static final SimpleDateFormat dateTimeFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
     private static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
     @Autowired
-    public DailyAqicnDataService(DailyAqicnDataRepository dailyAqicnDataRepository) {
+    public DailyAqicnDataService(DailyAqicnDataRepository dailyAqicnDataRepository, StationRepository stationRepository, MeasureRepository measureRepository, ForecastRepository forecastRepository, AqicnHttpCaller aqicnHttpCaller) {
         this.dailyAqicnDataRepository = dailyAqicnDataRepository;
+        this.stationRepository = stationRepository;
+        this.measureRepository = measureRepository;
+        this.forecastRepository = forecastRepository;
+        this.aqicnHttpCaller = aqicnHttpCaller;
     }
 
     /**
@@ -85,83 +86,175 @@ public class DailyAqicnDataService implements IDailyAqicnDataService {
 
     /**
      * Save the AQICN datas into the database
-     * @throws UnknownStationException
-     * @throws InvalidTokenException
-     * @throws ParseException
      */
     @Override
-    public void fillOutDailyAqicnData() throws UnknownStationException, InvalidTokenException, ParseException {
+    public void fillOutDailyAqicnData() throws ParseException, ExecutionException, InterruptedException {
 
-        List<StationEntity> stationEntityList = this.stationRepository.findAll();
+        Pair<List<DailyAqicnDataEntity>, List<ForecastEntity>> dailyAndForecastAqicnDataLists = fillInDailyAndForecastAqicnData();
+        List<DailyAqicnDataEntity> dailyAqicnDataEntityList = dailyAndForecastAqicnDataLists.getKey();
+        List<ForecastEntity> forecastEntityList = dailyAndForecastAqicnDataLists.getValue();
+
+        saveAqicnDataAndForecastsToDatabase(dailyAqicnDataEntityList, forecastEntityList);
+
+    }
+
+
+
+    /**
+     * Fill in a list of DailyAqicnDataEntity and a list of forecastEntity
+     * @return a Pair containing the dailyAqicnDataEntityList and the forecastEntityList
+     * @throws ParseException
+     */
+    private Pair<List<DailyAqicnDataEntity>, List<ForecastEntity>> fillInDailyAndForecastAqicnData() throws ParseException, ExecutionException, InterruptedException {
+
+        //int THREADS_COUNT=100;
+
         List<MeasureEntity> measureEntityList = this.measureRepository.findAll();
-        AqicnController aqicnController = new AqicnController(aqicnService);
+        List<StationEntity> stationEntityList = this.stationRepository.findAll();
+
+        List<DailyAqicnDataEntity> dailyAqicnDataEntityList = new ArrayList<DailyAqicnDataEntity>();
+        List<ForecastEntity> forecastEntityList = new ArrayList<ForecastEntity>();
 
         // for each existing station : AQICN datas are recorded in the database 'daily_aqicn_data' and the forecast in the database 'forecast'
+
+        ExecutorService executor = Executors.newWorkStealingPool();
+        List<Future<?>> futures = new ArrayList<Future<?>>();
+
+
+
+
+
         for (StationEntity station : stationEntityList) {
-            String urlStation = station.getUrl();
-            ResponseEntity<String> stringResponseEntity = aqicnService.requestAqicn(urlStation, this.request);
-            String bodyStringResponseEntity = stringResponseEntity.getBody();
-            DailyAqicnDataEntity dailyAqicnDataEntity = new DailyAqicnDataEntity();
-            JsonObject convertedObject = new Gson().fromJson(bodyStringResponseEntity, JsonObject.class);
 
-            if (convertedObject.get("data").getAsJsonObject().get("aqi") != null) {
-                dailyAqicnDataEntity.setAirQuality(convertedObject.get("data").getAsJsonObject().get("aqi").getAsDouble());
-            }
-            if (convertedObject.get("data").getAsJsonObject().get("iaqi").getAsJsonObject().get("no2") != null) {
-                dailyAqicnDataEntity.setNo2(convertedObject.get("data").getAsJsonObject().get("iaqi").getAsJsonObject().get("no2").getAsJsonObject().get("v").getAsDouble());
-            }
-            if (convertedObject.get("data").getAsJsonObject().get("iaqi").getAsJsonObject().get("pm25") != null) {
-                dailyAqicnDataEntity.setPm25(convertedObject.get("data").getAsJsonObject().get("iaqi").getAsJsonObject().get("pm25").getAsJsonObject().get("v").getAsDouble());
-            }
-            if (convertedObject.get("data").getAsJsonObject().get("iaqi").getAsJsonObject().get("pm10") != null) {
-                dailyAqicnDataEntity.setPm10(convertedObject.get("data").getAsJsonObject().get("iaqi").getAsJsonObject().get("pm10").getAsJsonObject().get("v").getAsDouble());
-            }
-            if (convertedObject.get("data").getAsJsonObject().get("iaqi").getAsJsonObject().get("o3") != null) {
-                dailyAqicnDataEntity.setO3(convertedObject.get("data").getAsJsonObject().get("iaqi").getAsJsonObject().get("o3").getAsJsonObject().get("v").getAsDouble());
-            }
-            if (convertedObject.get("data").getAsJsonObject().get("iaqi").getAsJsonObject().get("p") != null) {
-                dailyAqicnDataEntity.setPressure(convertedObject.get("data").getAsJsonObject().get("iaqi").getAsJsonObject().get("p").getAsJsonObject().get("v").getAsDouble());
-            }
-            if (convertedObject.get("data").getAsJsonObject().get("iaqi").getAsJsonObject().get("h") != null) {
-                dailyAqicnDataEntity.setHumidity(convertedObject.get("data").getAsJsonObject().get("iaqi").getAsJsonObject().get("h").getAsJsonObject().get("v").getAsDouble());
-            }
-            if (convertedObject.get("data").getAsJsonObject().get("iaqi").getAsJsonObject().get("w") != null) {
-                dailyAqicnDataEntity.setWind(convertedObject.get("data").getAsJsonObject().get("iaqi").getAsJsonObject().get("w").getAsJsonObject().get("v").getAsDouble());
-            }
-            if (convertedObject.get("data").getAsJsonObject().get("iaqi").getAsJsonObject().get("t") != null) {
-                dailyAqicnDataEntity.setTemperature(convertedObject.get("data").getAsJsonObject().get("iaqi").getAsJsonObject().get("t").getAsJsonObject().get("v").getAsDouble());
-            }
-            dailyAqicnDataEntity.setStationByIdStation(station);
-            dailyAqicnDataEntity.setIdStation(station.getIdStation());
-            dailyAqicnDataEntity.setDatetimeData(Timestamp.valueOf(convertedObject.get("data").getAsJsonObject().get("time").getAsJsonObject().get("s").getAsString()));
+          //  ExecutorService executorService = Executors.newFixedThreadPool(THREADS_COUNT);
+            futures.add(
+                    executor.submit( () ->
+                    {
+                        String urlStation = station.getUrl();
 
+
+                        JsonObject dailyAqicnJson = null;
+                        try {
+                            dailyAqicnJson = this.aqicnHttpCaller.callExternalApi(urlStation);
+                        } catch (UnknownStationException | InvalidTokenException | RequestErrorException e) {
+                            e.printStackTrace();
+                        }
+                        if (dailyAqicnJson != null) {
+                            DailyAqicnDataEntity dailyAqicnDataEntity = new DailyAqicnDataEntity();
+                            if (DoubleUtils.tryParse(dailyAqicnJson.get("data").getAsJsonObject().get("aqi").getAsString())) {
+                                if (dailyAqicnJson.get("data").getAsJsonObject().get("aqi") != null) {
+                                    //if (Double.(convertedObject.get("data").getAsJsonObject().get("aqi").getAsDouble() != double)
+                                    dailyAqicnDataEntity.setAirQuality(dailyAqicnJson.get("data").getAsJsonObject().get("aqi").getAsDouble());
+                                } else {
+                                    dailyAqicnDataEntity.setAirQuality(null);
+                                }
+                                if (dailyAqicnJson.get("data").getAsJsonObject().get("iaqi").getAsJsonObject().get("no2") != null) {
+                                    dailyAqicnDataEntity.setNo2(dailyAqicnJson.get("data").getAsJsonObject().get("iaqi").getAsJsonObject().get("no2").getAsJsonObject().get("v").getAsDouble());
+                                } else {
+                                    dailyAqicnDataEntity.setNo2(null);
+                                }
+                                if (dailyAqicnJson.get("data").getAsJsonObject().get("iaqi").getAsJsonObject().get("pm25") != null) {
+                                    dailyAqicnDataEntity.setPm25(dailyAqicnJson.get("data").getAsJsonObject().get("iaqi").getAsJsonObject().get("pm25").getAsJsonObject().get("v").getAsDouble());
+                                } else {
+                                    dailyAqicnDataEntity.setPm25(null);
+                                }
+                                if (dailyAqicnJson.get("data").getAsJsonObject().get("iaqi").getAsJsonObject().get("pm10") != null) {
+                                    dailyAqicnDataEntity.setPm10(dailyAqicnJson.get("data").getAsJsonObject().get("iaqi").getAsJsonObject().get("pm10").getAsJsonObject().get("v").getAsDouble());
+                                } else {
+                                    dailyAqicnDataEntity.setPm10(null);
+                                }
+                                if (dailyAqicnJson.get("data").getAsJsonObject().get("iaqi").getAsJsonObject().get("o3") != null) {
+                                    dailyAqicnDataEntity.setO3(dailyAqicnJson.get("data").getAsJsonObject().get("iaqi").getAsJsonObject().get("o3").getAsJsonObject().get("v").getAsDouble());
+                                } else {
+                                    dailyAqicnDataEntity.setO3(null);
+                                }
+                                if (dailyAqicnJson.get("data").getAsJsonObject().get("iaqi").getAsJsonObject().get("p") != null) {
+                                    dailyAqicnDataEntity.setPressure(dailyAqicnJson.get("data").getAsJsonObject().get("iaqi").getAsJsonObject().get("p").getAsJsonObject().get("v").getAsDouble());
+                                } else {
+                                    dailyAqicnDataEntity.setPressure(null);
+                                }
+                                if (dailyAqicnJson.get("data").getAsJsonObject().get("iaqi").getAsJsonObject().get("h") != null) {
+                                    dailyAqicnDataEntity.setHumidity(dailyAqicnJson.get("data").getAsJsonObject().get("iaqi").getAsJsonObject().get("h").getAsJsonObject().get("v").getAsDouble());
+                                } else {
+                                    dailyAqicnDataEntity.setHumidity(null);
+                                }
+                                if (dailyAqicnJson.get("data").getAsJsonObject().get("iaqi").getAsJsonObject().get("w") != null) {
+                                    dailyAqicnDataEntity.setWind(dailyAqicnJson.get("data").getAsJsonObject().get("iaqi").getAsJsonObject().get("w").getAsJsonObject().get("v").getAsDouble());
+                                } else {
+                                    dailyAqicnDataEntity.setWind(null);
+                                }
+                                if (dailyAqicnJson.get("data").getAsJsonObject().get("iaqi").getAsJsonObject().get("t") != null) {
+                                    dailyAqicnDataEntity.setTemperature(dailyAqicnJson.get("data").getAsJsonObject().get("iaqi").getAsJsonObject().get("t").getAsJsonObject().get("v").getAsDouble());
+                                } else {
+                                    dailyAqicnDataEntity.setTemperature(null);
+                                }
+                                dailyAqicnDataEntity.setStationByIdStation(station);
+                                dailyAqicnDataEntity.setIdStation(station.getIdStation());
+                                dailyAqicnDataEntity.setDatetimeData(Timestamp.valueOf(dailyAqicnJson.get("data").getAsJsonObject().get("time").getAsJsonObject().get("s").getAsString()));
+
+
+                                dailyAqicnDataEntityList.add(dailyAqicnDataEntity);
+
+                                // for each existing measure...
+                                for (MeasureEntity measure : measureEntityList) {
+
+                                    int numberOfForecast = dailyAqicnJson.get("data").getAsJsonObject().get("forecast").getAsJsonObject().get("daily").getAsJsonObject().get(measure.getMeasureName()).getAsJsonArray().size();
+
+                                    // for each forecast...
+                                    for (int i = 0; i < numberOfForecast; i++) {
+                                        String count = String.valueOf(i);
+                                        ForecastEntity forecastEntity = new ForecastEntity();
+
+                                        forecastEntity.setIdStation(station.getIdStation());
+                                        forecastEntity.setIdMeasure(measure.getIdMeasure());
+                                        forecastEntity.setDateForecasted(Timestamp.valueOf(dateTimeFormat.format(new Timestamp(System.currentTimeMillis()))));
+                                        try {
+                                            forecastEntity.setIdDateForecast(new java.sql.Date(dateFormat.parse(dailyAqicnJson.get("data").getAsJsonObject().get("forecast").getAsJsonObject().get("daily").getAsJsonObject().get(measure.getMeasureName()).getAsJsonArray().get(Integer.parseInt(count)).getAsJsonObject().get("day").getAsString()).getTime()));
+                                        } catch (ParseException e) {
+                                            //e.printStackTrace();
+                                        }
+                                        forecastEntity.setMeasureAverage(dailyAqicnJson.get("data").getAsJsonObject().get("forecast").getAsJsonObject().get("daily").getAsJsonObject().get(measure.getMeasureName()).getAsJsonArray().get(Integer.parseInt(count)).getAsJsonObject().get("avg").getAsDouble());
+                                        forecastEntity.setMeasureMax(dailyAqicnJson.get("data").getAsJsonObject().get("forecast").getAsJsonObject().get("daily").getAsJsonObject().get(measure.getMeasureName()).getAsJsonArray().get(Integer.parseInt(count)).getAsJsonObject().get("max").getAsDouble());
+                                        forecastEntity.setMeasureMin(dailyAqicnJson.get("data").getAsJsonObject().get("forecast").getAsJsonObject().get("daily").getAsJsonObject().get(measure.getMeasureName()).getAsJsonArray().get(Integer.parseInt(count)).getAsJsonObject().get("min").getAsDouble());
+                                        forecastEntity.setStationByIdStation(station);
+                                        forecastEntity.setMeasureByIdMeasure(measure);
+
+                                        forecastEntityList.add(forecastEntity);
+                                    }
+                                }
+
+                            }
+                        }
+                    }));
+
+        }
+
+        for (Future<?> future : futures) {
+            future.get();
+        }
+
+        boolean allDone = true;
+        for(Future<?> future : futures)
+        {
+            allDone &= future.isDone();
+        }
+        executor.shutdown();
+
+
+        return new Pair<List<DailyAqicnDataEntity>, List<ForecastEntity>>(dailyAqicnDataEntityList, forecastEntityList);
+    }
+
+
+    private void saveAqicnDataAndForecastsToDatabase(List<DailyAqicnDataEntity> dailyAqicnDataEntityList, List<ForecastEntity> forecastEntityList) {
+        for (DailyAqicnDataEntity dailyAqicnDataEntity : dailyAqicnDataEntityList) {
             this.dailyAqicnDataRepository.save(dailyAqicnDataEntity);
+        }
 
-            // for each existing measure...
-            for (MeasureEntity measure : measureEntityList) {
-
-                int numberOfForecast = convertedObject.get("data").getAsJsonObject().get("forecast").getAsJsonObject().get("daily").getAsJsonObject().get(measure.getMeasureName()).getAsJsonArray().size();
-
-                // for each forecast...
-                for (int i = 0; i < numberOfForecast; i++) {
-                    String count = String.valueOf(i);
-                    ForecastEntity forecastEntity = new ForecastEntity();
-
-                    forecastEntity.setIdStation(station.getIdStation());
-                    forecastEntity.setIdMeasure(measure.getIdMeasure());
-                    forecastEntity.setDateForecasted(Timestamp.valueOf(dateTimeFormat.format(new Timestamp(System.currentTimeMillis()))));
-                    forecastEntity.setIdDateForecast(new java.sql.Date(dateFormat.parse(convertedObject.get("data").getAsJsonObject().get("forecast").getAsJsonObject().get("daily").getAsJsonObject().get(measure.getMeasureName()).getAsJsonArray().get(Integer.parseInt(count)).getAsJsonObject().get("day").getAsString()).getTime()));
-                    forecastEntity.setMeasureAverage(convertedObject.get("data").getAsJsonObject().get("forecast").getAsJsonObject().get("daily").getAsJsonObject().get(measure.getMeasureName()).getAsJsonArray().get(Integer.parseInt(count)).getAsJsonObject().get("avg").getAsDouble());
-                    forecastEntity.setMeasureMax(convertedObject.get("data").getAsJsonObject().get("forecast").getAsJsonObject().get("daily").getAsJsonObject().get(measure.getMeasureName()).getAsJsonArray().get(Integer.parseInt(count)).getAsJsonObject().get("max").getAsDouble());
-                    forecastEntity.setMeasureMin(convertedObject.get("data").getAsJsonObject().get("forecast").getAsJsonObject().get("daily").getAsJsonObject().get(measure.getMeasureName()).getAsJsonArray().get(Integer.parseInt(count)).getAsJsonObject().get("min").getAsDouble());
-                    forecastEntity.setStationByIdStation(station);
-                    forecastEntity.setMeasureByIdMeasure(measure);
-
-                    this.forecastRepository.save(forecastEntity);
-                }
-            }
+        for (ForecastEntity forecastEntity : forecastEntityList) {
+            this.forecastRepository.save(forecastEntity);
         }
     }
+
 
     /**
      * Gets all the AQICN data by the id of the station

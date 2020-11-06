@@ -18,11 +18,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 
+/**
+ * In order to work, this test must be launched along with DataReaderPArticu
+ */
 @SpringBootTest
 @RunWith(SpringJUnit4ClassRunner.class)
 @AutoConfigureTestDatabase
-class DataReaderTest
+public class DataReaderTest
 {
     @Autowired
     private DataReader dataReader;
@@ -33,14 +37,14 @@ class DataReaderTest
 
 
     @Before
-    public void setUp() throws NoProperLocationFoundException, UnsupportedFindOperationOnLocationException, IOException
+    public void setUp() throws NoProperLocationFoundException, UnsupportedFindOperationOnLocationException, IOException, ExecutionException, InterruptedException
     {
         if(setupIsDone)
         {
             return;
         }
 
-        this.stationEntities = dataReader.retrieveAllStationNames();
+        stationEntities = dataReader.initializeAllStationsFromAqicnStationsHtmlFile();
         setupIsDone = true;
     }
 
@@ -49,7 +53,7 @@ class DataReaderTest
     {
         Map<String, String> countriesWithTheirIso2 = this.getAllCountriesAndTheirIso2();
 
-        for(StationEntity station : this.stationEntities)
+        for(StationEntity station : stationEntities)
         {
             String expectedCountry = countriesWithTheirIso2.get(station.getIso2());
             Assert.assertEquals(expectedCountry.toLowerCase(), station.getCountry().toLowerCase());
@@ -67,6 +71,4 @@ class DataReaderTest
         countries.put("XK", "Kosovo");
         return countries;
     }
-
-
 }

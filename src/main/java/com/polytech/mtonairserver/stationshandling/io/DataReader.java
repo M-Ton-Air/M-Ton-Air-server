@@ -21,9 +21,12 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.*;
 import java.util.stream.Collectors;
+
 
 /**
  * Class that handles all the reading operations with data files.
@@ -71,7 +74,6 @@ public class DataReader
      */
     public List<CountryCityRegion> retrieveCountriesCities() throws IOException
     {
-        // todo : encoding
         List<CountryCityRegion> countryCities = new ArrayList<CountryCityRegion>();
         countryCities.addAll(this.retrieveWordlwideCountriesCities());
         countryCities.addAll(this.retrieveJapaneseCities());
@@ -120,9 +122,9 @@ public class DataReader
      * and the csv file (csvCountriesCities).
      * @throws IOException in case of file reading exception.
      */
-    public List<StationEntity> retrieveAllStationNames() throws IOException, NoProperLocationFoundException, UnsupportedFindOperationOnLocationException
+    public List<StationEntity> initializeAllStationsFromAqicnStationsHtmlFile() throws IOException, NoProperLocationFoundException, UnsupportedFindOperationOnLocationException, ExecutionException, InterruptedException
     {
-        List<StationEntity> initializedStations = new ArrayList<StationEntity>();
+        List<StationEntity> initializedStations = Collections.synchronizedList(new ArrayList<>());
         File htmlFile = this.stations.getFile();
         Document document = Jsoup.parse(htmlFile, "UTF-8");
         //only keeping a[href] links cause they also are "a" items that looks like this : <a id="United States"></a>
@@ -132,105 +134,138 @@ public class DataReader
         // removes some unused links / wrong links.
         htmlLinks.removeAll(DataReaderParticularCaseHandler.removeParticularCases(htmlLinks));
 
-        initializeCountriesCities(initializedStations, htmlLinks);
 
+
+        ExecutorService executor = Executors.newWorkStealingPool();
+
+        List<Future<?>> futures = new ArrayList<Future<?>>();
+        for(Element htmlHrefElement : htmlLinks)
+        {
+            futures.add
+            (
+                executor.submit( () ->
+                {
+                    try
+                    {
+                        StationEntity newSta = this.initializeStation(htmlHrefElement);
+                        initializedStations.add(newSta);
+                    }
+                    catch (UnsupportedFindOperationOnLocationException | NoProperLocationFoundException ex)
+                    {
+                        ex.printStackTrace();
+                    }
+                })
+            );
+        }
+
+
+        for(Future<?> future : futures)
+        {
+            future.get();
+        }
+
+        boolean allDone = true;
+        for(Future<?> future : futures)
+        {
+            allDone &= future.isDone();
+        }
+        executor.shutdown();
+
+        //initializeStation(initializedStations, htmlLinks);
         DataReaderParticularCaseHandler cleaner = new DataReaderParticularCaseHandler(initializedStations);
         cleaner.executeAllCleaningMethods();
         return initializedStations;
     }
 
-    private void initializeCountriesCities(List<StationEntity> initializedStations, Elements htmlLinks) throws UnsupportedFindOperationOnLocationException, NoProperLocationFoundException
+    private StationEntity initializeStation(Element html_a_HrefLink) throws UnsupportedFindOperationOnLocationException, NoProperLocationFoundException
     {
-        for(Element htmlElement : htmlLinks)
+        StationEntity station = new StationEntity();
+
+       // only retrieves the href links.
+        String url = html_a_HrefLink.attr("href");
+
+        // gets the endpoint (url) without the https://aqicn.org/city stuff.
+        String endpoint = url.toString().replace(StationService.getHostLinkRealTimeAQI(), "");
+        // locations ared separated by slashes in the URL.
+        String[] locations = endpoint.split("/");
+        // a location can be, in that approximate specific order :
+        // A country -> a region -> a city -> a specific place (Street, district, etc.)
+
+        // We will analyze the first element of the locations array
+        // And we will retrieve the corresponding countries/region/cities thanks to the csv file
+        // And we'll store the rest as subdivisions.
+
+        // country is always (if present) at the first place.
+        // otherwise, it can be sometimes be a region or a city.
+        final String potentialCountry = locations[0];
+        // we'll get that potential country and check if it is really one thanks to the countries_cities.csv file.
+        Optional<CountryCityRegion> realCountryObject = this.findByCountryRegionCity(potentialCountry, LocationType.COUNTRY);
+
+        station.setUrl(endpoint);
+        // if we got a country at the first place of the endpoint, we initialize it
+        if(realCountryObject.isPresent())
         {
+            CountryCityRegion realCountry = realCountryObject.get();
+            station.setCountry(realCountry.getCountry());
+            station.setIso2(realCountry.getIso2());
+        }
+        // else : it may be a region or a city
+        else
+        {
+            //The first place can also be a region,
+            //so we'll get that potentialRegion and see if it is really a region thanks to the csv file.
+            final String potentialRegion = locations[0];
+            Optional<CountryCityRegion> realRegionObject = this.findByCountryRegionCity(potentialRegion, LocationType.REGION);
 
-            // only retrieves the href links.
-            String url = htmlElement.attr("href");
-
-            // gets the endpoint (url) without the https://aqicn.org/city stuff.
-            String endpoint = url.toString().replace(StationService.getHostLinkRealTimeAQI(), "");
-            // locations ared separated by slashes in the URL.
-            String[] locations = endpoint.split("/");
-            StationEntity station = new StationEntity();
-            // a location can be, in that approximate specific order :
-            // A country -> a region -> a city -> a specific place (Street, district, etc.)
-
-            // We will analyze the first element of the locations array
-            // And we will retrieve the corresponding countries/region/cities thanks to the csv file
-            // And we'll store the rest as subdivisions.
-
-            // country is always (if present) at the first place.
-            // otherwise, it can be sometimes be a region or a city.
-            final String potentialCountry = locations[0];
-            // we'll get that potential country and check if it is really one thanks to the countries_cities.csv file.
-            Optional<CountryCityRegion> realCountryObject = this.findByCountryRegionCity(potentialCountry, LocationType.COUNTRY);
-
-            station.setUrl(url);
-            initializedStations.add(station);
-            // if we got a country at the first place of the endpoint, we initialize it
-            if(realCountryObject.isPresent())
+            // if it is a region, then we got the country and the first subdivision
+            if(realRegionObject.isPresent())
             {
-                CountryCityRegion realCountry = realCountryObject.get();
-                station.setCountry(realCountry.getCountry());
-                station.setIso2(realCountry.getIso2());
-            }
-            // else : it may be a region or a city
-            else
-            {
-                //The first place can also be a region,
-                //so we'll get that potentialRegion and see if it is really a region thanks to the csv file.
-                final String potentialRegion = locations[0];
-                Optional<CountryCityRegion> realRegionObject = this.findByCountryRegionCity(potentialRegion, LocationType.REGION);
-
-                // if it is a region, then we got the country and the first subdivision
-                if(realRegionObject.isPresent())
+                CountryCityRegion countryCityRegion = realRegionObject.get();
+                // but sometimes, the region name is a city name. So in that case, we initialize the stationName instead.
+                // that case occurs when the length is 1 --> we directly have the city name in the url.
+                if(locations.length == 1)
                 {
-                    CountryCityRegion countryCityRegion = realRegionObject.get();
-                    // but sometimes, the region name is a city name. So in that case, we initialize the stationName instead.
-                    // that case occurs when the length is 1 --> we directly have the city name in the url.
-                    if(locations.length == 1)
-                    {
-                        station.setStationName(countryCityRegion.getRegion());
-                        station.setCountry(countryCityRegion.getCountry());
-                        station.setIso2(countryCityRegion.getIso2());
-                    }
-                    // else, it's very prolly a subdivision / region.
-                    else
-                    {
-                        station.setSubdivision1(countryCityRegion.getRegion());
-                        station.setCountry(countryCityRegion.getCountry());
-                        station.setIso2(countryCityRegion.getIso2());
-                    }
-
+                    station.setStationName(countryCityRegion.getRegion());
+                    station.setCountry(countryCityRegion.getCountry());
+                    station.setIso2(countryCityRegion.getIso2());
                 }
-                // When the first string is a city, then we have nothing left to do. We got the city,
-                // subdivision 1 and country
+                // else, it's very prolly a subdivision / region.
                 else
                 {
-                    final String potentialCity = locations[0];
-                    //and if it is a city, we make another filter.
-                    Optional<CountryCityRegion> realCityObject = this.findByCountryRegionCity(potentialCity, LocationType.CITY);
-                    if(realCityObject.isPresent())
-                    {
-                        CountryCityRegion countryCityRegion = realCityObject.get();
-                        station.setStationName(countryCityRegion.getCity());
-                        station.setSubdivision1(countryCityRegion.getRegion());
-                        station.setCountry(countryCityRegion.getCountry());
-                        station.setIso2(countryCityRegion.getIso2());
-                    }
-                    // as of 25/10/2020, this exception isn't raised and will not be unless the resources
-                    // do change (stations.html, countries_cities.csv, cities_in_japan_2019.csv).
-                    else
-                    {
-                        final String error = "Could not found a suitable location. " +
-                                "Please check the unknown location and fix the error.";
-                        throw new NoProperLocationFoundException(error, DataReader.class, potentialCity);
-                    }
+                    station.setSubdivision1(countryCityRegion.getRegion());
+                    station.setCountry(countryCityRegion.getCountry());
+                    station.setIso2(countryCityRegion.getIso2());
+                }
+
+            }
+            // When the first string is a city, then we have nothing left to do. We got the city,
+            // subdivision 1 and country
+            else
+            {
+                final String potentialCity = locations[0];
+                //and if it is a city, we make another filter.
+                Optional<CountryCityRegion> realCityObject = this.findByCountryRegionCity(potentialCity, LocationType.CITY);
+                if(realCityObject.isPresent())
+                {
+                    CountryCityRegion countryCityRegion = realCityObject.get();
+                    station.setStationName(countryCityRegion.getCity());
+                    station.setSubdivision1(countryCityRegion.getRegion());
+                    station.setCountry(countryCityRegion.getCountry());
+                    station.setIso2(countryCityRegion.getIso2());
+                }
+                // as of 25/10/2020, this exception isn't raised and will not be unless the resources
+                // do change (stations.html, countries_cities.csv, cities_in_japan_2019.csv).
+                else
+                {
+                    final String error = "Could not found a suitable location. " +
+                            "Please check the unknown location and fix the error.";
+                    throw new NoProperLocationFoundException(error, DataReader.class, potentialCity);
                 }
             }
-            // SECOND STEP : INITIALIZE THE SUBDIVISIONS / STATION NAME
-            this.initializeSubdivisionsAndStationsNames(locations, station);
         }
+        // SECOND STEP : INITIALIZE THE SUBDIVISIONS / STATION NAME
+        this.initializeSubdivisionsAndStationsNames(locations, station);
+        return station;
     }
 
 

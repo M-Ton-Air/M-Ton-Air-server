@@ -43,33 +43,10 @@ public class DataReaderParticularCaseHandler
      */
     public void executeAllCleaningMethods()
     {
-        this.cleanGeorgiaStationEntities();
         this.cleanSpecificSpellings();
         this.cleanSubdivisionsAndStationsNames();
     }
 
-
-    /**
-     * Georgia is a country, in Europe, but also a state in the USA.
-     * There are only few stations in Georgia, Europe, which are located in the
-     * Tbilissi town. So, the logic is simple, if the stationEntity URL contains "Tbilissi",
-     * we consider it's in Georgia, in Europe.
-     * Otherwise, it's in the USA.
-     */
-    public void cleanGeorgiaStationEntities()
-    {
-        final String georgiaCapital = "Tbilisi";
-        final String usa = "United States";
-        List<StationEntity> georgiaStationEntities = this.stationEntities.stream().filter(se -> se.getCountry().toLowerCase().equals("georgia")).collect(Collectors.toList());
-        for(StationEntity se : georgiaStationEntities)
-        {
-            if(!se.getUrl().toLowerCase().contains(georgiaCapital.toLowerCase()))
-            {
-                se.setCountry(usa);
-                se.setIso2("US");
-            }
-        }
-    }
 
     /**
      * Some Countries / regions / cities are wrongly spelled in the aqicn urls / or contains dashes cause there
@@ -90,48 +67,62 @@ public class DataReaderParticularCaseHandler
      *  - Sankt Gallen instead of saint-gallen
      *  - Massachusetts instead of Massachusett
      */
-    public void cleanSpecificSpellings()
+    private void cleanSpecificSpellings()
     {
+        final String georgiaCapital = "Tbilisi";
+        final String usa = "United States";
+
         for(StationEntity station : this.stationEntities)
         {
-            if(station.getCountry() != null)
+            switch(station.getCountry().toLowerCase())
             {
-                switch(station.getCountry().toLowerCase())
-                {
-                    case "afganistan":
-                        station.setCountry("Afghanistan");
-                        break;
-                    case "el-salavor":
-                        station.setCountry("El Salvador");
-                        break;
-                    case "uae":
-                        station.setCountry("United Arab Emirates");
-                        break;
-                    case  "hongkong":
-                        station.setCountry("Hong Kong");
-                        break;
-                    case "korea":
-                        station.setCountry("South Korea");
-                        break;
-                    case "ivory-coast":
-                        station.setCountry("Côte D'Ivoire");
-                        break;
-                    case "macau":
-                        station.setCountry("Macao");
-                        break;
-                    case "maynmar":
-                        station.setCountry("Myanmar");
-                        break;
-                    case "netherland":
-                        station.setCountry("Netherlands");
-                        break;
-                    case "czechrepublic":
-                        station.setCountry("Czech Republic");
-                        break;
-                    case "bosnia-herzegovina":
-                        station.setCountry("Bosnia And Herzegovina");
-                        break;
-                }
+                case "afganistan":
+                    station.setCountry("Afghanistan");
+                    break;
+                case "el-salavor":
+                    station.setCountry("El Salvador");
+                    break;
+                case "uae":
+                    station.setCountry("United Arab Emirates");
+                    break;
+                case  "hongkong":
+                    station.setCountry("Hong Kong");
+                    break;
+                case "korea":
+                    station.setCountry("South Korea");
+                    break;
+                case "ivory-coast":
+                    station.setCountry("Côte D'Ivoire");
+                    break;
+                case "macau":
+                    station.setCountry("Macao");
+                    break;
+                case "maynmar":
+                    station.setCountry("Myanmar");
+                    break;
+                case "netherland":
+                    station.setCountry("Netherlands");
+                    break;
+                case "czechrepublic":
+                    station.setCountry("Czech Republic");
+                    break;
+                case "bosnia-herzegovina":
+                    station.setCountry("Bosnia And Herzegovina");
+                    break;
+                /*
+                 *      * Georgia is a country, in Europe, but also a state in the USA.
+                 *      * There are only few stations in Georgia, Europe, which are located in the
+                 *      * Tbilissi town. So, the logic is simple, if the stationEntity URL contains "Tbilissi",
+                 *      * we consider it's in Georgia, in Europe.
+                 *      * Otherwise, it's in the USA.
+                 */
+                case "georgia":
+                    if(!station.getUrl().toLowerCase().contains(georgiaCapital.toLowerCase()))
+                    {
+                        station.setCountry(usa);
+                        station.setIso2("US");
+                    }
+                    break;
             }
 
             if(station.getSubdivision1() != null)
@@ -188,7 +179,7 @@ public class DataReaderParticularCaseHandler
      *      - Bosnia And Herzegovina
      *      - and many more.
      */
-    public void cleanSubdivisionsAndStationsNames()
+    private void cleanSubdivisionsAndStationsNames()
     {
         for(StationEntity se : this.stationEntities)
         {

@@ -11,12 +11,12 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 @SpringBootTest
 @RunWith(SpringJUnit4ClassRunner.class)
 @AutoConfigureTestDatabase
-public class EncodingTest extends DataReaderTest
+public class EncodingTest extends StationsDataReaderTest
 {
     @Test
     public void testEncoding()
     {
-        for(StationEntity station : DataReaderTest.stationEntities)
+        for(StationEntity station : StationsDataReaderTest.stationEntities)
         {
             Assert.assertFalse(station.getCountry().contains("?"));
             Assert.assertFalse(station.getSubdivision1() != null && station.getSubdivision1().contains("?"));

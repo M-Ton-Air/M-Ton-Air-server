@@ -1,10 +1,13 @@
 package com.polytech.mtonairserver.stationshandling.io;
 
+import com.google.gson.*;
 import com.opencsv.CSVReader;
 import com.polytech.mtonairserver.customexceptions.datareader.NoProperLocationFoundException;
 import com.polytech.mtonairserver.customexceptions.datareader.UnsupportedFindOperationOnLocationException;
+import com.polytech.mtonairserver.customexceptions.requestaqicnexception.UnknownStationException;
 import com.polytech.mtonairserver.model.entities.StationEntity;
 import com.polytech.mtonairserver.model.external.CountryCityRegion;
+import com.polytech.mtonairserver.service.implementation.AqicnService;
 import com.polytech.mtonairserver.service.implementation.StationService;
 import com.polytech.mtonairserver.stationshandling.LocationType;
 import com.polytech.mtonairserver.stationshandling.DataReaderParticularCaseHandler;
@@ -16,10 +19,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -32,10 +37,11 @@ import java.util.stream.Collectors;
  * Class that handles all the reading operations with data files.
  */
 @Component
-public class DataReader
+public class StationsDataReader
 {
     /**
-     * The stations.html files. It contains all the aqicn stations.
+     * The stations.html files. It contains all the aqicn stations
+     * https://aqicn.org/city/all
      */
     private Resource stations;
 
@@ -49,20 +55,39 @@ public class DataReader
      */
     private Resource csvJapan;
 
+    /**
+     * A json file containing the longitude + latitude for every station contained in the stations.html file.
+     *
+     */
+    private Resource jsonCoordinates;
+
 
     private final String UNKNOWN_ENDPOINT = "%2A";
 
     private final List<CountryCityRegion> countriesCitiesRegions;
 
+    /**
+     * Beware. The station entities of this stationsCoordinates list only contain the following fields :
+     * - url
+     * - longitude
+     * - latitude
+     *
+     * All ofther fields are null.
+     */
+    private final List<StationEntity> stationsCoordinates;
+
     @Autowired
-    public DataReader(@Value(value = "classpath:/data/cities_in_japan_2019.csv") Resource _csvJapan,
-                      @Value(value = "classpath:/data/countries_cities.csv")     Resource _csvCountriesCities,
-                      @Value(value = "classpath:/data/stations.html")            Resource _stations) throws IOException
+    public StationsDataReader(@Value(value = "classpath:/data/cities_in_japan_2019.csv") Resource _csvJapan,
+                              @Value(value = "classpath:/data/countries_cities.csv")     Resource _csvCountriesCities,
+                              @Value(value = "classpath:/data/stations.html")            Resource _stations,
+                              @Value(value = "classpath:/data/stations_geo.json")        Resource _jsonCoordinates) throws IOException, ExecutionException, InterruptedException
     {
         this.csvJapan = _csvJapan;
         this.csvCountriesCities = _csvCountriesCities;
         this.stations = _stations;
+        this.jsonCoordinates = _jsonCoordinates;
         this.countriesCitiesRegions = this.retrieveCountriesCities();
+        this.stationsCoordinates = this.retrieveStationsCoordinates();
     }
 
     /**
@@ -116,13 +141,64 @@ public class DataReader
         return countryCities;
     }
 
+    public List<StationEntity> retrieveStationsCoordinates() throws IOException, ExecutionException, InterruptedException
+    {
+        List<StationEntity> allStationCoordinates = Collections.synchronizedList(new ArrayList<>());
+
+        JsonParser parser = new JsonParser();
+        Reader reader = new FileReader(this.jsonCoordinates.getFile());
+        JsonArray allCoordinates = (JsonArray) parser.parse(reader);
+
+        ExecutorService executor = Executors.newWorkStealingPool();
+        List<Future<?>> futures = new ArrayList<Future<?>>();
+
+        for(JsonElement jElement : allCoordinates)
+        {
+            // todo : can this be factorized ? cause it is used many times in the code (threading)
+            futures.add
+            (
+                executor.submit( () ->
+                {
+                    StationEntity currentStationCoordinates = new StationEntity();
+                    JsonObject currentObject = jElement.getAsJsonObject();
+                    // first element is longitude, second element is latitude.
+                    JsonArray longitudeLatitude = currentObject.getAsJsonArray("geo");
+                    String url = currentObject.get("url").getAsString();
+                    String endpoint = StationService.getEndpointFromUrl(url);
+
+                    currentStationCoordinates.setLongitude(longitudeLatitude.get(0).getAsDouble());
+                    currentStationCoordinates.setLatitude(longitudeLatitude.get(1).getAsDouble());
+                    currentStationCoordinates.setUrl(endpoint);
+
+                    allStationCoordinates.add(currentStationCoordinates);
+                })
+            );
+        }
+
+        //blocking : waits for all threads to be completed
+        for(Future<?> future : futures)
+        {
+            future.get();
+        }
+
+        boolean allDone = true;
+        for(Future<?> future : futures)
+        {
+            allDone &= future.isDone();
+        }
+        executor.shutdown();
+
+        System.out.println();
+        return allStationCoordinates;
+    }
+
 
     /**
      * Retrieves all the station names by making joins with the aqicn url links (a href)
      * and the csv file (csvCountriesCities).
      * @throws IOException in case of file reading exception.
      */
-    public List<StationEntity> initializeAllStationsFromAqicnStationsHtmlFile() throws IOException, NoProperLocationFoundException, UnsupportedFindOperationOnLocationException, ExecutionException, InterruptedException
+    public List<StationEntity> initializeAllStationsFromResourcesFiles() throws IOException, NoProperLocationFoundException, UnsupportedFindOperationOnLocationException, ExecutionException, InterruptedException
     {
         List<StationEntity> initializedStations = Collections.synchronizedList(new ArrayList<>());
         File htmlFile = this.stations.getFile();
@@ -135,7 +211,7 @@ public class DataReader
         htmlLinks.removeAll(DataReaderParticularCaseHandler.removeParticularCases(htmlLinks));
 
 
-
+        // todo : can this be factorized ? cause it is used many times in the code (threading)
         ExecutorService executor = Executors.newWorkStealingPool();
 
         List<Future<?>> futures = new ArrayList<Future<?>>();
@@ -148,17 +224,28 @@ public class DataReader
                     try
                     {
                         StationEntity newSta = this.initializeStation(htmlHrefElement);
-                        initializedStations.add(newSta);
+                        this.initializeStationCoordinates(newSta);
+                        if(newSta.getLatitude() != null)
+                        {
+                            initializedStations.add(newSta);
+                        }
                     }
                     catch (UnsupportedFindOperationOnLocationException | NoProperLocationFoundException ex)
                     {
                         ex.printStackTrace();
+                    }
+                    catch(UnknownStationException e)
+                    {
+                        // do nothing. If we don't get coordinates for a given station, it's because that
+                        // station is not used anymore. Then, its longitude and latitude will be null,
+                        // and it will not be added to the initializedStations list.
                     }
                 })
             );
         }
 
 
+        //blocking : waits for all threads to be completed
         for(Future<?> future : futures)
         {
             future.get();
@@ -185,7 +272,8 @@ public class DataReader
         String url = html_a_HrefLink.attr("href");
 
         // gets the endpoint (url) without the https://aqicn.org/city stuff.
-        String endpoint = url.toString().replace(StationService.getHostLinkRealTimeAQI(), "");
+        String endpoint = StationService.getEndpointFromUrl(url);
+
         // locations ared separated by slashes in the URL.
         String[] locations = endpoint.split("/");
         // a location can be, in that approximate specific order :
@@ -259,7 +347,7 @@ public class DataReader
                 {
                     final String error = "Could not found a suitable location. " +
                             "Please check the unknown location and fix the error.";
-                    throw new NoProperLocationFoundException(error, DataReader.class, potentialCity);
+                    throw new NoProperLocationFoundException(error, StationsDataReader.class, potentialCity);
                 }
             }
         }
@@ -347,7 +435,7 @@ public class DataReader
                     }
                     break;
                 default:
-                    throw new UnsupportedFindOperationOnLocationException("The given LocationType is not handled.", DataReader.class);
+                    throw new UnsupportedFindOperationOnLocationException("The given LocationType is not handled.", StationsDataReader.class);
             }
         }
         return Optional.empty();
@@ -357,5 +445,19 @@ public class DataReader
     {
         return current.getCountry().toLowerCase().equals(expectedCountryRegionCityName.toLowerCase())
                 || current.getIso3().toLowerCase().   equals(expectedCountryRegionCityName.toLowerCase());
+    }
+
+    private StationEntity initializeStationCoordinates(StationEntity station) throws UnknownStationException
+    {
+        for(StationEntity coordinates : this.stationsCoordinates)
+        {
+            if(coordinates.getUrl().equals(station.getUrl()))
+            {
+                station.setLongitude(coordinates.getLongitude());
+                station.setLatitude(coordinates.getLatitude());
+                return station;
+            }
+        }
+        throw new UnknownStationException("Station coordinates could not be found", StationsDataReader.class);
     }
 }

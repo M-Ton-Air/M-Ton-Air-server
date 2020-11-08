@@ -15,9 +15,9 @@ public class ForecastEntity  {
     private int idStation;
     private Date idDateForecast;
     private Timestamp dateForecasted;
-    private double measureAverage;
-    private double measureMin;
-    private double measureMax;
+    private Double measureAverage;
+    private Double measureMin;
+    private Double measureMax;
     private StationEntity stationByIdStation;
     private MeasureEntity measureByIdMeasure;
     private int idMeasure;
@@ -64,32 +64,32 @@ public class ForecastEntity  {
     }
 
     @Basic
-    @Column(name = "measure_average", nullable = false, precision = 0)
-    public double getMeasureAverage() {
+    @Column(name = "measure_average", nullable = true, precision = 0)
+    public Double getMeasureAverage() {
         return measureAverage;
     }
 
-    public void setMeasureAverage(double measureAverage) {
+    public void setMeasureAverage(Double measureAverage) {
         this.measureAverage = measureAverage;
     }
 
     @Basic
-    @Column(name = "measure_min", nullable = false, precision = 0)
-    public double getMeasureMin() {
+    @Column(name = "measure_min", nullable = true, precision = 0)
+    public Double getMeasureMin() {
         return measureMin;
     }
 
-    public void setMeasureMin(double measureMin) {
+    public void setMeasureMin(Double measureMin) {
         this.measureMin = measureMin;
     }
 
     @Basic
-    @Column(name = "measure_max", nullable = false, precision = 0)
-    public double getMeasureMax() {
+    @Column(name = "measure_max", nullable = true, precision = 0)
+    public Double getMeasureMax() {
         return measureMax;
     }
 
-    public void setMeasureMax(double measureMax) {
+    public void setMeasureMax(Double measureMax) {
         this.measureMax = measureMax;
     }
 

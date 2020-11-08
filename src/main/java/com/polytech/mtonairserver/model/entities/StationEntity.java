@@ -8,7 +8,7 @@ import java.util.Collection;
 import java.util.Objects;
 
 @Entity
-@Table(name = "station", schema = "mtonairserver")
+@Table(name = "station", schema = "mtonairserver", catalog = "")
 public class StationEntity
 {
     private int idStation;
@@ -21,6 +21,8 @@ public class StationEntity
     private String iso2;
     private Collection<DailyAqicnDataEntity> dailyAqicnDataByIdStation;
     private Collection<ForecastEntity> forecastsByIdStation;
+    private Double latitude;
+    private Double longitude;
 
     public StationEntity() {}
 
@@ -146,27 +148,29 @@ public class StationEntity
                 Objects.equals(subdivision1, that.subdivision1) &&
                 Objects.equals(subdivision2, that.subdivision2) &&
                 Objects.equals(subdivision3, that.subdivision3) &&
-                Objects.equals(iso2, that.iso2);
+                Objects.equals(iso2, that.iso2) &&
+                Objects.equals(dailyAqicnDataByIdStation, that.dailyAqicnDataByIdStation) &&
+                Objects.equals(forecastsByIdStation, that.forecastsByIdStation) &&
+                Objects.equals(latitude, that.latitude) &&
+                Objects.equals(longitude, that.longitude);
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hash(idStation, stationName, url, country, subdivision1, subdivision2, subdivision3, iso2);
+        return Objects.hash(idStation, stationName, url, country, subdivision1, subdivision2, subdivision3, iso2, dailyAqicnDataByIdStation, forecastsByIdStation, latitude, longitude);
     }
 
     @Override
     public String toString()
     {
         return "StationEntity{" +
-                "idStation=" + idStation +
                 ", stationName='" + stationName + '\'' +
                 ", url='" + url + '\'' +
                 ", country='" + country + '\'' +
-                ", subdivision1='" + subdivision1 + '\'' +
-                ", subdivision2='" + subdivision2 + '\'' +
-                ", subdivision3='" + subdivision3 + '\'' +
                 ", iso2='" + iso2 + '\'' +
+                ", latitude=" + latitude +
+                ", longitude=" + longitude +
                 '}';
     }
 
@@ -186,5 +190,29 @@ public class StationEntity
 
     public void setForecastsByIdStation(Collection<ForecastEntity> forecastsByIdStation) {
         this.forecastsByIdStation = forecastsByIdStation;
+    }
+
+    @Basic
+    @Column(name = "latitude", nullable = true, precision = 0)
+    public Double getLatitude()
+    {
+        return latitude;
+    }
+
+    public void setLatitude(Double latitude)
+    {
+        this.latitude = latitude;
+    }
+
+    @Basic
+    @Column(name = "longitude", nullable = true, precision = 0)
+    public Double getLongitude()
+    {
+        return longitude;
+    }
+
+    public void setLongitude(Double longitude)
+    {
+        this.longitude = longitude;
     }
 }

@@ -36,7 +36,7 @@ public class AqicnController {
 
     /**
      * Retrieve air quality data about a city.
-     * @param stationBase station base we want to know about.
+     * @param station station we want to know about.
      * @param request request information.
      * @return a json file containing air quality information about the chosen city.
      * @throws UnknownStationException
@@ -44,12 +44,11 @@ public class AqicnController {
      */
     @ApiOperation(value = "Get air quality information about a station", notes = "gets all the" +
             "air quality information about a station thanks to AQICN API.")
-    @RequestMapping(value = "/{stationBase}/**", method= RequestMethod.GET)
+    @RequestMapping(value = "/{station}/**", method= RequestMethod.GET)
     public ResponseEntity<String> requestAqicn(
-            @ApiParam(name = "stationBase", value = "The station base name", required = true)
-            @PathVariable String stationBase, HttpServletRequest request) throws UnknownStationException, InvalidTokenException {
-
-        return this.aqicnService.requestAqicn(stationBase, request);
+            @ApiParam(name = "station", value = "The station base name", required = true)
+            @PathVariable String station, HttpServletRequest request) throws UnknownStationException, InvalidTokenException, Exception {
+        return new ResponseEntity<String>(this.aqicnService.requestAqicn(station), HttpStatus.OK);
     }
 
 
@@ -69,5 +68,13 @@ public class AqicnController {
     public ResponseEntity<ApiErrorResponse> invalidTokenResponse(InvalidTokenException ex)
     {
         return buildErrorResponseAndPrintStackTrace(HttpStatus.BAD_REQUEST, "The API AQICN token is invalid.", ex);
+    }
+
+    @ExceptionHandler(Exception.class)
+    @ResponseBody
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ResponseEntity<ApiErrorResponse> unknownException(Exception ex)
+    {
+        return buildErrorResponseAndPrintStackTrace(HttpStatus.INTERNAL_SERVER_ERROR, "Unkown error", ex);
     }
 }

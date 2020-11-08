@@ -13,16 +13,16 @@ public class DailyAqicnDataEntity  {
     private int idDailyAqicnData;
     private int idStation;
     private Timestamp datetimeData;
-    private double airQuality;
-    private double pm25;
-    private double o3;
-    private double pressure;
-    private double humidity;
-    private double wind;
+    private Double airQuality;
+    private Double pm25;
+    private Double o3;
+    private Double pressure;
+    private Double humidity;
+    private Double wind;
+    private Double pm10;
+    private Double no2;
+    private Double temperature;
     private StationEntity stationByIdStation;
-    private double pm10;
-    private double no2;
-    private double temperature;
 
     @Id
     @Column(name = "id_daily_aqicn_data", nullable = false)
@@ -57,61 +57,61 @@ public class DailyAqicnDataEntity  {
 
     @Basic
     @Column(name = "air_quality", nullable = false, precision = 0)
-    public double getAirQuality() {
+    public Double getAirQuality() {
         return airQuality;
     }
 
-    public void setAirQuality(double airQuality) {
+    public void setAirQuality(Double airQuality) {
         this.airQuality = airQuality;
     }
 
     @Basic
-    @Column(name = "pm2_5", nullable = false, precision = 0)
-    public double getPm25() {
+    @Column(name = "pm2_5", nullable = true, precision = 0)
+    public Double getPm25() {
         return pm25;
     }
 
-    public void setPm25(double pm25) {
+    public void setPm25(Double pm25) {
         this.pm25 = pm25;
     }
 
     @Basic
-    @Column(name = "o3", nullable = false, precision = 0)
-    public double getO3() {
+    @Column(name = "o3", nullable = true, precision = 0)
+    public Double getO3() {
         return o3;
     }
 
-    public void setO3(double o3) {
+    public void setO3(Double o3) {
         this.o3 = o3;
     }
 
     @Basic
-    @Column(name = "pressure", nullable = false, precision = 0)
-    public double getPressure() {
+    @Column(name = "pressure", nullable = true, precision = 0)
+    public Double getPressure() {
         return pressure;
     }
 
-    public void setPressure(double pressure) {
+    public void setPressure(Double pressure) {
         this.pressure = pressure;
     }
 
     @Basic
-    @Column(name = "humidity", nullable = false, precision = 0)
-    public double getHumidity() {
+    @Column(name = "humidity", nullable = true, precision = 0)
+    public Double getHumidity() {
         return humidity;
     }
 
-    public void setHumidity(double humidity) {
+    public void setHumidity(Double humidity) {
         this.humidity = humidity;
     }
 
     @Basic
-    @Column(name = "wind", nullable = false, precision = 0)
-    public double getWind() {
+    @Column(name = "wind", nullable = true, precision = 0)
+    public Double getWind() {
         return wind;
     }
 
-    public void setWind(double wind) {
+    public void setWind(Double wind) {
         this.wind = wind;
     }
 
@@ -149,32 +149,32 @@ public class DailyAqicnDataEntity  {
     }
 
     @Basic
-    @Column(name = "pm10", nullable = false, precision = 0)
-    public double getPm10() {
+    @Column(name = "pm10", nullable = true, precision = 0)
+    public Double getPm10() {
         return pm10;
     }
 
-    public void setPm10(double pm10) {
+    public void setPm10(Double pm10) {
         this.pm10 = pm10;
     }
 
     @Basic
-    @Column(name = "no2", nullable = false, precision = 0)
-    public double getNo2() {
+    @Column(name = "no2", nullable = true, precision = 0)
+    public Double getNo2() {
         return no2;
     }
 
-    public void setNo2(double no2) {
+    public void setNo2(Double no2) {
         this.no2 = no2;
     }
 
     @Basic
-    @Column(name = "temperature", nullable = false, precision = 0)
-    public double getTemperature() {
+    @Column(name = "temperature", nullable = true, precision = 0)
+    public Double getTemperature() {
         return temperature;
     }
 
-    public void setTemperature(double temperature) {
+    public void setTemperature(Double temperature) {
         this.temperature = temperature;
     }
 }

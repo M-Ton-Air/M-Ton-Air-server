@@ -3,7 +3,7 @@ package com.polytech.mtonairserver.stationshandling;
 import com.polytech.mtonairserver.customexceptions.datareader.NoProperLocationFoundException;
 import com.polytech.mtonairserver.customexceptions.datareader.UnsupportedFindOperationOnLocationException;
 import com.polytech.mtonairserver.model.entities.StationEntity;
-import com.polytech.mtonairserver.stationshandling.io.DataReader;
+import com.polytech.mtonairserver.stationshandling.io.StationsDataReader;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -26,10 +26,10 @@ import java.util.concurrent.ExecutionException;
 @SpringBootTest
 @RunWith(SpringJUnit4ClassRunner.class)
 @AutoConfigureTestDatabase
-public class DataReaderTest
+public class StationsDataReaderTest
 {
     @Autowired
-    private DataReader dataReader;
+    private StationsDataReader stationsDataReader;
 
     private static boolean setupIsDone = false;
 
@@ -44,7 +44,7 @@ public class DataReaderTest
             return;
         }
 
-        stationEntities = dataReader.initializeAllStationsFromAqicnStationsHtmlFile();
+        stationEntities = stationsDataReader.initializeAllStationsFromResourcesFiles();
         setupIsDone = true;
     }
 
@@ -71,4 +71,5 @@ public class DataReaderTest
         countries.put("XK", "Kosovo");
         return countries;
     }
+
 }

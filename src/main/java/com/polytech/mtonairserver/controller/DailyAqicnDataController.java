@@ -52,7 +52,6 @@ public class DailyAqicnDataController {
             "into the M-Ton-Air database.")
     @RequestMapping(value = "/save-data", method = RequestMethod.POST)
     public ApiResponse fillOutDailyAqicnData() {
-
         try {
             this.dailyAqicnDataService.fillOutDailyAqicnData();
         } catch (Exception e) {

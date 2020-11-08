@@ -15,6 +15,8 @@ CREATE TABLE `station` (
   `subdivision2` varchar(100),
   `subdivision3` varchar(100),
   `url` varchar(300) NOT NULL,
+  `latitude` DOUBLE,
+  `longitude` DOUBLE,
   PRIMARY KEY (`id_station`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci COMMENT='Table gathering stations';
 

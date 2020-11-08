@@ -32,7 +32,6 @@ public class DataReaderParticularCaseHandler
         "turkey"
     };
 
-
     public DataReaderParticularCaseHandler(List<StationEntity> _stationEntities)
     {
         this.stationEntities = _stationEntities;
@@ -46,7 +45,6 @@ public class DataReaderParticularCaseHandler
         this.cleanSpecificSpellings();
         this.cleanSubdivisionsAndStationsNames();
     }
-
 
     /**
      * Some Countries / regions / cities are wrongly spelled in the aqicn urls / or contains dashes cause there
@@ -228,7 +226,7 @@ public class DataReaderParticularCaseHandler
         for(Element e : links)
         {
             String url = e.attr("href");
-            String endpoint = url.toString().replace(StationService.getHostLinkRealTimeAQI(), "");
+            String endpoint = StationService.getEndpointFromUrl(url);
             String potentialParticularCase = endpoint.split("/")[0];
             for(String particularCase : DataReaderParticularCaseHandler.PARTICULAR_CASES)
             {

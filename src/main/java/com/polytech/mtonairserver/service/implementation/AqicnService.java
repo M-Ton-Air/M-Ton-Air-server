@@ -1,6 +1,7 @@
 package com.polytech.mtonairserver.service.implementation;
 
 import com.polytech.mtonairserver.controller.AqicnController;
+import com.polytech.mtonairserver.customexceptions.miscellaneous.EmptyBodyJsonResponseException;
 import com.polytech.mtonairserver.customexceptions.requestaqicnexception.InvalidTokenException;
 import com.polytech.mtonairserver.customexceptions.requestaqicnexception.RequestErrorException;
 import com.polytech.mtonairserver.customexceptions.requestaqicnexception.UnknownStationException;
@@ -34,8 +35,9 @@ public class AqicnService
      * @throws UnknownStationException
      * @throws InvalidTokenException
      */
-    public String requestAqicn(String stationEndpoint) throws UnknownStationException, InvalidTokenException, RequestErrorException {
-        return this.aqicnCaller.callExternalApi(stationEndpoint).getAsString();
+    public String requestAqicn(String stationEndpoint) throws UnknownStationException, InvalidTokenException, RequestErrorException, EmptyBodyJsonResponseException
+    {
+        return this.aqicnCaller.callExternalApi(stationEndpoint).toString();
     }
 
 }

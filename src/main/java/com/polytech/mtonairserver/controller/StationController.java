@@ -1,7 +1,6 @@
 package com.polytech.mtonairserver.controller;
 
 import com.polytech.mtonairserver.config.SwaggerConfig;
-import com.polytech.mtonairserver.customexceptions.ControllerExceptionBuilder;
 import com.polytech.mtonairserver.customexceptions.datareader.NoProperLocationFoundException;
 import com.polytech.mtonairserver.customexceptions.datareader.UnsupportedFindOperationOnLocationException;
 import com.polytech.mtonairserver.customexceptions.stations.StationsAlreadyInitializedException;
@@ -9,7 +8,7 @@ import com.polytech.mtonairserver.model.entities.StationEntity;
 import com.polytech.mtonairserver.model.responses.ApiErrorResponse;
 import com.polytech.mtonairserver.model.responses.ApiSuccessResponse;
 import com.polytech.mtonairserver.service.implementation.StationService;
-import com.polytech.mtonairserver.stationshandling.io.DataReader;
+import com.polytech.mtonairserver.stationshandling.io.StationsDataReader;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,7 +30,7 @@ public class StationController {
     private final StationService stationService;
 
     @Autowired
-    public StationController(StationService stationService, DataReader loader) {
+    public StationController(StationService stationService, StationsDataReader loader) {
         this.stationService = stationService;
     }
 
@@ -45,8 +44,12 @@ public class StationController {
     //todo : find by id, by name, by subdivision, etc.
 
     /**
-     * This methods loads up all the stations into memory thanks to the "stations.html" file. Then, it initializes
-     * a list of StationEntity, to save them up into the mtonair database.
+     * This methods loads up all the stations into memory thanks to the "stations.html" file (and the stations_geo.json file).
+     * Then, it initializes a list of StationEntity, to save them up into the mtonair database.
+     *
+     * Please, instead of using this endpoint, use the appropriate SQL script "insert-stations".
+     * That method takes about 1min30 to complete.
+     *
      * @return
      * @throws IOException
      * @throws StationsAlreadyInitializedException the current method can be started only if there are no more than one records in
@@ -58,10 +61,6 @@ public class StationController {
     @RequestMapping(value = "/create-stations", method = RequestMethod.PUT)
     public ResponseEntity insertAllStations() throws IOException, StationsAlreadyInitializedException, UnsupportedFindOperationOnLocationException, NoProperLocationFoundException, ExecutionException, InterruptedException
     {
-        // todo : for each url of each record of the database : retrieve the geo (latitude / longitude) and store it.
-        // todo : add a longitude / latitude field for the station (database)
-
-        // todo : handle ExecutionException, InterruptedException
         this.stationService.saveAllStationsToDatabaseFromFiles();
         return new ResponseEntity<ApiSuccessResponse>
         (
@@ -100,6 +99,22 @@ public class StationController {
     private ResponseEntity<ApiErrorResponse> insertAllStationsStationsAlreadyInitialized(StationsAlreadyInitializedException e)
     {
         return buildErrorResponseAndPrintStackTrace(HttpStatus.CONFLICT, "Stations are already initialized", e);
+    }
+
+    @ExceptionHandler(ExecutionException.class)
+    @ResponseBody
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    private ResponseEntity<ApiErrorResponse> insertAllStationsExecutionError(ExecutionException e)
+    {
+        return buildErrorResponseAndPrintStackTrace(HttpStatus.INTERNAL_SERVER_ERROR, "A threading error occured", e);
+    }
+
+    @ExceptionHandler(Exception.class)
+    @ResponseBody
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    private ResponseEntity<ApiErrorResponse> insertAllStationsInterruptedError(InterruptedException e)
+    {
+        return buildErrorResponseAndPrintStackTrace(HttpStatus.INTERNAL_SERVER_ERROR, "An threading error occured", e);
     }
 
     @ExceptionHandler(Exception.class)

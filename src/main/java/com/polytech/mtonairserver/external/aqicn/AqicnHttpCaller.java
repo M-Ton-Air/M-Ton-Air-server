@@ -5,6 +5,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.polytech.mtonairserver.customexceptions.miscellaneous.EmptyBodyJsonResponseException;
 import com.polytech.mtonairserver.customexceptions.requestaqicnexception.InvalidTokenException;
 import com.polytech.mtonairserver.customexceptions.requestaqicnexception.RequestErrorException;
 import com.polytech.mtonairserver.customexceptions.requestaqicnexception.UnknownStationException;
@@ -22,13 +23,14 @@ public class AqicnHttpCaller extends HttpCall
     private static String partOfUrlToRemove = "/api/v1/aqicn/";
 
     public AqicnHttpCaller(@Value(value = "https://api.waqi.info/feed/")String domain,
-                           @Value(value = "/?token=582a979a038e4dd717de2788124fd200620e1e3b") String token)
+                           @Value(value = "?token=582a979a038e4dd717de2788124fd200620e1e3b") String token)
     {
         super(domain, token);
     }
 
     @Override
-    public JsonObject callExternalApi(String endpoint) throws RequestErrorException, InvalidTokenException, UnknownStationException {
+    public JsonObject callExternalApi(String endpoint) throws RequestErrorException, InvalidTokenException, UnknownStationException, EmptyBodyJsonResponseException
+    {
         RestTemplate restTemplate = new RestTemplate();
         String urlToCall = this.domain + endpoint + this.token;
 
@@ -37,6 +39,10 @@ public class AqicnHttpCaller extends HttpCall
         if(jsonResponseAsString.getStatusCode().equals(HttpStatus.OK))
         {
             String jsonString = jsonResponseAsString.getBody();
+            if(jsonString == null)
+            {
+                throw new EmptyBodyJsonResponseException("Http response body was null / empty.", AqicnHttpCaller.class);
+            }
             JsonElement jsonElement = this.parser.parse(jsonString);
             JsonObject jsonObject = jsonElement.getAsJsonObject();
             JsonElement status = jsonObject.get("status");

@@ -7,11 +7,12 @@ import com.polytech.mtonairserver.model.entities.StationEntity;
 import com.polytech.mtonairserver.repository.StationRepository;
 import com.polytech.mtonairserver.service.interfaces.IStationService;
 
-import com.polytech.mtonairserver.stationshandling.io.DataReader;
+import com.polytech.mtonairserver.stationshandling.io.StationsDataReader;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
@@ -24,25 +25,27 @@ public class StationService implements IStationService
 {
     private final StationRepository stationRepository;
 
-    private final DataReader dataReader;
+    private final StationsDataReader stationsDataReader;
 
     @Autowired
-    public StationService(StationRepository _stationRepository, DataReader dr)
+    public StationService(StationRepository _stationRepository, StationsDataReader dr)
     {
         this.stationRepository = _stationRepository;
-        this.dataReader = dr;
+        this.stationsDataReader = dr;
     }
 
-    private static String hostLinkRealTimeAQI = "http://aqicn.org/city/";
+    private final static String getHostLinkRealTimeAQIHttp =  "http://aqicn.org/city/";
 
-    public static String getHostLinkRealTimeAQI()
-    {
-        return hostLinkRealTimeAQI;
-    }
+    private final static String getHostLinkRealTimeAQIHttps =  "https://aqicn.org/city/";
 
-    public static void setHostLinkRealTimeAQI(String hostLinkRealTimeAQI)
+    public static String getEndpointFromUrl(String url)
     {
-        StationService.hostLinkRealTimeAQI = hostLinkRealTimeAQI;
+        String endpoint = url.replace(getHostLinkRealTimeAQIHttps, "").replace(getHostLinkRealTimeAQIHttp, "");
+        if(endpoint.endsWith("/"))
+        {
+            endpoint = endpoint.substring(0, endpoint.length() - 1);
+        }
+        return endpoint;
     }
 
     @Override
@@ -95,7 +98,7 @@ public class StationService implements IStationService
         }
         else
         {
-            this.stationRepository.saveAll(this.dataReader.initializeAllStationsFromAqicnStationsHtmlFile());
+            this.stationRepository.saveAll(this.stationsDataReader.initializeAllStationsFromResourcesFiles());
         }
     }
 

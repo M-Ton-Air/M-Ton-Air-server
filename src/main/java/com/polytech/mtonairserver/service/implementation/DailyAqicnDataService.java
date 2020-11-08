@@ -2,6 +2,7 @@ package com.polytech.mtonairserver.service.implementation;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
+import com.polytech.mtonairserver.customexceptions.miscellaneous.EmptyBodyJsonResponseException;
 import com.polytech.mtonairserver.customexceptions.requestaqicnexception.InvalidTokenException;
 import com.polytech.mtonairserver.customexceptions.requestaqicnexception.RequestErrorException;
 import com.polytech.mtonairserver.customexceptions.requestaqicnexception.UnknownStationException;
@@ -136,7 +137,7 @@ public class DailyAqicnDataService implements IDailyAqicnDataService {
                         JsonObject dailyAqicnJson = null;
                         try {
                             dailyAqicnJson = this.aqicnHttpCaller.callExternalApi(urlStation);
-                        } catch (UnknownStationException | InvalidTokenException | RequestErrorException e) {
+                        } catch (UnknownStationException | InvalidTokenException | RequestErrorException | EmptyBodyJsonResponseException e) {
                             e.printStackTrace();
                         }
                         if (dailyAqicnJson != null) {

@@ -1,6 +1,4 @@
-package com.polytech.mtonairserver.model.reponseobject.data.city;
-
-import com.fasterxml.jackson.annotation.JsonProperty;
+package com.polytech.mtonairserver.model.ReponseObject.data.city;
 
 public class CityData {
 

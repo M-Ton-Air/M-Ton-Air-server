@@ -7,13 +7,13 @@ import com.polytech.mtonairserver.customexceptions.requestaqicnexception.Invalid
 import com.polytech.mtonairserver.customexceptions.requestaqicnexception.RequestErrorException;
 import com.polytech.mtonairserver.customexceptions.requestaqicnexception.UnknownStationException;
 import com.polytech.mtonairserver.external.aqicn.AqicnHttpCaller;
-import com.polytech.mtonairserver.model.ReponseObject.CityData;
 import com.polytech.mtonairserver.model.entities.StationEntity;
 import com.polytech.mtonairserver.service.interfaces.IGeoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
+import com.polytech.mtonairserver.model.ReponseObject.data.city.CityData;
 
 import java.io.FileWriter;
 import java.io.IOException;
@@ -85,10 +85,11 @@ public class GeoService implements IGeoService
                     JsonObject currentStationJson = null;
                     try
                     {
+                        JsonParser jsonParser = new JsonParser();
                         System.out.println(station.getUrl());
-                        currentStationJson = this.httpCaller.callExternalApi(station.getUrl());
+                        currentStationJson = jsonParser.parse(this.httpCaller.callExternalApi(station.getUrl()).getBody()).getAsJsonObject();
                     }
-                    catch (RequestErrorException | InvalidTokenException | UnknownStationException | EmptyBodyJsonResponseException e)
+                    catch (RequestErrorException | InvalidTokenException | UnknownStationException e)
                     {
                         exceptionOccured = true;
                         stationsCausingErrors.add(station);

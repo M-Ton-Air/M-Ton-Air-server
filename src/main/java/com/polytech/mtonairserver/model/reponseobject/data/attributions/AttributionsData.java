@@ -1,6 +1,4 @@
-package com.polytech.mtonairserver.model.reponseobject.data.attributions;
-
-import com.fasterxml.jackson.annotation.JsonProperty;
+package com.polytech.mtonairserver.model.ReponseObject.data.attributions;
 
 public class AttributionsData {
 

@@ -1,13 +1,11 @@
-package com.polytech.mtonairserver.model.reponseobject.data;
+package com.polytech.mtonairserver.model.ReponseObject.data;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.polytech.mtonairserver.model.reponseobject.data.attributions.AttributionsData;
-import com.polytech.mtonairserver.model.reponseobject.data.city.CityData;
-import com.polytech.mtonairserver.model.reponseobject.data.debug.DebugData;
-import com.polytech.mtonairserver.model.reponseobject.data.forecast.ForecastData;
-import com.polytech.mtonairserver.model.reponseobject.data.iaqi.IaqiData;
-import com.polytech.mtonairserver.model.reponseobject.data.time.TimeData;
-
+import com.polytech.mtonairserver.model.ReponseObject.data.attributions.AttributionsData;
+import com.polytech.mtonairserver.model.ReponseObject.data.city.CityData;
+import com.polytech.mtonairserver.model.ReponseObject.data.debug.DebugData;
+import com.polytech.mtonairserver.model.ReponseObject.data.forecast.ForecastData;
+import com.polytech.mtonairserver.model.ReponseObject.data.iaqi.IaqiData;
+import com.polytech.mtonairserver.model.ReponseObject.data.time.TimeData;
 
 public class Data {
 

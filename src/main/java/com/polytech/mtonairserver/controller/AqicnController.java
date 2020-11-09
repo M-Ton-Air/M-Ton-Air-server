@@ -3,6 +3,7 @@ package com.polytech.mtonairserver.controller;
 import com.polytech.mtonairserver.config.SwaggerConfig;
 import com.polytech.mtonairserver.customexceptions.requestaqicnexception.InvalidTokenException;
 import com.polytech.mtonairserver.customexceptions.requestaqicnexception.UnknownStationException;
+import com.polytech.mtonairserver.model.entities.StationEntity;
 import com.polytech.mtonairserver.model.responses.ApiErrorResponse;
 import com.polytech.mtonairserver.service.implementation.AqicnService;
 import io.swagger.annotations.Api;
@@ -16,6 +17,8 @@ import org.springframework.web.bind.annotation.*;
 
 
 import javax.servlet.http.HttpServletRequest;
+
+import java.util.List;
 
 import static com.polytech.mtonairserver.customexceptions.ControllerExceptionBuilder.buildErrorResponseAndPrintStackTrace;
 
@@ -48,7 +51,7 @@ public class AqicnController {
     @RequestMapping(value = "/**", method= RequestMethod.GET)
     public ResponseEntity<String> requestAqicn(HttpServletRequest request) throws UnknownStationException, InvalidTokenException, Exception {
         String endpoint = request.getRequestURI().replace(this.partOfUrlToRemove, "");
-        return this.aqicnService.requestAqicn(endpoint);
+        return new ResponseEntity<String>(this.aqicnService.requestAqicn(endpoint), HttpStatus.OK);
     }
 
 

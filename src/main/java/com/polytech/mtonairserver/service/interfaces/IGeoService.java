@@ -6,11 +6,12 @@ import com.polytech.mtonairserver.customexceptions.requestaqicnexception.Coordin
 import com.polytech.mtonairserver.customexceptions.requestaqicnexception.InvalidTokenException;
 import com.polytech.mtonairserver.customexceptions.requestaqicnexception.RequestErrorException;
 import com.polytech.mtonairserver.customexceptions.requestaqicnexception.UnknownStationException;
-import com.polytech.mtonairserver.model.ReponseObject.CityData;
+import com.polytech.mtonairserver.model.ReponseObject.data.city.CityData;
 
 import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
+
 
 public interface IGeoService
 {

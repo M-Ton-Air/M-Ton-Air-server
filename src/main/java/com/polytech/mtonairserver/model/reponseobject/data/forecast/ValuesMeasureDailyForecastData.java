@@ -1,8 +1,4 @@
-package com.polytech.mtonairserver.model.reponseobject.data.forecast;
-
-import com.fasterxml.jackson.annotation.JsonProperty;
-
-import java.sql.Date;
+package com.polytech.mtonairserver.model.ReponseObject.data.forecast;
 
 public class ValuesMeasureDailyForecastData {
 

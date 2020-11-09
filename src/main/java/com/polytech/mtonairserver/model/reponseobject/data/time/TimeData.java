@@ -1,9 +1,4 @@
-package com.polytech.mtonairserver.model.reponseobject.data.time;
-
-import com.fasterxml.jackson.annotation.JsonProperty;
-
-import java.sql.Timestamp;
-import java.time.LocalDateTime;
+package com.polytech.mtonairserver.model.ReponseObject.data.time;
 
 public class TimeData {
 

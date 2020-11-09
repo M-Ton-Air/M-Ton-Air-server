@@ -5,7 +5,7 @@ import com.polytech.mtonairserver.customexceptions.requestaqicnexception.Invalid
 import com.polytech.mtonairserver.customexceptions.requestaqicnexception.UnknownStationException;
 import com.polytech.mtonairserver.model.entities.DailyAqicnDataEntity;
 import com.polytech.mtonairserver.model.entities.ForecastEntity;
-import com.polytech.mtonairserver.model.reponseobject.GlobalObject;
+import com.polytech.mtonairserver.model.ReponseObject.GlobalObject;
 import io.swagger.annotations.ApiResponse;
 import javafx.util.Pair;
 

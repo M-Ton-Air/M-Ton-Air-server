@@ -19,8 +19,6 @@ public class StationEntity
     private String subdivision2;
     private String subdivision3;
     private String iso2;
-    private Collection<DailyAqicnDataEntity> dailyAqicnDataByIdStation;
-    private Collection<ForecastEntity> forecastsByIdStation;
     private Double latitude;
     private Double longitude;
 
@@ -149,8 +147,6 @@ public class StationEntity
                 Objects.equals(subdivision2, that.subdivision2) &&
                 Objects.equals(subdivision3, that.subdivision3) &&
                 Objects.equals(iso2, that.iso2) &&
-                Objects.equals(dailyAqicnDataByIdStation, that.dailyAqicnDataByIdStation) &&
-                Objects.equals(forecastsByIdStation, that.forecastsByIdStation) &&
                 Objects.equals(latitude, that.latitude) &&
                 Objects.equals(longitude, that.longitude);
     }
@@ -158,7 +154,7 @@ public class StationEntity
     @Override
     public int hashCode()
     {
-        return Objects.hash(idStation, stationName, url, country, subdivision1, subdivision2, subdivision3, iso2, dailyAqicnDataByIdStation, forecastsByIdStation, latitude, longitude);
+        return Objects.hash(idStation, stationName, url, country, subdivision1, subdivision2, subdivision3, iso2, latitude, longitude);
     }
 
     @Override
@@ -172,24 +168,6 @@ public class StationEntity
                 ", latitude=" + latitude +
                 ", longitude=" + longitude +
                 '}';
-    }
-
-    @OneToMany(mappedBy = "stationByIdStation")
-    public Collection<DailyAqicnDataEntity> getDailyAqicnDataByIdStation() {
-        return dailyAqicnDataByIdStation;
-    }
-
-    public void setDailyAqicnDataByIdStation(Collection<DailyAqicnDataEntity> dailyAqicnDataByIdStation) {
-        this.dailyAqicnDataByIdStation = dailyAqicnDataByIdStation;
-    }
-
-    @OneToMany(mappedBy = "stationByIdStation")
-    public Collection<ForecastEntity> getForecastsByIdStation() {
-        return forecastsByIdStation;
-    }
-
-    public void setForecastsByIdStation(Collection<ForecastEntity> forecastsByIdStation) {
-        this.forecastsByIdStation = forecastsByIdStation;
     }
 
     @Basic

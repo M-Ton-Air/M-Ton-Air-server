@@ -37,6 +37,6 @@ public class AqicnService
      */
     public String requestAqicn(String stationEndpoint) throws UnknownStationException, InvalidTokenException, RequestErrorException, EmptyBodyJsonResponseException
     {
-        return this.aqicnCaller.callExternalApi(stationEndpoint).toString();
+        return this.aqicnCaller.callExternalApi(stationEndpoint).getBody();
     }
 }

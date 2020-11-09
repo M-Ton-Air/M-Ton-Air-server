@@ -4,7 +4,6 @@ import com.polytech.mtonairserver.customexceptions.requestaqicnexception.Coordin
 import com.polytech.mtonairserver.customexceptions.requestaqicnexception.InvalidTokenException;
 import com.polytech.mtonairserver.customexceptions.requestaqicnexception.RequestErrorException;
 import com.polytech.mtonairserver.customexceptions.requestaqicnexception.UnknownStationException;
-import com.polytech.mtonairserver.model.ReponseObject.CityData;
 import com.polytech.mtonairserver.service.implementation.GeoService;
 import org.junit.Test;
 import org.junit.runner.RunWith;

@@ -1,7 +1,6 @@
-package com.polytech.mtonairserver.model.reponseobject;
+package com.polytech.mtonairserver.model.ReponseObject;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.polytech.mtonairserver.model.reponseobject.data.Data;
+import com.polytech.mtonairserver.model.ReponseObject.data.Data;
 
 public class GlobalObject {
 

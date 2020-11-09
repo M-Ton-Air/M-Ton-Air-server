@@ -68,8 +68,6 @@ public class DailyAqicnDataService implements IDailyAqicnDataService {
     @Override
     public List<DailyAqicnDataEntity> listOfAqicnData() {
         List<DailyAqicnDataEntity> dailyAqicnDataList = this.dailyAqicnDataRepository.findAll();
-        dailyAqicnDataList.forEach(sta -> sta.getStationByIdStation().getDailyAqicnDataByIdStation().clear());
-        dailyAqicnDataList.forEach(st -> st.getStationByIdStation().getForecastsByIdStation().clear());
         return dailyAqicnDataList;
     }
 
@@ -80,8 +78,6 @@ public class DailyAqicnDataService implements IDailyAqicnDataService {
     @Override
     public List<ForecastEntity> listOfAqicnForecastData() {
         List<ForecastEntity> dailyAqicnForecastDataList = this.forecastRepository.findAll();
-        dailyAqicnForecastDataList.forEach(sta -> sta.getStationByIdStation().getDailyAqicnDataByIdStation().clear());
-        dailyAqicnForecastDataList.forEach(st -> st.getStationByIdStation().getForecastsByIdStation().clear());
         return dailyAqicnForecastDataList;
     }
 
@@ -158,8 +154,8 @@ public class DailyAqicnDataService implements IDailyAqicnDataService {
         String urlStation = station.getUrl();
         String dailyAqicnJsonStr = null;
         try {
-            dailyAqicnJsonStr = this.aqicnHttpCaller.callExternalApi(urlStation).toString();
-        } catch (UnknownStationException | InvalidTokenException | RequestErrorException | EmptyBodyJsonResponseException e) {
+            dailyAqicnJsonStr = this.aqicnHttpCaller.callExternalApi(urlStation).getBody();
+        } catch (UnknownStationException | InvalidTokenException | RequestErrorException e) {
             e.printStackTrace();
         }
 
@@ -317,8 +313,6 @@ public class DailyAqicnDataService implements IDailyAqicnDataService {
     @Override
     public List<DailyAqicnDataEntity> getAqicnDatasByIdStation(int idStation) {
         List<DailyAqicnDataEntity> dailyAqicnDataByIdStationList = this.dailyAqicnDataRepository.findByIdStation(idStation);
-        dailyAqicnDataByIdStationList.forEach(sta -> sta.getStationByIdStation().getDailyAqicnDataByIdStation().clear());
-        dailyAqicnDataByIdStationList.forEach(st -> st.getStationByIdStation().getForecastsByIdStation().clear());
         return dailyAqicnDataByIdStationList;
     }
 
@@ -330,8 +324,6 @@ public class DailyAqicnDataService implements IDailyAqicnDataService {
     @Override
     public List<ForecastEntity> getAqicnForecastDatasByIdStation(int idStation) {
         List<ForecastEntity> dailyAqicnForecastDataByIdStationList = this.forecastRepository.findByIdStation(idStation);
-        dailyAqicnForecastDataByIdStationList.forEach(sta -> sta.getStationByIdStation().getDailyAqicnDataByIdStation().clear());
-        dailyAqicnForecastDataByIdStationList.forEach(st -> st.getStationByIdStation().getForecastsByIdStation().clear());
         return dailyAqicnForecastDataByIdStationList;
     }
 
@@ -344,8 +336,6 @@ public class DailyAqicnDataService implements IDailyAqicnDataService {
     @Override
     public List<ForecastEntity> getAqicnForecastDatasByIdStationAndMeasureName(int idStation, String measureName) {
         List<ForecastEntity> dailyAqicnForecastDataByIdStationAndMeasureList = this.forecastRepository.findByIdStationAndMeasureByIdMeasure_MeasureName(idStation, measureName);
-        dailyAqicnForecastDataByIdStationAndMeasureList.forEach(sta -> sta.getStationByIdStation().getDailyAqicnDataByIdStation().clear());
-        dailyAqicnForecastDataByIdStationAndMeasureList.forEach(st -> st.getStationByIdStation().getForecastsByIdStation().clear());
         return dailyAqicnForecastDataByIdStationAndMeasureList;
     }
 

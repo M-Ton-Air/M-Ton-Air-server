@@ -14,6 +14,7 @@ public abstract class HttpCall
 {
     protected String domain;
     protected String token;
+    protected JsonParser parser;
 
     public abstract ResponseEntity<String> callExternalApi(String endpoint) throws LoggableException;
 
@@ -21,5 +22,6 @@ public abstract class HttpCall
     {
         this.domain = domain;
         this.token = token;
+        this.parser = new JsonParser();
     }
 }

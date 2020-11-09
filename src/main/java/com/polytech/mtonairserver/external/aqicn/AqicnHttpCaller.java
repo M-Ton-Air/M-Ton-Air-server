@@ -49,7 +49,7 @@ public class AqicnHttpCaller extends HttpCall
 
             if(status.getAsString().equals("ok"))
             {
-                   return jsonObject;
+                return jsonObject;
             }
             else if(status.getAsString().equals("error"))
             {
@@ -61,7 +61,7 @@ public class AqicnHttpCaller extends HttpCall
             }
         }
 
-         throw new RequestErrorException(jsonResponseAsString.getStatusCode() + " : " + jsonResponseAsString.getBody(), AqicnHttpCaller.class);
+        throw new RequestErrorException(jsonResponseAsString.getStatusCode() + " : " + jsonResponseAsString.getBody(), AqicnHttpCaller.class);
     }
 
     private void handleError(String endpoint, ResponseEntity<String> jsonResponseAsString, JsonObject jsonObject) throws UnknownStationException, InvalidTokenException, RequestErrorException {

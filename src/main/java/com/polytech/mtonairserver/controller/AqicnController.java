@@ -29,6 +29,8 @@ public class AqicnController {
 
     private AqicnService aqicnService;
 
+    private final String partOfUrlToRemove = "/api/v1/aqicn/";
+
     @Autowired
     public AqicnController(AqicnService _aqicnService) {
         this.aqicnService = _aqicnService;
@@ -36,7 +38,6 @@ public class AqicnController {
 
     /**
      * Retrieve air quality data about a city.
-     * @param station station we want to know about.
      * @param request request information.
      * @return a json file containing air quality information about the chosen city.
      * @throws UnknownStationException
@@ -44,11 +45,10 @@ public class AqicnController {
      */
     @ApiOperation(value = "Get air quality information about a station", notes = "gets all the" +
             "air quality information about a station thanks to AQICN API.")
-    @RequestMapping(value = "/{station}/**", method= RequestMethod.GET)
-    public ResponseEntity<String> requestAqicn(
-            @ApiParam(name = "station", value = "The station base name", required = true)
-            @PathVariable String station, HttpServletRequest request) throws UnknownStationException, InvalidTokenException, Exception {
-        return new ResponseEntity<String>(this.aqicnService.requestAqicn(station), HttpStatus.OK);
+    @RequestMapping(value = "/**", method= RequestMethod.GET)
+    public ResponseEntity<String> requestAqicn(HttpServletRequest request) throws UnknownStationException, InvalidTokenException, Exception {
+        String endpoint = request.getRequestURI().replace(this.partOfUrlToRemove, "");
+        return this.aqicnService.requestAqicn(endpoint);
     }
 
 

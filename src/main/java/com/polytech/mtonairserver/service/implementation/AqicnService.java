@@ -39,5 +39,4 @@ public class AqicnService
     {
         return this.aqicnCaller.callExternalApi(stationEndpoint).toString();
     }
-
 }

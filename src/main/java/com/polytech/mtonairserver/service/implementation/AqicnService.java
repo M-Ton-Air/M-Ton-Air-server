@@ -34,8 +34,8 @@ public class AqicnService
      * @throws UnknownStationException
      * @throws InvalidTokenException
      */
-    public String requestAqicn(String stationEndpoint) throws UnknownStationException, InvalidTokenException, RequestErrorException {
-        return this.aqicnCaller.callExternalApi(stationEndpoint).getAsString();
+    public ResponseEntity<String> requestAqicn(String stationEndpoint) throws UnknownStationException, InvalidTokenException, RequestErrorException {
+        return this.aqicnCaller.callExternalApi(stationEndpoint);
     }
 
 }

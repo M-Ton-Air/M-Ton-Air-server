@@ -28,51 +28,24 @@ public class AqicnHttpCaller extends HttpCall
     }
 
     @Override
-    public JsonObject callExternalApi(String endpoint) throws RequestErrorException, InvalidTokenException, UnknownStationException {
+    public ResponseEntity<String> callExternalApi(String endpoint) throws RequestErrorException, InvalidTokenException, UnknownStationException {
         RestTemplate restTemplate = new RestTemplate();
         String urlToCall = this.domain + endpoint + this.token;
 
-        ResponseEntity<String> jsonResponseAsString = restTemplate.getForEntity(urlToCall, String.class);
+        ResponseEntity<String> jsonResponse = restTemplate.getForEntity(urlToCall, String.class);
 
-        if(jsonResponseAsString.getStatusCode().equals(HttpStatus.OK))
-        {
-            String jsonString = jsonResponseAsString.getBody();
-            JsonElement jsonElement = this.parser.parse(jsonString);
-            JsonObject jsonObject = jsonElement.getAsJsonObject();
-            JsonElement status = jsonObject.get("status");
-
-            if(status.getAsString().equals("ok"))
-            {
-                   return jsonObject;
-            }
-            else if(status.getAsString().equals("error"))
-            {
-                handleError(endpoint, jsonResponseAsString, jsonObject);
-            }
-            else
-            {
-                throw new RequestErrorException(jsonResponseAsString.getStatusCode() + " : " + jsonResponseAsString.getBody(), AqicnHttpCaller.class);
-            }
+        if (jsonResponse.getBody().contains("Unknown station")) {
+            throw new UnknownStationException("The station name is unknown.", AqicnHttpCaller.class);
         }
-
-         throw new RequestErrorException(jsonResponseAsString.getStatusCode() + " : " + jsonResponseAsString.getBody(), AqicnHttpCaller.class);
-    }
-
-    private void handleError(String endpoint, ResponseEntity<String> jsonResponseAsString, JsonObject jsonObject) throws UnknownStationException, InvalidTokenException, RequestErrorException {
-        JsonElement error = jsonObject.get("data");
-        if(error.getAsString().equals("Unknown station"))
-        {
-            throw new UnknownStationException("The station name is unknown : " + endpoint, AqicnHttpCaller.class);
-        }
-        else if(error.getAsString().equals("Invalid key"))
-        {
+        else if (jsonResponse.getBody().contains("Invalid key")) {
             throw new InvalidTokenException("The API AQICN token is invalid.", AqicnHttpCaller.class);
         }
-        else
-        {
-            throw new RequestErrorException(jsonResponseAsString.getStatusCode() + " : " + jsonResponseAsString.getBody(), AqicnHttpCaller.class);
-        }
+
+        return jsonResponse;
+
     }
+
+
 
 
 }

@@ -2,7 +2,7 @@ package com.polytech.mtonairserver.service;
 
 import com.polytech.mtonairserver.customexceptions.requestaqicnexception.AqiNotFoundException;
 import com.polytech.mtonairserver.external.aqicn.AqicnHttpCaller;
-import com.polytech.mtonairserver.model.ReponseObject.GlobalObject;
+import com.polytech.mtonairserver.model.responseobject.GlobalObject;
 import com.polytech.mtonairserver.model.entities.DailyAqicnDataEntity;
 import com.polytech.mtonairserver.model.entities.ForecastEntity;
 import com.polytech.mtonairserver.repository.DailyAqicnDataRepository;

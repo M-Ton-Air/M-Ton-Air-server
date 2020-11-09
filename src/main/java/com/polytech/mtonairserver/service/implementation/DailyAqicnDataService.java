@@ -2,15 +2,14 @@ package com.polytech.mtonairserver.service.implementation;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
-import com.polytech.mtonairserver.customexceptions.miscellaneous.EmptyBodyJsonResponseException;
 import com.google.gson.JsonParser;
 import com.polytech.mtonairserver.customexceptions.requestaqicnexception.AqiNotFoundException;
 import com.polytech.mtonairserver.customexceptions.requestaqicnexception.InvalidTokenException;
 import com.polytech.mtonairserver.customexceptions.requestaqicnexception.RequestErrorException;
 import com.polytech.mtonairserver.customexceptions.requestaqicnexception.UnknownStationException;
 import com.polytech.mtonairserver.external.aqicn.AqicnHttpCaller;
-import com.polytech.mtonairserver.model.ReponseObject.data.forecast.ValuesMeasureDailyForecastData;
 import com.polytech.mtonairserver.model.entities.*;
+import com.polytech.mtonairserver.model.responseobject.data.forecast.ValuesMeasureDailyForecastData;
 import com.polytech.mtonairserver.repository.DailyAqicnDataRepository;
 import com.polytech.mtonairserver.repository.ForecastRepository;
 import com.polytech.mtonairserver.repository.MeasureRepository;
@@ -19,12 +18,10 @@ import com.polytech.mtonairserver.service.interfaces.IDailyAqicnDataService;
 import com.polytech.mtonairserver.utils.doubleextensions.DoubleUtils;
 import javafx.util.Pair;
 import org.apache.commons.lang3.time.FastDateFormat;
-import org.hibernate.PropertyValueException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
-import com.polytech.mtonairserver.model.ReponseObject.*;
+import com.polytech.mtonairserver.model.responseobject.*;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.util.*;
@@ -37,7 +34,7 @@ import java.util.concurrent.Future;
  * Service implementation for the daily AQICN data.
  */
 @Service
-public class DailyAqicnDataService implements IDailyAqicnDataService {
+public class  DailyAqicnDataService implements IDailyAqicnDataService {
 
     private DailyAqicnDataRepository dailyAqicnDataRepository;
 
@@ -346,6 +343,6 @@ public class DailyAqicnDataService implements IDailyAqicnDataService {
 
     }
 
-    }
+}
 
 

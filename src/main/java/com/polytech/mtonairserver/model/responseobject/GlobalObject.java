@@ -1,6 +1,6 @@
-package com.polytech.mtonairserver.model.ReponseObject;
+package com.polytech.mtonairserver.model.responseobject;
 
-import com.polytech.mtonairserver.model.ReponseObject.data.Data;
+import com.polytech.mtonairserver.model.responseobject.data.Data;
 
 public class GlobalObject {
 

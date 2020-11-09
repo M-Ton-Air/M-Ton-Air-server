@@ -1,4 +1,4 @@
-package com.polytech.mtonairserver.model.ReponseObject.data.city;
+package com.polytech.mtonairserver.model.responseobject.data.city;
 
 public class CityData {
 

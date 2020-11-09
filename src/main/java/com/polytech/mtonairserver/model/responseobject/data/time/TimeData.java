@@ -1,4 +1,4 @@
-package com.polytech.mtonairserver.model.ReponseObject.data.time;
+package com.polytech.mtonairserver.model.responseobject.data.time;
 
 public class TimeData {
 

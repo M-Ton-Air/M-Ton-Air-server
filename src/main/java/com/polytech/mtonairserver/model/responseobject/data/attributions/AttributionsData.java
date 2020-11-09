@@ -1,4 +1,4 @@
-package com.polytech.mtonairserver.model.ReponseObject.data.attributions;
+package com.polytech.mtonairserver.model.responseobject.data.attributions;
 
 public class AttributionsData {
 

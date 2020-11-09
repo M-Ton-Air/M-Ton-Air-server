@@ -1,4 +1,4 @@
-package com.polytech.mtonairserver.model.ReponseObject.data.forecast;
+package com.polytech.mtonairserver.model.responseobject.data.forecast;
 
 public class MeasureDailyForecastData {
 

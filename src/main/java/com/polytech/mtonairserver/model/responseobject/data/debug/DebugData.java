@@ -1,4 +1,4 @@
-package com.polytech.mtonairserver.model.ReponseObject.data.debug;
+package com.polytech.mtonairserver.model.responseobject.data.debug;
 
 public class DebugData {
 

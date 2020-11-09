@@ -1,4 +1,4 @@
-package com.polytech.mtonairserver.model.ReponseObject.data.iaqi;
+package com.polytech.mtonairserver.model.responseobject.data.iaqi;
 
 public class ValueIaqiData {
 

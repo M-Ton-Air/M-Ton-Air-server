@@ -208,6 +208,11 @@ public class  DailyAqicnDataService implements IDailyAqicnDataService {
                     } else {
                         dailyAqicnDataEntity.setTemperature(null);
                     }
+                    if (globalObject.getData().getDominentpol() != null) {
+                        dailyAqicnDataEntity.setDominentMeasure(globalObject.getData().getDominentpol());
+                    } else {
+                        dailyAqicnDataEntity.setDominentMeasure(null);
+                    }
                     dailyAqicnDataEntity.setStationByIdStation(station);
                     dailyAqicnDataEntity.setIdStation(station.getIdStation());
                     dailyAqicnDataEntity.setDatetimeData(Timestamp.valueOf(globalObject.getData().getTime().getS()));

@@ -23,6 +23,7 @@ public class DailyAqicnDataEntity  {
     private Double no2;
     private Double temperature;
     private StationEntity stationByIdStation;
+    private String dominentMeasure;
 
     @Id
     @Column(name = "id_daily_aqicn_data", nullable = false)
@@ -176,5 +177,15 @@ public class DailyAqicnDataEntity  {
 
     public void setTemperature(Double temperature) {
         this.temperature = temperature;
+    }
+
+    @Basic
+    @Column(name = "dominent_measure", nullable = true, length = 25)
+    public String getDominentMeasure() {
+        return dominentMeasure;
+    }
+
+    public void setDominentMeasure(String dominentMeasure) {
+        this.dominentMeasure = dominentMeasure;
     }
 }

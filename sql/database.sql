@@ -53,6 +53,7 @@ CREATE TABLE `daily_aqicn_data` (
   `humidity` float,
   `wind` float,
   `temperature` float,
+  `dominent_measure` varchar(25),
   PRIMARY KEY (`id_station`,`datetime_data`,`id_daily_aqicn_data`),
   UNIQUE KEY `id_daily_aqicn_data_UNIQUE` (`id_daily_aqicn_data`),
   CONSTRAINT `fk_id_station` FOREIGN KEY (`id_station`) REFERENCES `station` (`id_station`) ON DELETE CASCADE ON UPDATE CASCADE
@@ -77,3 +78,13 @@ CREATE TABLE `forecast` (
   CONSTRAINT `fk_id_measure` FOREIGN KEY (`id_measure`) REFERENCES `measure` (`id_measure`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `fk_id_station_bis` FOREIGN KEY (`id_station`) REFERENCES `station` (`id_station`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci COMMENT='Table gathering forecasts according to station name, date and particulates';
+
+--
+-- Déchargement des données de la table `measure`
+--
+
+INSERT INTO `measure` (`id_measure`, `measure_name`) VALUES
+(1, 'o3'),
+(2, 'pm25'),
+(3, 'pm10'),
+(4, 'uvi');

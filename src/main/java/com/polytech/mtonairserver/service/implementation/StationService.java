@@ -55,6 +55,12 @@ public class StationService implements IStationService
     }
 
     @Override
+    public StationEntity findStationById(int idStation)
+    {
+        return this.stationRepository.findByIdStation(idStation);
+    }
+
+    @Override
     public List<StationEntity> findAllByCountry(String country)
     {
         return this.stationRepository.findAllByCountry(country);
@@ -76,11 +82,7 @@ public class StationService implements IStationService
     @Override
     public List<StationEntity> findAllBySubdivision(String subdivision)
     {
-        List<StationEntity> result = this.stationRepository.findAllBySubdivision1(subdivision);
-        result.addAll(               this.stationRepository.findAllBySubdivision2(subdivision));
-        result.addAll(               this.stationRepository.findAllBySubdivision3(subdivision));
-
-        return result;
+        return this.stationRepository.findAllBySubdivision(subdivision);
     }
 
     @Override

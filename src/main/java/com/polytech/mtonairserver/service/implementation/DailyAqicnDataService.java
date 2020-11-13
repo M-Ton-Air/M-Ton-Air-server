@@ -314,7 +314,7 @@ public class  DailyAqicnDataService implements IDailyAqicnDataService {
      */
     @Override
     public List<DailyAqicnDataEntity> getAqicnDatasByIdStation(int idStation) {
-        List<DailyAqicnDataEntity> dailyAqicnDataByIdStationList = this.dailyAqicnDataRepository.findByIdStation(idStation);
+        List<DailyAqicnDataEntity> dailyAqicnDataByIdStationList = this.dailyAqicnDataRepository.findAllByIdStation(idStation);
         return dailyAqicnDataByIdStationList;
     }
 
@@ -325,7 +325,7 @@ public class  DailyAqicnDataService implements IDailyAqicnDataService {
      */
     @Override
     public List<ForecastEntity> getAqicnForecastDatasByIdStation(int idStation) {
-        List<ForecastEntity> dailyAqicnForecastDataByIdStationList = this.forecastRepository.findByIdStation(idStation);
+        List<ForecastEntity> dailyAqicnForecastDataByIdStationList = this.forecastRepository.findAllByIdStation(idStation);
         return dailyAqicnForecastDataByIdStationList;
     }
 
@@ -337,7 +337,7 @@ public class  DailyAqicnDataService implements IDailyAqicnDataService {
      */
     @Override
     public List<ForecastEntity> getAqicnForecastDatasByIdStationAndMeasureName(int idStation, String measureName) {
-        List<ForecastEntity> dailyAqicnForecastDataByIdStationAndMeasureList = this.forecastRepository.findByIdStationAndMeasureByIdMeasure_MeasureName(idStation, measureName);
+        List<ForecastEntity> dailyAqicnForecastDataByIdStationAndMeasureList = this.forecastRepository.findAllByIdStationAndMeasureByIdMeasure_MeasureName(idStation, measureName);
         return dailyAqicnForecastDataByIdStationAndMeasureList;
     }
 

@@ -13,6 +13,8 @@ public interface IStationService
 {
     public List<StationEntity> findAll();
 
+    public StationEntity findStationById(int idStation);
+
     public List<StationEntity> findAllByCountry(String country);
 
     public List<StationEntity> findAllByIso2(String iso2);

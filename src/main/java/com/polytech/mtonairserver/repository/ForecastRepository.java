@@ -9,8 +9,8 @@ import java.util.List;
 @Repository
 public interface ForecastRepository extends JpaRepository<ForecastEntity, Integer> {
 
-    public List<ForecastEntity> findByIdStation(int idStation);
+    public List<ForecastEntity> findAllByIdStation(int idStation);
 
-    public List<ForecastEntity> findByIdStationAndMeasureByIdMeasure_MeasureName(int idStation, String measureName);
+    public List<ForecastEntity> findAllByIdStationAndMeasureByIdMeasure_MeasureName(int idStation, String measureName);
 
 }

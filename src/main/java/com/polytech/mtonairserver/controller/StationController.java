@@ -4,6 +4,7 @@ import com.polytech.mtonairserver.config.SwaggerConfig;
 import com.polytech.mtonairserver.customexceptions.datareader.NoProperLocationFoundException;
 import com.polytech.mtonairserver.customexceptions.datareader.UnsupportedFindOperationOnLocationException;
 import com.polytech.mtonairserver.customexceptions.stations.StationsAlreadyInitializedException;
+import com.polytech.mtonairserver.model.entities.DailyAqicnDataEntity;
 import com.polytech.mtonairserver.model.entities.StationEntity;
 import com.polytech.mtonairserver.model.responses.ApiErrorResponse;
 import com.polytech.mtonairserver.model.responses.ApiSuccessResponse;
@@ -11,6 +12,7 @@ import com.polytech.mtonairserver.service.implementation.StationService;
 import com.polytech.mtonairserver.stationshandling.io.StationsDataReader;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -30,18 +32,78 @@ public class StationController {
     private final StationService stationService;
 
     @Autowired
-    public StationController(StationService stationService, StationsDataReader loader) {
+    public StationController(StationService stationService) {
         this.stationService = stationService;
     }
 
     @RequestMapping(value = "/all", method = RequestMethod.GET)
     @ApiOperation(value = "Stations list", notes = "Retrieves all the AQICN stations.")
-    public ResponseEntity<List<StationEntity>> getAllStationsName() throws IOException, NoProperLocationFoundException, UnsupportedFindOperationOnLocationException
+    public ResponseEntity<List<StationEntity>> getAllStationsName()
     {
         return new ResponseEntity<List<StationEntity>>(this.stationService.findAll(), HttpStatus.OK);
     }
 
-    //todo : find by id, by name, by subdivision, etc.
+    @RequestMapping(value = "/{idStation}", method = RequestMethod.GET)
+    @ApiOperation(value = "Get a specific station with his id", notes = "Retrieves a specific station according to his id")
+    public ResponseEntity<StationEntity> getAStationById(
+            @ApiParam(name = "idStation", value = "The station id", required = true)
+            @PathVariable int idStation) {
+        return new ResponseEntity<StationEntity>(this.stationService.findStationById(idStation), HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "/by-country/{country}", method = RequestMethod.GET)
+    @ApiOperation(value = "Stations list by country", notes = "Retrieves all the AQICN stations by a country.")
+    public ResponseEntity<List<StationEntity>> getStationsByCountry(
+            @ApiParam(name = "country", value = "The country name", required = true)
+            @PathVariable String country
+    )
+    {
+        return new ResponseEntity<List<StationEntity>>(this.stationService.findAllByCountry(country), HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "/by-name/{stationName}", method = RequestMethod.GET)
+    @ApiOperation(value = "Stations list by name", notes = "Retrieves  AQICN stations by a station name.")
+    public ResponseEntity<List<StationEntity>> getStationsByStationName(
+            @ApiParam(name = "stationName", value = "The station name", required = true)
+            @PathVariable String stationName
+    )
+    {
+        return new ResponseEntity<List<StationEntity>>(this.stationService.findAllByStationName(stationName), HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "/by-iso2/{iso2}", method = RequestMethod.GET)
+    @ApiOperation(value = "Stations list by iso2", notes = "Retrieves all the AQICN stations by iso2.")
+    public ResponseEntity<List<StationEntity>> getStationsByIso2(
+            @ApiParam(name = "iso2", value = "The iso2", required = true)
+            @PathVariable String iso2
+    )
+    {
+        return new ResponseEntity<List<StationEntity>>(this.stationService.findAllByIso2(iso2), HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "/by-subdivision/{subdivision}", method = RequestMethod.GET)
+    @ApiOperation(value = "Stations list by the subdivision", notes = "Retrieves all the AQICN stations by the subdivision1, " +
+            "the subdivision2 or the subdivision3.")
+    public ResponseEntity<List<StationEntity>> getStationsBySubdivision(
+            @ApiParam(name = "subdivision", value = "The subdivision", required = true)
+            @PathVariable String subdivision
+    )
+    {
+        return new ResponseEntity<List<StationEntity>>(this.stationService.findAllBySubdivision(subdivision), HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "/delete-all", method = RequestMethod.DELETE)
+    @ApiOperation(value = "Delete all stations", notes = "Delete all stations from the mtonairserver database ")
+    public ResponseEntity deleteAllStations()
+    {
+        this.stationService.deleteAll();
+        return new ResponseEntity<ApiSuccessResponse>
+                (
+                        new ApiSuccessResponse(HttpStatus.OK, "Stations were removed from the database."),
+                        HttpStatus.OK
+                );
+    }
+
 
     /**
      * This methods loads up all the stations into memory thanks to the "stations.html" file (and the stations_geo.json file).

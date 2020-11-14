@@ -15,10 +15,14 @@ import java.util.Set;
 @Repository
 public interface UserRepository extends JpaRepository<UserEntity, Integer> {
 
+    public UserEntity findAllByIdUser(int idUser);
+
     public UserEntity findByEmail(String email);
 
     public boolean existsByEmail(String email);
 
     public boolean existsByApiKey(String email);
+
+    //public void
 
 }

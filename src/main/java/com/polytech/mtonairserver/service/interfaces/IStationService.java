@@ -23,6 +23,8 @@ public interface IStationService
 
     public List<StationEntity> findAllBySubdivision(String subdivision);
 
+    public StationEntity findByUrl(String url);
+
     public boolean existsByStationName(String stationName);
 
     public void saveAllStationsToDatabaseFromFiles() throws StationsAlreadyInitializedException, NoProperLocationFoundException, UnsupportedFindOperationOnLocationException, IOException, ExecutionException, InterruptedException;

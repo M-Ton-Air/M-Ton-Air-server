@@ -1,10 +1,7 @@
 package com.polytech.mtonairserver.controller;
 
 import com.polytech.mtonairserver.config.SwaggerConfig;
-import com.polytech.mtonairserver.customexceptions.miscellaneous.UserFavoriteStationsFetchException;
-import com.polytech.mtonairserver.model.entities.StationEntity;
 import com.polytech.mtonairserver.model.entities.UserEntity;
-import com.polytech.mtonairserver.model.responses.ApiErrorResponse;
 import com.polytech.mtonairserver.service.implementation.UserService;
 import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +10,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Set;
 
 /**
  * Users controller.
@@ -56,43 +52,4 @@ public class UserController {
         return new ResponseEntity<UserEntity>(this.userService.findByIdUser(id), HttpStatus.OK);
     }
 
-    @ApiOperation(value = "Gets the favorite stations for a given user", notes = "Returns 0, one or many stations" +
-            " according to the user favorite stations.")
-    @RequestMapping(value = "/{id}/favorite-stations", method = RequestMethod.GET)
-    public ResponseEntity<Set<StationEntity>> getUserFavoriteStations(
-            @ApiParam(name = "id", value = "The user id", required = true)
-            @PathVariable int id) throws UserFavoriteStationsFetchException
-    {
-        try
-        {
-            return new ResponseEntity<Set<StationEntity>>(this.userService.listUserFavoriteStations(id), HttpStatus.OK);
-        }
-        catch(Exception e)
-        {
-            throw new UserFavoriteStationsFetchException(e.getMessage(), UserController.class);
-        }
-    }
-
-
-    //todo : add a favorite station.
-
-    //todo : delete all user favorite stations
-
-
-    /* ############################################################## EXCEPTION HANDLERS ############################################################## */
-
-    /**
-     * Custom Exception Handler for invalid variables length.
-     * @param ex an InvalidVariablesLengthException.
-     * @return an ApiErrorResponse describing the error.
-     */
-    @ExceptionHandler(UserFavoriteStationsFetchException.class)
-    @ResponseBody
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public ApiErrorResponse invalidVarLength(UserFavoriteStationsFetchException ex)
-    {
-        ex.printStackTrace();
-        ex.setStackTrace(new StackTraceElement[]{ex.getStackTrace()[0]});
-        return new ApiErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, "Could not fetch the user favorite stations. Server side error occured.", ex);
-    }
 }

@@ -86,6 +86,12 @@ public class StationService implements IStationService
     }
 
     @Override
+    public StationEntity findByUrl(String url)
+    {
+        return this.stationRepository.findAllByUrl(url);
+    }
+
+    @Override
     public boolean existsByStationName(String city)
     {
         return this.stationRepository.existsByStationName(city);

@@ -3,6 +3,7 @@ package com.polytech.mtonairserver.service.interfaces;
 import com.polytech.mtonairserver.customexceptions.accountcreation.*;
 import com.polytech.mtonairserver.customexceptions.loginexception.UnknownEmailException;
 import com.polytech.mtonairserver.customexceptions.loginexception.WrongPasswordException;
+import com.polytech.mtonairserver.customexceptions.favoritestation.StationAlreadyInUserFavoriteStationsException;
 import com.polytech.mtonairserver.model.entities.StationEntity;
 import com.polytech.mtonairserver.model.entities.UserEntity;
 
@@ -23,7 +24,6 @@ public interface IUserService
 
     void createAccount(UserEntity user) throws NamesMissingException, InvalidVariablesLengthException, InvalidEmailException, AccountAlreadyExistsException, TokenGenerationException;
 
-    public UserEntity login(UserEntity loginPassword) throws UnknownEmailException, WrongPasswordException;
+    UserEntity login(UserEntity loginPassword) throws UnknownEmailException, WrongPasswordException;
 
-    public Set<StationEntity> listUserFavoriteStations(int userId);
 }

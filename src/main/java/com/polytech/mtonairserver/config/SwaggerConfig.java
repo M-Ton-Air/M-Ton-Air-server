@@ -39,6 +39,9 @@ public class SwaggerConfig
     public static final String GEO_NAME_TAG = "Stations geographical coordinates";
     private static final String GEO_DESCRIPTION_TAG = "Requests all the AQICN urls and saves the different stations coordinates into a json file located in the classpath";
 
+    public static final String USER_FAVORITE_STATION_NAME_TAG = "User favorite station";
+    private static final String USER_FAVORITE_STATION_DESCRIPTION_TAG = "User favorite station management API";
+
     @Bean
     /**
      * M-Ton-Air docker api config

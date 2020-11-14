@@ -133,8 +133,8 @@ public class UserFavoriteStationController {
     /* ############################################################## EXCEPTION HANDLERS ############################################################## */
 
     /**
-     * Custom Exception Handler for invalid variables length.
-     * @param ex an InvalidVariablesLengthException.
+     * Custom Exception Handler.
+     * @param ex an UserFavoriteStationsFetchException.
      * @return an ApiErrorResponse describing the error.
      */
     @ExceptionHandler(UserFavoriteStationsFetchException.class)

@@ -30,6 +30,11 @@ public class UserFavoriteStationService implements IUserFavoriteStationService {
         this.userFavoriteStationRepository = userFavoriteStationRepository;
     }
 
+    /**
+     * List user's favorite stations.
+     * @param userId the id of the user.
+     * @return List of user's favorite stations.
+     */
     @Override
     public Set<StationEntity> listUserFavoriteStations(int userId)
     {
@@ -37,6 +42,13 @@ public class UserFavoriteStationService implements IUserFavoriteStationService {
         return ue.getUserFavoriteStationsByIdUser();
     }
 
+    /**
+     * Add a favorite station to a user.
+     * @param idUser the id of the user.
+     * @param idStation the id of the station.
+     * @throws StationAlreadyInUserFavoriteStationsException if the station already exist in user's favorite stations.
+     * @throws StationDoesntExistIntoTheDatabaseException if the station doesn't exist into the database M'Ton'Air.
+     */
     @Override
     public void addUserFavoriteStation(int idUser, int idStation) throws StationAlreadyInUserFavoriteStationsException, StationDoesntExistIntoTheDatabaseException {
 
@@ -73,6 +85,10 @@ public class UserFavoriteStationService implements IUserFavoriteStationService {
         }
     }
 
+    /**
+     * Delete all user's favorite stations.
+     * @param idUser the id of the user.
+     */
     @Override
     public void deleteAllUserFavoriteStations(int idUser) {
         this.userFavoriteStationRepository.deleteAllByIdUser(idUser);

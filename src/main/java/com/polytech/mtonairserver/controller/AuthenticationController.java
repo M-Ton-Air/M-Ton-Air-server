@@ -38,6 +38,7 @@ public class AuthenticationController
                                 @RequestBody UserEntity loginPassword) throws UnknownEmailException, WrongPasswordException
     {
         UserEntity ue = this.userService.login(loginPassword);
+
         return new ResponseEntity<ApiAuthenticateSuccessResponse>(
                 new ApiAuthenticateSuccessResponse(HttpStatus.OK, "The user " + ue.getFirstname() + " " + ue.getName() +
                 " (" + ue.getEmail() + ") is well authenticated.", ue.getIdUser(), ue.getApiKey()),

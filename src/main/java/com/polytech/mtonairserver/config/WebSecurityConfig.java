@@ -79,8 +79,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     public void configure(WebSecurity web) {
-        web.ignoring().antMatchers("/authentification/authenticate*")
+        web.ignoring().antMatchers("/auth/sign-in")
                 .antMatchers(HttpMethod.OPTIONS, "/**");
+
+        web.ignoring().antMatchers("/auth/sign-up");
     }
 
     @Bean

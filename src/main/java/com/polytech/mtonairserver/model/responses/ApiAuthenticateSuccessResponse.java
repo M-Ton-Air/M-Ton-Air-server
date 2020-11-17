@@ -12,12 +12,14 @@ public class ApiAuthenticateSuccessResponse extends ApiSuccessResponse
      * @param _message the success message (response)
      * @param _userId the userentity id
      * @param _apiToken the generated userentity token.
+     * @param _securityToken the generated security token
      */
-    public ApiAuthenticateSuccessResponse(HttpStatus _status, String _message, int _userId, String _apiToken)
+    public ApiAuthenticateSuccessResponse(HttpStatus _status, String _message, int _userId, String _apiToken, String _securityToken)
     {
         super(_status, _message);
         this.userId = _userId;
         this.apiToken = _apiToken;
+        this.securityToken = _securityToken;
     }
 
     @JsonFormat(shape = JsonFormat.Shape.NUMBER_INT)
@@ -25,6 +27,9 @@ public class ApiAuthenticateSuccessResponse extends ApiSuccessResponse
 
     @JsonFormat(shape = JsonFormat.Shape.STRING)
     private String apiToken;
+
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
+    private String securityToken;
 
 
 }

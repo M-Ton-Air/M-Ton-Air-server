@@ -22,7 +22,8 @@ public class AqicnHttpCaller extends HttpCall
     private static String partOfUrlToRemove = "/api/v1/aqicn/";
 
     public AqicnHttpCaller(@Value(value = "https://api.waqi.info/feed/")String domain,
-                           @Value(value = "/?token=582a979a038e4dd717de2788124fd200620e1e3b") String token)
+                           /*@Value(value = "/?token=582a979a038e4dd717de2788124fd200620e1e3b") String token*/
+                           @Value(value = "/?token=c35e2c9732b063aedfdde529afc64860398e565d") String token)
     {
         super(domain, token);
     }

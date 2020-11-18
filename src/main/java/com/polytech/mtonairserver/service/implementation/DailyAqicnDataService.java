@@ -149,6 +149,7 @@ public class  DailyAqicnDataService implements IDailyAqicnDataService {
         List<ForecastEntity> forecastEntityList = new ArrayList<>();
 
         String urlStation = station.getUrl();
+        System.out.println("In progress : " + urlStation);
         String dailyAqicnJsonStr = null;
         try {
             dailyAqicnJsonStr = this.aqicnHttpCaller.callExternalApi(urlStation).getBody();
@@ -283,26 +284,8 @@ public class  DailyAqicnDataService implements IDailyAqicnDataService {
         List<DailyAqicnDataEntity> dailyAqicnDataEntityListSynchronized = Collections.synchronizedList(dailyAqicnDataEntityList);
         List<ForecastEntity> forecastEntityListSynchronized = Collections.synchronizedList(forecastEntityList);
 
-        ExecutorService executor = Executors.newWorkStealingPool();
-        List<Future<?>> futures = new ArrayList<Future<?>>();
-
-        futures.add(
-                executor.submit(() ->
-                        {
-                            this.dailyAqicnDataRepository.saveAll(dailyAqicnDataEntityListSynchronized);
-                            this.forecastRepository.saveAll(forecastEntityListSynchronized);
-                        })
-        );
-
-        for (Future<?> future : futures) {
-            future.get();
-        }
-
-        boolean allDone = true;
-        for (Future<?> future : futures) {
-            allDone &= future.isDone();
-        }
-        executor.shutdown();
+        this.dailyAqicnDataRepository.saveAll(dailyAqicnDataEntityListSynchronized);
+        this.forecastRepository.saveAll(forecastEntityListSynchronized);
 
     }
 

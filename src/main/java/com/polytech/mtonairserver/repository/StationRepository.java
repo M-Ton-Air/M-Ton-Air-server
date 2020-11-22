@@ -15,13 +15,13 @@ public interface StationRepository extends JpaRepository<StationEntity, Integer>
 
     public StationEntity findByIdStation(int idStation);
 
-    @Query("SELECT s FROM StationEntity s where s.country LIKE %:country%")
+    @Query("SELECT s FROM StationEntity s WHERE s.country LIKE %:country%")
     public List<StationEntity> findAllByCountry(
             @Param("country") String country);
 
     public List<StationEntity> findAllByIso2(String iso2);
 
-    @Query("SELECT s FROM StationEntity s where s.stationName LIKE %:stationName%")
+    @Query("SELECT s FROM StationEntity s WHERE s.stationName LIKE %:stationName%")
     public List<StationEntity> findAllByStationName(String stationName);
 
     public List<StationEntity> findAllBySubdivision1(String subdivision1);
@@ -30,7 +30,7 @@ public interface StationRepository extends JpaRepository<StationEntity, Integer>
 
     public List<StationEntity> findAllBySubdivision3(String subdivision1);
 
-    @Query("SELECT s FROM StationEntity s where s.subdivision1 LIKE %:subdivision% " +
+    @Query("SELECT s FROM StationEntity s WHERE s.subdivision1 LIKE %:subdivision% " +
             "OR s.subdivision2 LIKE %:subdivision% " +
             "OR s.subdivision3 LIKE %:subdivision%")
     public List<StationEntity> findAllBySubdivision(String subdivision);

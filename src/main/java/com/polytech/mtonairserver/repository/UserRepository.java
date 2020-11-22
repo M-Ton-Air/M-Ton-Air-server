@@ -23,6 +23,10 @@ public interface UserRepository extends JpaRepository<UserEntity, Integer> {
 
     public boolean existsByApiKey(String email);
 
-    //public void
+    @Query(value = "DELETE FROM user_favorite_station u  WHERE u.id_user = :idUser",
+            nativeQuery = true)
+    public void deleteAllUserFavoriteStationsByIdUser(int idUser);
+
+
 
 }

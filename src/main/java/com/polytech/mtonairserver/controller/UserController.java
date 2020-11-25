@@ -36,19 +36,6 @@ public class UserController {
         this.userService = _userService;
     }
 
-    // todo : restrict the user api usage, otherwise anyone can access these data.
-
-    /**
-     * Retrieve the users list
-     * @return users list
-     */
-    @ApiOperation(value = "Get the users list", notes = "gets all the" +
-            "available users stored in the M-Ton-Air database.")
-    @RequestMapping(method= RequestMethod.GET)
-    public ResponseEntity<List<UserEntity>> listOfUsers() {
-        return new ResponseEntity<List<UserEntity>>(this.userService.findAllUsersWithoutTheirFavoriteStations(), HttpStatus.OK);
-    }
-
     /**
      * Retrieve a user by his id
      * @param id users id

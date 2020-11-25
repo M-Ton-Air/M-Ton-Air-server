@@ -10,7 +10,6 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 //@SpringBootApplication
 @EnableSwagger2
-@EnableWebMvc
 @SpringBootApplication(exclude = { SecurityAutoConfiguration.class })
 @EnableCaching
 public class MTonAirServerApplication {
@@ -18,7 +17,5 @@ public class MTonAirServerApplication {
     public static void main(String[] args) {
         SpringApplication.run(MTonAirServerApplication.class, args);
     }
-
-
 
 }

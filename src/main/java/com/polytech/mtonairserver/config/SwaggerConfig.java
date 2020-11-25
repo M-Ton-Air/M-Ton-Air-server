@@ -23,10 +23,6 @@ public class SwaggerConfig
     public static final String AUTHENTICATION_NAME_TAG = "Authentication";
     private static final String AUTHENTICATION_DESCRIPTION_TAG = "Authentication API, for users to sign-in and/or sign-up";
 
-
-    public static final String AQICN_NAME_TAG = "AQICN requests";
-    private static final String AQICN_DESCRIPTION_TAG = "AQICN requests management API";
-
     public static final String DEFAULT_TAG = "Default fallback";
     private static final String DEFAULT_DESCRIPTION_TAG = "Handles all unsupported requests";
 
@@ -38,9 +34,6 @@ public class SwaggerConfig
 
     public static final String GEO_NAME_TAG = "Stations geographical coordinates";
     private static final String GEO_DESCRIPTION_TAG = "Requests all the AQICN urls and saves the different stations coordinates into a json file located in the classpath";
-
-    public static final String USER_FAVORITE_STATION_NAME_TAG = "User favorite station";
-    private static final String USER_FAVORITE_STATION_DESCRIPTION_TAG = "User favorite station management API";
 
     @Bean
     /**
@@ -60,7 +53,6 @@ public class SwaggerConfig
                         new Tag(USERS_NAME_TAG, USERS_DESCRIPTION_TAG),
                         new Tag(AUTHENTICATION_NAME_TAG, AUTHENTICATION_DESCRIPTION_TAG),
                         new Tag(DEFAULT_TAG, DEFAULT_DESCRIPTION_TAG),
-                        new Tag(AQICN_NAME_TAG, AQICN_DESCRIPTION_TAG),
                         new Tag(DAILY_AQICN_DATA_NAME_TAG, DAILY_AQICN_DATA_DESCRIPTION_TAG),
                         new Tag(STATIONS_NAME_TAG, STATIONS_DESCRIPTION_TAG),
                         new Tag(GEO_NAME_TAG, GEO_DESCRIPTION_TAG));

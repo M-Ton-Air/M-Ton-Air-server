@@ -9,6 +9,7 @@ import com.polytech.mtonairserver.model.responses.ApiResponse;
 import com.polytech.mtonairserver.model.responses.ApiSuccessResponse;
 import com.polytech.mtonairserver.service.implementation.GeoService;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -51,6 +52,7 @@ public class GeoController
         this.geoService = geoService;
     }
 
+    @ApiOperation(value = "Get the coordinates of all stations on the AQICN API", notes = "Allows to request the AQICN API and to save the stations coordinates in a json file.")
     @RequestMapping(value = "/save-all", method = RequestMethod.GET)
     public ResponseEntity<ApiResponse> saveAllStationsToJsonFile() throws IOException, InterruptedException, ExecutionException, InvalidTokenException, CoordinatesRetrievalException, RequestErrorException, UnknownStationException
     {

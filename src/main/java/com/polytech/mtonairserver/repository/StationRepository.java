@@ -35,6 +35,13 @@ public interface StationRepository extends JpaRepository<StationEntity, Integer>
             "OR s.subdivision3 LIKE %:subdivision%")
     public List<StationEntity> findAllBySubdivision(String subdivision);
 
+    @Query("SELECT s FROM StationEntity  s WHERE s.stationName LIKE %:any% " +
+            "OR s.country LIKE %:any% " +
+            "OR s.subdivision1 LIKE %:any% " +
+            "OR s.subdivision2 LIKE %:any% " +
+            "OR s.subdivision3 LIKE %:any%")
+    public List<StationEntity> findAllByStationNameAndCountryAndSubdivision(String any);
+
     public StationEntity findAllByUrl(String url);
 
     public boolean existsByStationName(String stationName);

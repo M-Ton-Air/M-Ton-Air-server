@@ -36,6 +36,15 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     private JwtRequestFilter jwtRequestFilter;
 
+    // URLs we want to disable security web tokens
+    private final String[] authorizedUrls = new String[]{
+            "/auth/sign-in",
+            "/auth/sign-up",
+            "/",
+            "/swagger-resources/**",
+            "/v2/**"
+    };
+
     public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
 
         // configure AuthenticationManager so that it knows from where to load user for matching credentials
@@ -54,8 +63,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         return super.authenticationManagerBean();
     }
 
-    // Configuration du comportement de votre APPI
-    // face aux requêtes qui arrivent
+    //Configuration of the API's behavior to incoming requests
     @Override
     protected void configure(HttpSecurity httpSecurity) throws Exception {
 
@@ -76,13 +84,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         // httpSecurity.exceptionHandling().accessDeniedPage("/authentification/authenticate");
     }
 
-
     @Override
     public void configure(WebSecurity web) {
-        web.ignoring().antMatchers("/auth/sign-in")
-                .antMatchers(HttpMethod.OPTIONS, "/**");
-
-        web.ignoring().antMatchers("/auth/sign-up");
+        web.ignoring().antMatchers(authorizedUrls);
     }
 
     @Bean

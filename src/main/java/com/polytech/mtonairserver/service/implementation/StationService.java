@@ -72,7 +72,6 @@ public class StationService implements IStationService
         return this.stationRepository.findAllByIso2(iso2);
     }
 
-
     @Override
     public List<StationEntity> findAllByStationName(String stationName)
     {
@@ -83,6 +82,11 @@ public class StationService implements IStationService
     public List<StationEntity> findAllBySubdivision(String subdivision)
     {
         return this.stationRepository.findAllBySubdivision(subdivision);
+    }
+
+    @Override
+    public List<StationEntity> findAllByStationNameAndCountryAndSubdivision(String any) {
+        return this.stationRepository.findAllByStationNameAndCountryAndSubdivision(any);
     }
 
     @Override

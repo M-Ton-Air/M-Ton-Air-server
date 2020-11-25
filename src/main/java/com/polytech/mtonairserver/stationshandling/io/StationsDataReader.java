@@ -7,7 +7,6 @@ import com.polytech.mtonairserver.customexceptions.datareader.UnsupportedFindOpe
 import com.polytech.mtonairserver.customexceptions.requestaqicnexception.UnknownStationException;
 import com.polytech.mtonairserver.model.entities.StationEntity;
 import com.polytech.mtonairserver.model.external.CountryCityRegion;
-import com.polytech.mtonairserver.service.implementation.AqicnService;
 import com.polytech.mtonairserver.service.implementation.StationService;
 import com.polytech.mtonairserver.stationshandling.LocationType;
 import com.polytech.mtonairserver.stationshandling.DataReaderParticularCaseHandler;

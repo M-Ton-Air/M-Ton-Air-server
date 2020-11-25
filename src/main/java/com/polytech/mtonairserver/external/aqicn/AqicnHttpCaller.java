@@ -9,7 +9,6 @@ import com.polytech.mtonairserver.customexceptions.requestaqicnexception.Invalid
 import com.polytech.mtonairserver.customexceptions.requestaqicnexception.RequestErrorException;
 import com.polytech.mtonairserver.customexceptions.requestaqicnexception.UnknownStationException;
 import com.polytech.mtonairserver.external.HttpCall;
-import com.polytech.mtonairserver.service.implementation.AqicnService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

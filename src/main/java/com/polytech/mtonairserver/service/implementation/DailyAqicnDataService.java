@@ -19,9 +19,11 @@ import com.polytech.mtonairserver.utils.doubleextensions.DoubleUtils;
 import javafx.util.Pair;
 import org.apache.commons.lang3.time.FastDateFormat;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import com.polytech.mtonairserver.model.responseobject.*;
+
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.util.*;
@@ -63,6 +65,7 @@ public class  DailyAqicnDataService implements IDailyAqicnDataService {
      * @return all the AQICN data
      */
     @Override
+    @Cacheable(value = "aqicndata")
     public List<DailyAqicnDataEntity> listOfAqicnData() {
         List<DailyAqicnDataEntity> dailyAqicnDataList = this.dailyAqicnDataRepository.findAll();
         return dailyAqicnDataList;
@@ -73,6 +76,7 @@ public class  DailyAqicnDataService implements IDailyAqicnDataService {
      * @return all the AQICN forecast data
      */
     @Override
+    @Cacheable(value = "forecastsdata")
     public List<ForecastEntity> listOfAqicnForecastData() {
         List<ForecastEntity> dailyAqicnForecastDataList = this.forecastRepository.findAll();
         return dailyAqicnForecastDataList;

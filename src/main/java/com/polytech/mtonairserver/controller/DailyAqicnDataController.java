@@ -12,11 +12,16 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;
+import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@Configuration
+@EnableScheduling
 @RestController
 @Api(tags = SwaggerConfig.DAILY_AQICN_DATA_NAME_TAG)
 @RequestMapping("/aqicn-data")
@@ -48,6 +53,7 @@ public class DailyAqicnDataController {
     }
 
 
+    //@Scheduled(fixedDelay=86400000) // method starting every 24 hours
     @ApiOperation(value = "Save the AQICN datas into the database", notes = "Save all the available AQICN data" +
             "into the M-Ton-Air database.")
     @RequestMapping(value = "/save-data", method = RequestMethod.POST)

@@ -14,8 +14,11 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
@@ -101,7 +104,6 @@ public class StationController {
         return new ResponseEntity<List<StationEntity>>(this.stationService.findAllByStationNameAndCountryAndSubdivision(any), HttpStatus.OK);
     }
 
-
     @RequestMapping(value = "/delete-all", method = RequestMethod.DELETE)
     @ApiOperation(value = "Delete all stations", notes = "Delete all stations from the mtonairserver database ")
     public ResponseEntity deleteAllStations()
@@ -113,7 +115,6 @@ public class StationController {
                         HttpStatus.OK
                 );
     }
-
 
     /**
      * This methods loads up all the stations into memory thanks to the "stations.html" file (and the stations_geo.json file).

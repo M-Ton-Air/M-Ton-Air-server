@@ -285,12 +285,26 @@ public class  DailyAqicnDataService implements IDailyAqicnDataService {
 
     private void saveAqicnDataAndForecastsToDatabase(List<DailyAqicnDataEntity> dailyAqicnDataEntityList, List<ForecastEntity> forecastEntityList) throws ExecutionException, InterruptedException {
 
+        //todo :pk pas enlever les syncrhonized list ici ?
         List<DailyAqicnDataEntity> dailyAqicnDataEntityListSynchronized = Collections.synchronizedList(dailyAqicnDataEntityList);
         List<ForecastEntity> forecastEntityListSynchronized = Collections.synchronizedList(forecastEntityList);
 
         this.dailyAqicnDataRepository.saveAll(dailyAqicnDataEntityListSynchronized);
         this.forecastRepository.saveAll(forecastEntityListSynchronized);
 
+        this.deleteOldAqicnDatasAndForecasts();
+
+    }
+
+    /**
+     * Delete the old aqicn datas and forecasts after saving all the new datas
+     */
+    public void deleteOldAqicnDatasAndForecasts() {
+        List<StationEntity> stationEntityList = this.stationRepository.findAll();
+        for (StationEntity stationEntity : stationEntityList) {
+            this.dailyAqicnDataRepository.deleteAllOldAqicnDatas(stationEntity.getIdStation());
+            this.dailyAqicnDataRepository.deleteAllOldForecasts(stationEntity.getIdStation());
+        }
     }
 
 

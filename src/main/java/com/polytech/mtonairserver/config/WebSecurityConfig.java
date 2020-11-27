@@ -42,7 +42,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
             "/auth/sign-up",
             "/",
             "/swagger-resources/**",
-            "/v2/**"
+            "/v2/**",
+            "/swagger-ui.html"
     };
 
     public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {

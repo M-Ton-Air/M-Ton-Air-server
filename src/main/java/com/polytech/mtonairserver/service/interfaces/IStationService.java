@@ -23,7 +23,7 @@ public interface IStationService
 
     public List<StationEntity> findAllBySubdivision(String subdivision);
 
-    public List<StationEntity> findAllByStationNameAndCountryAndSubdivision(String any);
+    public List<StationEntity> findByStationNameAndCountryAndSubdivision(String any, int numberOfStations);
 
     public StationEntity findByUrl(String url);
 

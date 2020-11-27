@@ -95,13 +95,15 @@ public class StationController {
         return new ResponseEntity<List<StationEntity>>(this.stationService.findAllBySubdivision(subdivision), HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/by-all/{any}", method = RequestMethod.GET)
-    @ApiOperation(value = "Stations list by the station name, the country or the subdivision", notes = "Retrieves all the AQICN stations by the station name, " +
+    @RequestMapping(value = "/by-all/{any}/{numberOfStations}", method = RequestMethod.GET)
+    @ApiOperation(value = "Stations list by the station name, the country or the subdivision", notes = "Retrieves the AQICN stations by the station name, " +
             "the country the subdivision1, the subdivision2 or the subdivision3.")
     public ResponseEntity<List<StationEntity>> getStationsByStationNameAndCountryAndSubdivision(
             @ApiParam(name = "any", value = "It can be the station name, the country or the subdivision", required = true)
-            @PathVariable String any) {
-        return new ResponseEntity<List<StationEntity>>(this.stationService.findAllByStationNameAndCountryAndSubdivision(any), HttpStatus.OK);
+            @PathVariable String any,
+            @ApiParam(name = "numberOfStations", value = "Number of stations we want to get", required = true)
+            @PathVariable int numberOfStations) {
+        return new ResponseEntity<List<StationEntity>>(this.stationService.findByStationNameAndCountryAndSubdivision(any, numberOfStations), HttpStatus.OK);
     }
 
     @RequestMapping(value = "/delete-all", method = RequestMethod.DELETE)

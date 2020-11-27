@@ -1,6 +1,8 @@
 package com.polytech.mtonairserver.repository;
 
 import com.polytech.mtonairserver.model.entities.StationEntity;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -40,7 +42,7 @@ public interface StationRepository extends JpaRepository<StationEntity, Integer>
             "OR s.subdivision1 LIKE %:any% " +
             "OR s.subdivision2 LIKE %:any% " +
             "OR s.subdivision3 LIKE %:any%")
-    public List<StationEntity> findAllByStationNameAndCountryAndSubdivision(String any);
+    public List<StationEntity> findFirstByStationNameAndCountryAndSubdivision(String any, Pageable pageable);
 
     public StationEntity findAllByUrl(String url);
 

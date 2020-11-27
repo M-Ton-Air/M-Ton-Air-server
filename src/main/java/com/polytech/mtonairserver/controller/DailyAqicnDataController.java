@@ -53,6 +53,7 @@ public class DailyAqicnDataController {
     }
 
 
+    // todo : A activer
     //@Scheduled(fixedDelay=86400000) // method starting every 24 hours
     @ApiOperation(value = "Save the AQICN datas into the database", notes = "Save all the available AQICN data" +
             "into the M-Ton-Air database.")

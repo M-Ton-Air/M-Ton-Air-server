@@ -9,6 +9,7 @@ import com.polytech.mtonairserver.service.interfaces.IStationService;
 
 import com.polytech.mtonairserver.stationshandling.io.StationsDataReader;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -85,8 +86,8 @@ public class StationService implements IStationService
     }
 
     @Override
-    public List<StationEntity> findAllByStationNameAndCountryAndSubdivision(String any) {
-        return this.stationRepository.findAllByStationNameAndCountryAndSubdivision(any);
+    public List<StationEntity> findByStationNameAndCountryAndSubdivision(String any, int numberOfStations) {
+        return this.stationRepository.findFirstByStationNameAndCountryAndSubdivision(any, PageRequest.of(0, numberOfStations));
     }
 
     @Override

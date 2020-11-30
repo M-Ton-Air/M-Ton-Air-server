@@ -1,5 +1,6 @@
 package com.polytech.mtonairserver.model.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.polytech.mtonairserver.model.entities.keys.ForecastEntityPK;
 
 import javax.persistence.*;
@@ -112,6 +113,7 @@ public class ForecastEntity  {
         return Objects.hash(idForecast, idStation, idDateForecast, dateForecasted, measureAverage, measureMin, measureMax);
     }
 
+    @JsonIgnore
     @ManyToOne
     //@JoinColumn(name = "id_station", referencedColumnName = "id_station", nullable = false)
     @JoinColumn(name = "id_station", updatable = false, insertable = false)

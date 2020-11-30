@@ -316,7 +316,21 @@ public class  DailyAqicnDataService implements IDailyAqicnDataService {
     @Override
     public List<DailyAqicnDataEntity> getAqicnDatasByIdStation(int idStation) {
         List<DailyAqicnDataEntity> dailyAqicnDataByIdStationList = this.dailyAqicnDataRepository.findAllByIdStation(idStation);
+        // we remove the stations cause if the user asks the aqicn data station with an id station,
+        // we suppose he already has the station information. No need to overload the response.
+        dailyAqicnDataByIdStationList.forEach(sta -> sta.setStationByIdStation(null));
         return dailyAqicnDataByIdStationList;
+    }
+
+    public List<DailyAqicnDataEntity> getaqicnDataByManyIdStations(int[] stationIds){
+        List<Integer> ints = new ArrayList<>();
+        for(int i : stationIds)
+        {
+            ints.add(i);
+        }
+        List<DailyAqicnDataEntity> data = this.dailyAqicnDataRepository.findAllByIdStationIn(ints);
+        data.forEach(sta -> sta.setStationByIdStation(null));
+        return data;
     }
 
     /**

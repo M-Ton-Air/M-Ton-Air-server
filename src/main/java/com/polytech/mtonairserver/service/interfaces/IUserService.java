@@ -7,6 +7,7 @@ import com.polytech.mtonairserver.customexceptions.loginexception.WrongPasswordE
 import com.polytech.mtonairserver.customexceptions.favoritestation.StationAlreadyInUserFavoriteStationsException;
 import com.polytech.mtonairserver.customexceptions.stations.StationDoesntExistIntoTheDatabaseException;
 import com.polytech.mtonairserver.customexceptions.user.UserNotFoundException;
+import com.polytech.mtonairserver.model.entities.DailyAqicnDataEntity;
 import com.polytech.mtonairserver.model.entities.StationEntity;
 import com.polytech.mtonairserver.model.entities.UserEntity;
 
@@ -29,7 +30,7 @@ public interface IUserService
 
     UserEntity login(UserEntity loginPassword) throws UnknownEmailException, WrongPasswordException;
 
-    Set<StationEntity> listUserFavoriteStations(int userId);
+    List<DailyAqicnDataEntity> listUserFavoriteAqicnData(int userId);
 
     void addUserFavoriteStation(int idUser, int idStation) throws StationAlreadyInUserFavoriteStationsException, StationDoesntExistIntoTheDatabaseException;
 

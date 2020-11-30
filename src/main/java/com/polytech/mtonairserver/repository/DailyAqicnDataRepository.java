@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.util.Collection;
 import java.util.List;
 
 @Repository
@@ -20,5 +21,7 @@ public interface DailyAqicnDataRepository extends JpaRepository<DailyAqicnDataEn
     @Query(value = "DELETE f FROM forecast f JOIN (SELECT max(date_forecasted) AS maxdate from forecast) x" +
             "ON f.date_forecasted < x.maxdate where f.id_station = :idStation", nativeQuery = true)
     public void deleteAllOldForecasts(int idStation);
+
+    public List<DailyAqicnDataEntity> findAllByIdStationIn(Collection<Integer> ids);
 
 }

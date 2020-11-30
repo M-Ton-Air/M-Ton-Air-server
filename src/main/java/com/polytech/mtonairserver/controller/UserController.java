@@ -5,6 +5,7 @@ import com.polytech.mtonairserver.customexceptions.ControllerExceptionBuilder;
 import com.polytech.mtonairserver.customexceptions.favoritestation.StationAlreadyInUserFavoriteStationsException;
 import com.polytech.mtonairserver.customexceptions.miscellaneous.UserFavoriteStationsFetchException;
 import com.polytech.mtonairserver.customexceptions.stations.StationDoesntExistIntoTheDatabaseException;
+import com.polytech.mtonairserver.model.entities.DailyAqicnDataEntity;
 import com.polytech.mtonairserver.model.entities.StationEntity;
 import com.polytech.mtonairserver.model.entities.UserEntity;
 import com.polytech.mtonairserver.model.responses.ApiErrorResponse;
@@ -51,14 +52,14 @@ public class UserController {
 
     @ApiOperation(value = "Gets the favorite stations for a given user", notes = "Returns 0, one or many stations" +
             " according to the user favorite stations.")
-    @RequestMapping(value = "/{id}/favorite-stations", method = RequestMethod.GET)
-    public ResponseEntity<Set<StationEntity>> getUserFavoriteStations(
+    @RequestMapping(value = "/{id}/favorite-station", method = RequestMethod.GET)
+    public ResponseEntity<List<DailyAqicnDataEntity>> getUserFavoriteStations(
             @ApiParam(name = "id", value = "The user id", required = true)
             @PathVariable int id) throws UserFavoriteStationsFetchException
     {
         try
         {
-            return new ResponseEntity<Set<StationEntity>>(this.userService.listUserFavoriteStations(id), HttpStatus.OK);
+            return new ResponseEntity<List<DailyAqicnDataEntity>>(this.userService.listUserFavoriteAqicnData(id), HttpStatus.OK);
         }
         catch(Exception e)
         {
@@ -165,10 +166,10 @@ public class UserController {
 
     @ExceptionHandler(StationAlreadyInUserFavoriteStationsException.class)
     @ResponseBody
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ResponseEntity<ApiErrorResponse> stationAlreadyInUserFavoriteStations(StationAlreadyInUserFavoriteStationsException ex)
     {
-        return ControllerExceptionBuilder.buildErrorResponseAndPrintStackTrace(HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage(), ex);
+        return ControllerExceptionBuilder.buildErrorResponseAndPrintStackTrace(HttpStatus.BAD_REQUEST, ex.getMessage(), ex);
     }
 
 

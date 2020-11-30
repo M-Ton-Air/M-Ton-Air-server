@@ -70,7 +70,7 @@ public class DailyAqicnDataController {
                 "SAVE OK ");
     }
 
-    @ApiOperation(value = "Gets the AQICN datas with the id station", notes = "Retrieves all datas of a station according to his id")
+    @ApiOperation(value = "Gets the AQICN datas with the id station", notes = "Retrieves all data of a station according to its id")
     @RequestMapping(value = "/{idStation}", method = RequestMethod.GET)
     public List<DailyAqicnDataEntity> getAllAqicnDatasOfAStation(
             @ApiParam(name = "idStation", value = "The station id", required = true)
@@ -78,7 +78,7 @@ public class DailyAqicnDataController {
         return this.dailyAqicnDataService.getAqicnDatasByIdStation(idStation);
     }
 
-    @ApiOperation(value = "Gets the AQICN forecast datas with the id station", notes = "Retrieves all forecast datas of a station according to his id")
+    @ApiOperation(value = "Gets the AQICN forecast datas with the id station", notes = "Retrieves aqcin forecast data for a given station id")
     @RequestMapping(value = "/forecast/{idStation}", method = RequestMethod.GET)
     public List<ForecastEntity> getAqicnForecastDatasByIdStation(
             @ApiParam(name = "idStation", value = "The station id", required = true)
@@ -86,7 +86,15 @@ public class DailyAqicnDataController {
         return this.dailyAqicnDataService.getAqicnForecastDatasByIdStation(idStation);
     }
 
-    @ApiOperation(value = "Gets the AQICN forecast datas with the id station and the measure name", notes = "Retrieves all forecast datas of a station according to his id and the measure name")
+    @ApiOperation(value = "Gets the AQICN forecast data with many ids", notes = "Retrieves all forecast datas of a station according to its id")
+    @RequestMapping(value = "/by-ids", method = RequestMethod.GET)
+    public List<DailyAqicnDataEntity> getAqicnDataByManyIdStation(
+            @ApiParam(name = "idStation", value = "The stations ids", required = true)
+            @RequestBody int[] stationIds) {
+        return this.dailyAqicnDataService.getaqicnDataByManyIdStations(stationIds);
+    }
+
+    @ApiOperation(value = "Gets the AQICN forecast datas with the id station and the measure name", notes = "Retrieves all aqicn data of a station according to its id and measure name")
     @RequestMapping(value = "/forecast/{idStation}/{measureName}", method = RequestMethod.GET)
     public List<ForecastEntity> getAqicnForecastDatasByIdStationAndMeasureName(
             @ApiParam(name = "idStation", value = "The station id", required = true)

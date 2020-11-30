@@ -6,8 +6,10 @@ import com.polytech.mtonairserver.customexceptions.favoritestation.StationIsNotI
 import com.polytech.mtonairserver.customexceptions.loginexception.*;
 import com.polytech.mtonairserver.customexceptions.stations.StationDoesntExistIntoTheDatabaseException;
 import com.polytech.mtonairserver.customexceptions.user.UserNotFoundException;
+import com.polytech.mtonairserver.model.entities.DailyAqicnDataEntity;
 import com.polytech.mtonairserver.model.entities.StationEntity;
 import com.polytech.mtonairserver.model.entities.UserEntity;
+import com.polytech.mtonairserver.repository.DailyAqicnDataRepository;
 import com.polytech.mtonairserver.repository.StationRepository;
 import com.polytech.mtonairserver.repository.UserRepository;
 import com.polytech.mtonairserver.security.TokenGenerator;
@@ -18,6 +20,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.security.SecureRandom;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
@@ -30,17 +33,23 @@ public class UserService implements IUserService
 {
     private UserRepository userRepository;
 
-    @Autowired
     private StationRepository stationRepository;
+
+    private DailyAqicnDataRepository dailyAqicnDataRepository;
+
+
 
     private final int encryptionStrength = 10;
 
     private BCryptPasswordEncoder pwHasher = new BCryptPasswordEncoder(encryptionStrength, new SecureRandom());
 
     @Autowired
-    public UserService(UserRepository ur)
+    public UserService(UserRepository ur, StationRepository sr, DailyAqicnDataRepository dr)
     {
         this.userRepository = ur;
+        this.stationRepository = sr;
+        this.dailyAqicnDataRepository = dr;
+
     }
 
     /**
@@ -131,7 +140,10 @@ public class UserService implements IUserService
     private void checkIfUserEntityNamesArePresent(UserEntity userEntityToTest) throws NamesMissingException
     {
         // when no names are given
-        if(userEntityToTest.getName().isEmpty() || userEntityToTest.getFirstname().isEmpty())
+        if(userEntityToTest.getName() == null
+                || userEntityToTest.getFirstname() == null
+                || userEntityToTest.getName().isEmpty()
+                || userEntityToTest.getFirstname().isEmpty())
         {
             throw new NamesMissingException("Name and First name were not specified", UserService.class);
         }
@@ -210,9 +222,14 @@ public class UserService implements IUserService
      * @return List of user's favorite stations.
      */
     @Override
-    public Set<StationEntity> listUserFavoriteStations(int userId) {
+    public List<DailyAqicnDataEntity> listUserFavoriteAqicnData(int userId) {
         UserEntity ue = this.userRepository.findAllByIdUser(userId);
-        return ue.getUserFavoriteStationsByIdUser();
+        List<Integer> stationIds = new ArrayList<Integer>();
+        for(StationEntity stationEntity : ue.getUserFavoriteStationsByIdUser())
+        {
+            stationIds.add(stationEntity.getIdStation());
+        }
+        return this.dailyAqicnDataRepository.findAllByIdStationIn(stationIds);
     }
 
     /**
@@ -246,13 +263,12 @@ public class UserService implements IUserService
                 this.userRepository.save(userEntity);
             }
             else {
-                throw new StationAlreadyInUserFavoriteStationsException("The station n°" + idStation + " doesn't exists " +
-                        "into the M'Ton'Air Database", UserService.class);
+                throw new StationDoesntExistIntoTheDatabaseException("The station n°" + idStation + " doesn't exists " +
+                        "in the M'Ton'Air Database", UserService.class);
             }
         }
         else {
-            throw new StationDoesntExistIntoTheDatabaseException("The station n°" + idStation + " is already into "
-                    + userEntity.getEmail() + " favorite station", UserService.class);
+            throw new StationAlreadyInUserFavoriteStationsException("The station n°" + idStation + " is already in the user favorites", UserService.class);
         }
     }
 

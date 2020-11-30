@@ -71,7 +71,9 @@ public class AuthenticationController {
                             " (" + ue.getEmail() + ") is well authenticated.", ue.getIdUser(), ue.getApiKey(), token),
                     HttpStatus.OK);
         } catch (Exception e) {
-            return ResponseEntity.notFound().build();
+            e.printStackTrace();
+            return new ResponseEntity<ApiErrorResponse>(
+                new ApiErrorResponse(HttpStatus.NOT_FOUND, "Could not find a record to set up a new jwt.",e), HttpStatus.NOT_FOUND);
         }
 
     }

@@ -50,7 +50,6 @@ public class DailyAqcinDataServiceTest
 
     @Test
     public void fillOutDailyAqicnDataTest() throws ParseException, ExecutionException, InterruptedException, AqiNotFoundException {
-        //todo
         this.dailyAqicnDataService.fillOutDailyAqicnData();
     }
 

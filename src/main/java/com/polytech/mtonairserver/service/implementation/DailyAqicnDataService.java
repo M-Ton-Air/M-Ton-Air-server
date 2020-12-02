@@ -297,7 +297,7 @@ public class  DailyAqicnDataService implements IDailyAqicnDataService {
     }
 
     /**
-     * Delete the old aqicn datas and forecasts after saving all the new datas
+     * Delete the old aqicn data and forecasts after saving all the new datas
      */
     public void deleteOldAqicnDatasAndForecasts() {
         List<StationEntity> stationEntityList = this.stationRepository.findAll();

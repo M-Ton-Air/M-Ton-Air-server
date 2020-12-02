@@ -69,7 +69,6 @@ public class GeoService implements IGeoService
     {
         List<StationEntity> stationsCausingErrors = new ArrayList<>();
 
-        // todo : can this be factorized ? cause it is used many times in the code (threading)
         List<CityData> stationsCoordinates = Collections.synchronizedList(new ArrayList<>());
         ExecutorService executor = Executors.newWorkStealingPool();
         List<Future<?>> futures = new ArrayList<Future<?>>();

@@ -40,14 +40,14 @@ public class StationController {
     }
 
     @RequestMapping(value = "/all", method = RequestMethod.GET)
-    @ApiOperation(value = "Stations list", notes = "Retrieves all the AQICN stations.")
+    @ApiOperation(value = "Stations list.", notes = "Retrieves all the AQICN stations.")
     public ResponseEntity<List<StationEntity>> getAllStationsName()
     {
         return new ResponseEntity<List<StationEntity>>(this.stationService.findAll(), HttpStatus.OK);
     }
 
     @RequestMapping(value = "/{idStation}", method = RequestMethod.GET)
-    @ApiOperation(value = "Get a specific station with his id", notes = "Retrieves a specific station according to his id")
+    @ApiOperation(value = "Gets a specific station according to its id.", notes = "Retrieves a specific station according to his id")
     public ResponseEntity<StationEntity> getAStationById(
             @ApiParam(name = "idStation", value = "The station id", required = true)
             @PathVariable int idStation) {
@@ -55,7 +55,7 @@ public class StationController {
     }
 
     @RequestMapping(value = "/by-country/{country}", method = RequestMethod.GET)
-    @ApiOperation(value = "Stations list by country", notes = "Retrieves all the AQICN stations by a country.")
+    @ApiOperation(value = "Stations list by country.", notes = "Retrieves all the AQICN stations by a country.")
     public ResponseEntity<List<StationEntity>> getStationsByCountry(
             @ApiParam(name = "country", value = "The country name", required = true)
             @PathVariable String country
@@ -65,7 +65,7 @@ public class StationController {
     }
 
     @RequestMapping(value = "/by-name/{stationName}", method = RequestMethod.GET)
-    @ApiOperation(value = "Stations list by name", notes = "Retrieves  AQICN stations by a station name.")
+    @ApiOperation(value = "Stations list by name.", notes = "Retrieves  AQICN stations by a station name.")
     public ResponseEntity<List<StationEntity>> getStationsByStationName(
             @ApiParam(name = "stationName", value = "The station name", required = true)
             @PathVariable String stationName
@@ -75,7 +75,7 @@ public class StationController {
     }
 
     @RequestMapping(value = "/by-iso2/{iso2}", method = RequestMethod.GET)
-    @ApiOperation(value = "Stations list by iso2", notes = "Retrieves all the AQICN stations by iso2.")
+    @ApiOperation(value = "Stations list by iso2.", notes = "Retrieves all the AQICN stations by iso2.")
     public ResponseEntity<List<StationEntity>> getStationsByIso2(
             @ApiParam(name = "iso2", value = "The iso2", required = true)
             @PathVariable String iso2
@@ -85,7 +85,7 @@ public class StationController {
     }
 
     @RequestMapping(value = "/by-subdivision/{subdivision}", method = RequestMethod.GET)
-    @ApiOperation(value = "Stations list by the subdivision", notes = "Retrieves all the AQICN stations by the subdivision1, " +
+    @ApiOperation(value = "Stations list by the subdivision.", notes = "Retrieves all the AQICN stations by the subdivision1, " +
             "the subdivision2 or the subdivision3.")
     public ResponseEntity<List<StationEntity>> getStationsBySubdivision(
             @ApiParam(name = "subdivision", value = "The subdivision", required = true)
@@ -96,7 +96,7 @@ public class StationController {
     }
 
     @RequestMapping(value = "/by-all/{any}/{numberOfStations}", method = RequestMethod.GET)
-    @ApiOperation(value = "Stations list by the station name, the country or the subdivision", notes = "Retrieves the AQICN stations by the station name, " +
+    @ApiOperation(value = "Stations list by the station name, the country or the subdivision.", notes = "Retrieves the AQICN stations by the station name, " +
             "the country the subdivision1, the subdivision2 or the subdivision3.")
     public ResponseEntity<List<StationEntity>> getStationsByStationNameAndCountryAndSubdivision(
             @ApiParam(name = "any", value = "It can be the station name, the country or the subdivision", required = true)
@@ -107,7 +107,7 @@ public class StationController {
     }
 
     @RequestMapping(value = "/delete-all", method = RequestMethod.DELETE)
-    @ApiOperation(value = "Delete all stations", notes = "Delete all stations from the mtonairserver database ")
+    @ApiOperation(value = "Delete all stations.", notes = "Delete all stations from the mtonairserver database ")
     public ResponseEntity deleteAllStations()
     {
         this.stationService.deleteAll();
@@ -132,7 +132,7 @@ public class StationController {
      * @throws UnsupportedFindOperationOnLocationException This method is raised if there are problems with the DataReader.
      * @throws NoProperLocationFoundException Same than for UnsupportedFindOperation.
      */
-    @ApiOperation(value = "Stations creation", notes = "Creates and inserts all the aqicn stations into the database.")
+    @ApiOperation(value = "Stations creation.", notes = "Creates and inserts all the aqicn stations into the database.")
     @RequestMapping(value = "/create-stations", method = RequestMethod.PUT)
     public ResponseEntity insertAllStations() throws IOException, StationsAlreadyInitializedException, UnsupportedFindOperationOnLocationException, NoProperLocationFoundException, ExecutionException, InterruptedException
     {

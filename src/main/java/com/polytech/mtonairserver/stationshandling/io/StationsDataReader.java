@@ -153,7 +153,6 @@ public class StationsDataReader
 
         for(JsonElement jElement : allCoordinates)
         {
-            // todo : can this be factorized ? cause it is used many times in the code (threading)
             futures.add
             (
                 executor.submit( () ->
@@ -209,8 +208,6 @@ public class StationsDataReader
         // removes some unused links / wrong links.
         htmlLinks.removeAll(DataReaderParticularCaseHandler.removeParticularCases(htmlLinks));
 
-
-        // todo : can this be factorized ? cause it is used many times in the code (threading)
         ExecutorService executor = Executors.newWorkStealingPool();
 
         List<Future<?>> futures = new ArrayList<Future<?>>();

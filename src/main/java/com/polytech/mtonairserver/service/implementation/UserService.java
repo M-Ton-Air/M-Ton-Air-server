@@ -4,6 +4,7 @@ import com.polytech.mtonairserver.customexceptions.accountcreation.*;
 import com.polytech.mtonairserver.customexceptions.favoritestation.StationAlreadyInUserFavoriteStationsException;
 import com.polytech.mtonairserver.customexceptions.favoritestation.StationIsNotIntoUserFavoriteStationsException;
 import com.polytech.mtonairserver.customexceptions.loginexception.*;
+import com.polytech.mtonairserver.customexceptions.miscellaneous.UserFavoriteStationsFetchException;
 import com.polytech.mtonairserver.customexceptions.stations.StationDoesntExistIntoTheDatabaseException;
 import com.polytech.mtonairserver.customexceptions.user.UserNotFoundException;
 import com.polytech.mtonairserver.model.entities.DailyAqicnDataEntity;
@@ -24,6 +25,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * Service implementation for the user service.
@@ -230,6 +232,15 @@ public class UserService implements IUserService
             stationIds.add(stationEntity.getIdStation());
         }
         return this.dailyAqicnDataRepository.findAllByIdStationIn(stationIds);
+    }
+
+    public List<StationEntity> getFavoriteStations(int id) throws UserFavoriteStationsFetchException
+    {
+        if(this.userRepository.findById(id).isPresent())
+        {
+            return new ArrayList<>(this.userRepository.findById(id).get().getUserFavoriteStationsByIdUser());
+        }
+        throw new UserFavoriteStationsFetchException("Could not retrieve user favorite exceptions", UserService.class);
     }
 
     /**

@@ -53,13 +53,29 @@ public class UserController {
     @ApiOperation(value = "Gets the favorite stations for a given user", notes = "Returns 0, one or many stations" +
             " according to the user favorite stations.")
     @RequestMapping(value = "/{id}/favorite-station", method = RequestMethod.GET)
-    public ResponseEntity<List<DailyAqicnDataEntity>> getUserFavoriteStations(
+    public ResponseEntity<List<DailyAqicnDataEntity>> getUserFavoriteStationsData(
             @ApiParam(name = "id", value = "The user id", required = true)
             @PathVariable int id) throws UserFavoriteStationsFetchException
     {
         try
         {
             return new ResponseEntity<List<DailyAqicnDataEntity>>(this.userService.listUserFavoriteAqicnData(id), HttpStatus.OK);
+        }
+        catch(Exception e)
+        {
+            throw new UserFavoriteStationsFetchException(e.getMessage(), UserController.class);
+        }
+    }
+
+
+    @RequestMapping(value = "/{id}/favorite-station/stations-only", method = RequestMethod.GET)
+    public ResponseEntity<List<StationEntity>> getUserFavoriteStations(
+            @ApiParam(name = "id", value = "The user id", required = true)
+            @PathVariable int id) throws UserFavoriteStationsFetchException
+    {
+        try
+        {
+            return new ResponseEntity<List<StationEntity>>(this.userService.getFavoriteStations(id), HttpStatus.OK);
         }
         catch(Exception e)
         {

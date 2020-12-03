@@ -284,8 +284,7 @@ public class  DailyAqicnDataService implements IDailyAqicnDataService {
     }
 
     private void saveAqicnDataAndForecastsToDatabase(List<DailyAqicnDataEntity> dailyAqicnDataEntityList, List<ForecastEntity> forecastEntityList) throws ExecutionException, InterruptedException {
-
-        //todo :pk pas enlever les syncrhonized list ici ?
+        
         List<DailyAqicnDataEntity> dailyAqicnDataEntityListSynchronized = Collections.synchronizedList(dailyAqicnDataEntityList);
         List<ForecastEntity> forecastEntityListSynchronized = Collections.synchronizedList(forecastEntityList);
 
